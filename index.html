@@ -851,7 +851,36 @@ function step9() {
 // ============================================================
 function save1() { Object.assign(ST.info, { relación:getR('relación'), razon:gv('f-razon'), municipio:gv('f-municipio'), direccion:gv('f-direccion'), ubicacion:gv('f-ubicacion'), sector:gv('f-sector'), antiguedad:gv('f-antiguedad'), tiene_rut:getR('tiene_rut'), correo:gv('f-correo'), telefono:gv('f-telefono'), meses_reg:parseInt(gv('f-meses-reg'))||0 }); }
 function save2() { Object.assign(ST.info, { nombre1:gv('f-nombre1'), nombre2:gv('f-nombre2'), apellido1:gv('f-apellido1'), apellido2:gv('f-apellido2'), nacimiento:gv('f-nacimiento'), sexo:getR('sexo'), grupos_pob:getC('grupos_pob'), edu:gv('f-edu'), motivo:getR('motivo') }); }
-function save3() { Object.assign(ST.R, { anos_act:getR('anos_act'), vision:getR('vision'), personal:gv('f-personal'), aportes:getR('aportes'), ventas:gv('f-ventas'), costos:gv('f-costos'), fuente_ventas:getR('fuente_ventas'), comercio_int:getR('comercio_int') }); }
+function save3() {
+  if (MODO === 'ingreso') {
+    Object.assign(ST.R, {
+      anos_act:      getR('anos_act'),
+      vision:        getR('vision'),
+      personal:      gv('f-personal'),
+      aportes:       getR('aportes'),
+      ventas:        gv('f-ventas'),
+      costos:        gv('f-costos'),
+      fuente_ventas: getR('fuente_ventas'),
+      comercio_int:  getR('comercio_int')
+    });
+  } else {
+    // Save ingreso (baseline) values
+    Object.assign(ST.ing, {
+      ventas:     parseFloat(gv('f-ing-ventas'))  || ST.ing.ventas  || 0,
+      costos:     parseFloat(gv('f-ing-costos'))  || ST.ing.costos  || 0,
+      personal:   parseInt(gv('f-ing-personal'))  || ST.ing.personal|| 0,
+      emp_formal: parseInt(gv('f-ing-empformal')) || ST.ing.emp_formal || 0,
+      puntaje:    parseInt(gv('f-ing-puntaje'))   || ST.ing.puntaje || 0,
+      nivel:      gv('f-ing-nivel') || ST.ing.nivel || ''
+    });
+    // Save current values
+    Object.assign(ST.R, {
+      ventas:   gv('f-ventas'),
+      costos:   gv('f-costos'),
+      personal: gv('f-personal'),
+      aportes:  getR('aportes')
+    });
+  } }
 function save4() { Object.assign(ST.R, { plan_crec:getR('plan_crec'), productos:gv('f-productos'), cliente:gv('f-cliente'), pv:gv('f-pv') }); }
 function save5() { Object.assign(ST.R, { satisfaccion:getR('satisfaccion'), elems_com:getC('elems_com') }); }
 function save6() { Object.assign(ST.R, { contabilidad:getR('contabilidad'), financiamiento:getC('financiamiento'), tramites:getC('tramites') }); }
@@ -884,13 +913,21 @@ function validate(n) {
     if (!I.motivo)    { showErr('Selecciona el motivo principal para iniciar el negocio.'); return false; }
   }
   if (n === 3) {
-    if (!R.anos_act)      { showErr('Indica hace cuántos años desarrollas esta actividad.'); return false; }
-    if (!R.vision)        { showErr('Selecciona como ves el futuro de tu negocio.'); return false; }
-    if (!R.personal)      { showErr('Indica cuántas personas ocupadas tiene el negocio.'); return false; }
-    if (!R.aportes)       { showErr('Indica si el negocio paga salud y/o pension.'); return false; }
-    if (!R.ventas)        { showErr('Ingresa el valor promedio de ventas mensuales.'); return false; }
-    if (!R.fuente_ventas) { showErr('Selecciona la fuente principal de ventas.'); return false; }
-    if (!R.comercio_int)  { showErr('Indica si realizas comercio internacional.'); return false; }
+    if (MODO === 'ingreso') {
+      if (!R.anos_act)      { showErr('Indica hace cuántos años desarrollas esta actividad.'); return false; }
+      if (!R.vision)        { showErr('Selecciona cómo ves el futuro del negocio.'); return false; }
+      if (!R.personal)      { showErr('Indica el número de personas ocupadas.'); return false; }
+      if (!R.aportes)       { showErr('Indica si el negocio paga seguridad social.'); return false; }
+      if (!R.ventas)        { showErr('Ingresa los ingresos (ventas) mensuales.'); return false; }
+      if (!R.costos)        { showErr('Ingresa los costos y gastos mensuales.'); return false; }
+      if (!R.fuente_ventas) { showErr('Selecciona la fuente principal de ventas.'); return false; }
+      if (!R.comercio_int)  { showErr('Indica si realizas comercio internacional.'); return false; }
+    } else {
+      // seguimiento / salida — validate ingreso values + current values
+      if (!gv('f-ing-ventas') && !(ST.ing && ST.ing.ventas)) { showErr('Ingresa los ingresos del diagnóstico de ingreso (línea base).'); return false; }
+      if (!gv('f-ventas') && !R.ventas)     { showErr('Ingresa los ingresos (ventas) actuales.'); return false; }
+      if (!R.aportes && !getR('aportes'))   { showErr('Indica si el negocio paga seguridad social actualmente.'); return false; }
+    }
   }
   if (n === 4) {
     if (!R.plan_crec)  { showErr('Selecciona como planificas el crecimiento del negocio.'); return false; }
