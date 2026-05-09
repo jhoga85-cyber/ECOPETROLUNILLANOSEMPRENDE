@@ -229,7 +229,9 @@ function updateProg() {
   var p = Math.round((ST.step / (TOTAL - 1)) * 100);
   gid('prog-fill').style.width = p + '%';
   gid('prog-pct').textContent  = p + '%';
-  var lbls = ['Bienvenida','A. Identificacion del negocio','Datos del informante','B. Desarrollo del producto','C. Liderazgo y planeación','D. Mercadeo y ventas','E. Contabilidad y financiamiento','F. Innovación','G. Tecnología','Resumen'];
+  var esSalidaLbl = ST.info.tipo_diag && ST.info.tipo_diag.indexOf('Salida') >= 0;
+  var lbls = esSalidaLbl ? ['Tipo de diagnóstico','A. Identificación del negocio','Datos del informante','B. Resultados al cierre','C. Planeación — impacto','D. Mercadeo — resultados','E. Contabilidad — evolución','F. Innovación — cambios','G. Tecnología — adopción','Resumen final']
+  : ['Tipo de diagnóstico','A. Identificación del negocio','Datos del informante','B. Desarrollo del producto','C. Liderazgo y planeación','D. Mercadeo y ventas','E. Contabilidad y financiamiento','F. Innovación','G. Tecnología','Resumen'];
   gid('prog-lbl').textContent = lbls[ST.step] || '';
 }
 
@@ -375,6 +377,169 @@ function showErr(msg) {
 // ============================================================
 // STEP RENDERERS
 // ============================================================
+// ═══════════════════════════════════════════════════════
+// PASOS DE DIAGNÓSTICO DE SALIDA — EVALUACIÓN FINAL
+// Las preguntas miden CAMBIOS y RESULTADOS, no estado inicial
+// ═══════════════════════════════════════════════════════
+
+var ANOS_ACT_SAL  = ['Menos de 1 año','De 1 a 3 años','De 3 a 5 años','De 5 a 10 años','Más de 10 años'];
+var VISION_SAL    = [
+  'El negocio creció y se estabilizó con estructura sólida',
+  'El negocio mejoró su operación y amplió su oferta',
+  'El negocio se mantiene con mejoras moderadas',
+  'El negocio se mantiene igual que al inicio',
+  'El negocio enfrenta dificultades mayores que al inicio'
+];
+var PLAN_CREC_SAL = [
+  'Ahora tengo un plan estratégico a más de 3 años con indicadores',
+  'Desarrollé un plan de crecimiento a 2-3 años con recursos asignados',
+  'Establecí metas de ventas y plan de trabajo para los próximos 12 meses',
+  'Tengo ideas de crecimiento pero aún sin plan escrito',
+  'No hubo cambios en mi forma de planificar'
+];
+var SATISF_SAL    = [
+  'Implementé estrategia sistematizada con análisis de múltiples aspectos',
+  'Realizo encuestas periódicas físicas o digitales',
+  'Registro comentarios de clientes en WhatsApp o cuaderno organizado',
+  'Recibo comentarios pero no los registro',
+  'No mido la satisfacción de clientes'
+];
+var CONTAB_SAL    = [
+  'Adopté sistema ERP o software avanzado de gestión financiera',
+  'Uso ahora software especializado de contabilidad',
+  'Migré a Excel sistematizado o programa gratuito',
+  'Mejoré mi registro manual en cuadernos',
+  'No hubo cambios en mi sistema contable'
+];
+var INNOV_SAL_OPTS = ['Ninguna','Una (1)','Dos (2)','Tres o más'];
+var HERRAMIENTAS_NUEVAS = [
+  'Software de contabilidad o gestión financiera',
+  'CRM o gestión de clientes',
+  'Plataforma de ventas en línea o comercio electrónico',
+  'WhatsApp Business o herramientas de comunicación',
+  'Redes sociales con estrategia de contenido',
+  'Herramientas de publicidad digital (Meta Ads, Google Ads)',
+  'Software de gestión de inventarios',
+  'Plataformas de videoconferencia para negocio',
+  'Billeteras digitales o pasarelas de pago',
+  'Ninguna nueva herramienta'
+];
+
+function step3sal() {
+  var R = ST.R; clr();
+  var html = '<div class="step active">'
+    + secHdr('B', 'Desarrollo del producto o servicio — Evaluación de cierre')
+    + '<div class="alert-info" style="background:#EEF0FE;border-left:4px solid var(--navy);padding:10px 14px;border-radius:0 var(--r-md) var(--r-md) 0;font-size:12.5px;margin-bottom:1rem;color:var(--navy)">📊 <strong>Diagnóstico de Salida:</strong> Estas preguntas evalúan los cambios y resultados alcanzados durante el proceso de acompañamiento.</div>'
+    + '<div class="field"><label>¿Cómo describe el estado actual del negocio al FINALIZAR el acompañamiento?<span class="req">*</span></label>'
+    + radioGrp('vision', VISION_SAL, R.vision) + '</div>'
+    + divider('Resultados al cierre')
+    + '<div class="field"><label>Personas ocupadas al CIERRE del acompañamiento (incluyéndote a ti)<span class="req">*</span></label>'
+    + '<input type="number" id="f-personal" min="1" placeholder="1" value="' + esc(R.personal||'') + '">'
+    + '<div class="hint">Compara con el número inicial para medir el crecimiento del empleo</div></div>'
+    + '<div class="field"><label>¿El negocio paga seguridad social al CIERRE?<span class="req">*</span></label>'
+    + radioGrp('aportes', APORTES_SEG, R.aportes) + '</div>'
+    + divider('Indicadores financieros al cierre')
+    + '<div class="field"><label>Ventas mensuales promedio al CIERRE (COP)<span class="req">*</span></label>'
+    + '<div class="hint">Línea de salida — se comparará con las ventas registradas al inicio para calcular el crecimiento</div>'
+    + '<input type="number" id="f-ventas" min="0" placeholder="Valor en pesos colombianos" value="' + esc(R.ventas||'') + '"></div>'
+    + '<div class="field"><label>Costos mensuales promedio al CIERRE (COP)<span class="req">*</span></label>'
+    + '<div class="hint">Línea de salida — se comparará con los costos iniciales para calcular la variación</div>'
+    + '<input type="number" id="f-costos" min="0" placeholder="Valor en pesos colombianos" value="' + esc(R.costos||'') + '"></div>'
+    + '<div class="field"><label>¿Sus ventas al cierre provienen principalmente de?<span class="req">*</span></label>'
+    + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
+    + navBtns(true)
+    + '</div>';
+  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
+}
+
+function step4sal() {
+  var R = ST.R; clr();
+  var html = '<div class="step active">'
+    + secHdr('C', 'Liderazgo y planeación — Impacto del acompañamiento')
+    + '<div class="field"><label>¿Cómo describe su capacidad de planificación empresarial al CIERRE?<span class="req">*</span></label>'
+    + radioGrp('plan_crec', PLAN_CREC_SAL, R.plan_crec) + '</div>'
+    + divider('Logros en planeación estratégica')
+    + field('¿Qué metas de ventas o crecimiento logró durante el proceso?', 'f-productos', 'text', 'Ej: Aumenté ventas un 25%, abrí nuevo canal digital, formalicé la empresa...', R.productos, true)
+    + field('¿Cómo evolucionó su propuesta de valor? ¿Qué mejoró?', 'f-pv', 'text', 'Describe los cambios en diferenciación, precios o servicios...', R.pv, false)
+    + field('¿Quiénes son ahora sus clientes objetivo? ¿Cambió o amplió su mercado?', 'f-cliente', 'text', 'Describe si amplió segmentos, geografías o tipos de cliente...', R.cliente, false)
+    + navBtns(true)
+    + '</div>';
+  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
+}
+
+function step5sal() {
+  var R = ST.R; clr();
+  var html = '<div class="step active">'
+    + secHdr('D', 'Mercadeo y ventas — Resultados al cierre')
+    + '<div class="field"><label>¿Cómo mide la satisfacción de sus clientes al CIERRE del acompañamiento?<span class="req">*</span></label>'
+    + radioGrp('satisfaccion', SATISF_SAL, R.satisfaccion) + '</div>'
+    + divider('Evolución comercial')
+    + '<div class="field"><label>¿Qué elementos comerciales IMPLEMENTÓ o MEJORÓ durante el acompañamiento? (seleccione todos)<span class="req">*</span></label>'
+    + checkGrp('elems_com', ELEMS_COMERCIAL, R.elems_com) + '</div>'
+    + '<div class="field"><label>¿Realizó actividades de comercio internacional al cierre?<span class="req">*</span></label>'
+    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
+    + navBtns(true)
+    + '</div>';
+  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
+}
+
+function step6sal() {
+  var R = ST.R; clr();
+  var html = '<div class="step active">'
+    + secHdr('E', 'Contabilidad y financiamiento — Evolución al cierre')
+    + '<div class="field"><label>¿Cómo lleva las cuentas del negocio al CIERRE del acompañamiento?<span class="req">*</span></label>'
+    + radioGrp('contabilidad', CONTAB_SAL, R.contabilidad) + '</div>'
+    + divider('Fuentes de financiamiento al cierre')
+    + '<div class="field"><label>¿Con qué fuentes de financiamiento operó durante el proceso? (seleccione todas)<span class="req">*</span></label>'
+    + checkGrp('financiamiento', FINANCIAMIENTO, R.financiamiento) + '</div>'
+    + divider('Trámites y formalización al cierre')
+    + '<div class="field"><label>¿Qué trámites de formalización realizó o tiene vigentes al cierre?<span class="req">*</span></label>'
+    + checkGrp('tramites', TRAMITES, R.tramites) + '</div>'
+    + navBtns(true)
+    + '</div>';
+  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
+}
+
+function step7sal() {
+  var R = ST.R; clr();
+  var html = '<div class="step active">'
+    + secHdr('F', 'Innovación — Cambios implementados')
+    + '<div class="notice" style="background:#FFFBF0;border-left:3px solid var(--amber);padding:10px 14px;border-radius:0 var(--r-md) var(--r-md) 0;font-size:12.5px;margin-bottom:1rem">💡 <strong>Innovación de salida:</strong> Registra únicamente los cambios implementados DURANTE el proceso de acompañamiento, no los previos.</div>'
+    + '<div class="field"><label>¿Con qué aspectos de innovación cuenta su negocio AL CIERRE?<span class="req">*</span></label>'
+    + checkGrp('innov_aspectos', INNOV_ASPECTOS, R.innov_aspectos) + '</div>'
+    + divider('Innovaciones implementadas DURANTE el acompañamiento')
+    + '<div class="field"><label>¿Cuántas innovaciones implementó en cada área DURANTE el proceso?<span class="req">*</span></label>'
+    + '<div class="hint">Cuenta solo los cambios nuevos implementados durante el convenio, no los que ya existían</div>'
+    + buildMatrix() + '</div>'
+    + divider('Satisfacción con el proceso')
+    + '<div class="field"><label>Valore la calidad del acompañamiento recibido (1=Muy malo, 5=Excelente)<span class="req">*</span></label>'
+    + radioGrp('valoracion_proc', ['1 — Muy malo','2 — Malo','3 — Regular','4 — Bueno','5 — Excelente'], R.valoracion_proc) + '</div>'
+    + '<div class="field"><label>¿En qué área(s) generó mayor impacto el acompañamiento? (seleccione todas)</label>'
+    + checkGrp('impacto_areas', ['Mercado objetivo','Oferta de valor','Modelo de rentabilización','Modelo de comercialización','Madurez administrativa','Formalización','Innovación tecnológica'], R.impacto_areas) + '</div>'
+    + navBtns(true)
+    + '</div>';
+  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
+}
+
+function step8sal() {
+  var R = ST.R; clr();
+  var html = '<div class="step active">'
+    + secHdr('G', 'Tecnología — Adopción durante el proceso')
+    + '<div class="field"><label>¿Qué tecnologías usa el negocio AL CIERRE del acompañamiento?<span class="req">*</span></label>'
+    + checkGrp('tecnologias', TECNOLOGIAS, R.tecnologias) + '</div>'
+    + '<div class="field"><label>¿Qué herramientas o tecnologías ADOPTÓ durante el proceso que no tenía al inicio? (seleccione todas)</label>'
+    + checkGrp('herram_nuevas', HERRAMIENTAS_NUEVAS, R.herram_nuevas) + '</div>'
+    + divider('Reflexión final del proceso')
+    + fieldTxt('¿Qué obstáculos impidieron un mayor avance durante el acompañamiento?', 'f-obs', 'Describe los principales barreras (tiempo, recursos, mercado, familia, etc.)', R.obs, false)
+    + fieldTxt('¿Qué herramientas o conocimientos adquiridos planea sostener en el tiempo?', 'f-sostenibilidad', 'Describe lo que implementaste y mantendrás después del convenio...', R.sostenibilidad, false)
+    + '<div class="field"><label>¿Recomendaría este proceso a otro emprendedor?</label>'
+    + radioGrp('recomienda', ['Sí, definitivamente','Sí, con algunas reservas','No lo recomendaría'], R.recomienda) + '</div>'
+    + navBtns(true)
+    + '</div>';
+  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
+}
+
+
 function step0() {
   clr();
   var html = '<div class="step active">'
@@ -382,9 +547,18 @@ function step0() {
     + '<h1>Diagnóstico de Madurez Empresarial</h1>'
     + '<p>Unillanos busca conocer la situacion de los emprendimientos y MiPymes beneficiarios del convenio, para identificar su nivel de madurez y necesidades. Con esta información, fortaleceremos las estrategias de acompaniamiento empresarial y formativo.</p>'
     + '</div>'
-    + '<div class="notice"><strong>Importante</strong>'
-    + 'La exactitud de la información es fundamental para garantizar la precision de los resultados del Diagnóstico de Madurez Empresarial. Datos incorrectos pueden alterar los resultados y afectar las conclusiones obtenidas.<br><br>'
-    + '<strong style="color:#92400E">Por favor, registre información veraz. Su participación es clave para el desarrollo empresarial de la region.</strong>'
+    + '<div style="background:white;border:1px solid var(--border);border-radius:var(--r-lg);padding:1rem;margin-bottom:1.25rem">'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+    + '<div style="border:1.5px solid #C7D2FE;border-radius:var(--r-md);padding:10px 12px;background:#EEF0FE">'
+    + '<div style="font-size:11px;font-weight:700;color:#3730A3;margin-bottom:4px">📋 DIAGNÓSTICO DE INGRESO</div>'
+    + '<div style="font-size:12px;color:#374151;line-height:1.6">Establece la <strong>línea base</strong> del estado actual. Las preguntas miden el estado del negocio <em>hoy</em>.</div>'
+    + '</div>'
+    + '<div style="border:1.5px solid #93C5FD;border-radius:var(--r-md);padding:10px 12px;background:#E6F1FB">'
+    + '<div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:4px">🏁 DIAGNÓSTICO DE SALIDA</div>'
+    + '<div style="font-size:12px;color:#374151;line-height:1.6">Mide los <strong>cambios y resultados</strong> del acompañamiento. Preguntas diferentes orientadas al impacto.</div>'
+    + '</div>'
+    + '</div>'
+    + '<div style="font-size:11.5px;color:var(--sub);margin-top:.75rem">⚠ Registre información veraz. Datos incorrectos afectan los resultados del diagnóstico.</div>'
     + '</div>'
     + '<div class="field" style="font-size:12px;color:var(--sub);line-height:1.65;background:white;border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;">'
     + 'En cumplimiento de la Ley 1581 de 2012, la información suministrada sera utilizada para fines de acompaniamiento empresarial y analisis del convenio.'
@@ -585,7 +759,7 @@ function save4() { Object.assign(ST.R, { plan_crec:getR('plan_crec'), productos:
 function save5() { Object.assign(ST.R, { satisfaccion:getR('satisfaccion'), elems_com:getC('elems_com') }); }
 function save6() { Object.assign(ST.R, { contabilidad:getR('contabilidad'), financiamiento:getC('financiamiento'), tramites:getC('tramites') }); }
 function save7() { Object.assign(ST.R, { innov_asp:getC('innov_asp') }); }
-function save8() { Object.assign(ST.R, { tecnologias:getC('tecnologias'), obs:gv('f-obs') }); }
+function save8() { Object.assign(ST.R, { tecnologias:getC('tecnologias'), herram_nuevas:getC('herram_nuevas'), obs:gv('f-obs'), sostenibilidad:gv('f-sostenibilidad'), recomienda:getR('recomienda'), valoracion_proc:getR('valoracion_proc'), impacto_areas:getC('impacto_areas') }); }
 
 // ============================================================
 // VALIDATION
@@ -646,10 +820,14 @@ function validate(n) {
 // ============================================================
 // NAVIGATION
 // ============================================================
-var RENDERS = [step0, step1, step2, step3, step4, step5, step6, step7, step8, step9];
-var SAVES   = [null, save1, save2, save3, save4, save5, save6, save7, save8, null];
+var RENDERS_ING = [step0, step1, step2, step3,    step4,    step5,    step6,    step7,    step8,    step9];
+var RENDERS_SAL = [step0, step1, step2, step3sal, step4sal, step5sal, step6sal, step7sal, step8sal, step9];
+var RENDERS     = RENDERS_ING;
+var SAVES   = [null, save1, save2, save3, save4, save5, save6, save7, save8, null]; // save functions shared
 
 function renderStep(n) {
+  var esSalida = ST.info.tipo_diag && ST.info.tipo_diag.indexOf('Salida') >= 0;
+  RENDERS = esSalida ? RENDERS_SAL : RENDERS_ING;
   RENDERS[n]();
   updateProg();
   window.scrollTo(0, 0);
@@ -977,7 +1155,21 @@ function showResults() {
   html += '<div class="s-title">Diagnóstico por componente — Diagrama de madurez</div>';
   html += '<div id="spider-container" style="display:flex;justify-content:center;margin:1rem 0 1.5rem"><canvas id="spider-canvas" width="400" height="400" style="max-width:100%"></canvas></div>';
 
-    html += '<div class="s-title">Línea base — Indicadores de diagnóstico de entrada</div>';
+    // Scoring explanation section
+  html += '<div class="s-title" style="margin-top:1.5rem">¿Cómo se calcula el diagnóstico?</div>';
+  html += '<div style="background:white;border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1.5rem;font-size:12.5px;line-height:1.75;color:var(--text)">'
+    + '<p style="margin-bottom:.75rem">El diagnóstico evalúa <strong>5 componentes fundamentales del modelo de negocio y la gestión empresarial</strong>, definidos en el convenio Ecopetrol Emprende — Unillanos. Cada componente recibe un puntaje de 0 a 100, y el puntaje global es el promedio de los cinco.</p>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.75rem">'
+    + '<div style="background:var(--light);border-radius:var(--r-md);padding:8px 10px"><strong style="color:var(--navy)">Mercado objetivo (0-100)</strong><br><span style="font-size:11.5px;color:var(--sub)">Satisfacción del cliente (50%), alcance de ventas (30%) y segmentación (20%)</span></div>'
+    + '<div style="background:var(--light);border-radius:var(--r-md);padding:8px 10px"><strong style="color:var(--navy)">Oferta de valor (0-100)</strong><br><span style="font-size:11.5px;color:var(--sub)">Propuesta documentada, perfil del cliente, descripción de productos y elementos comerciales</span></div>'
+    + '<div style="background:var(--light);border-radius:var(--r-md);padding:8px 10px"><strong style="color:var(--navy)">Modelo de rentabilización (0-100)</strong><br><span style="font-size:11.5px;color:var(--sub)">Sistema contable (60%) y diversidad de fuentes de financiamiento (40%)</span></div>'
+    + '<div style="background:var(--light);border-radius:var(--r-md);padding:8px 10px"><strong style="color:var(--navy)">Modelo de comercialización (0-100)</strong><br><span style="font-size:11.5px;color:var(--sub)">Nivel de planeación (40%), elementos de canal y escalabilidad (60%)</span></div>'
+    + '<div style="background:var(--light);border-radius:var(--r-md);padding:8px 10px;grid-column:span 2"><strong style="color:var(--navy)">Madurez administrativa y financiera (0-100)</strong><br><span style="font-size:11.5px;color:var(--sub)">Formalización 30% + Tecnología adoptada 30% + Seguridad social 20% + Planeación 20%</span></div>'
+    + '</div>'
+    + '<div style="padding:8px 12px;background:#DCFCE7;border-radius:var(--r-sm);border-left:3px solid var(--green);font-size:12px"><strong>Nivel de madurez:</strong> 0-39% Temprano · 40-64% En desarrollo · 65-100% Avanzado</div>'
+    + '</div>';
+  
+  html += '<div class="s-title">Línea base — Indicadores de diagnóstico de entrada</div>';
   html += '<div style="font-size:11.5px;color:var(--sub);margin-bottom:.85rem;line-height:1.6">'
     + 'Estos indicadores registran el estado actual del ' + clasif.tipo.toLowerCase() + ' y servirán como punto de comparación para el '
     + '<strong>Informe de Diagnóstico de Salida</strong> al finalizar el proceso de acompañamiento. '
@@ -1813,39 +2005,42 @@ function exportPDF() {
     doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(80,80,78);
     doc.text('Resumen visual del nivel de madurez por componente:', ML, y); y+=5;
 
-    // Diagrama de madurez — barras graficas usando rectangulos
+    // Diagrama de madurez — representacion con texto y porcentaje
     var dkSpider = Object.keys(DIMS_META);
-    var barX = ML + 68;   // x donde empieza la barra
-    var barMaxW = CW - 68 - 18; // ancho maximo de la barra (hasta margen derecho)
-    var barH = 4;         // alto de la barra
-
     dkSpider.forEach(function(dim) {
-      np(12);
+      np(10);
       var sc2   = D.scores[dim] || 0;
       var col2  = sc2>=65?'#1D9E75':sc2>=40?'#E8A020':'#C0392B';
       var r3=parseInt(col2.slice(1,3),16), g3=parseInt(col2.slice(3,5),16), b3=parseInt(col2.slice(5,7),16);
       var nivel = sc2>=65?'Avanzado':sc2>=40?'En desarrollo':'Temprano';
+      var barMaxW = 80;
+      var fillW   = Math.round(barMaxW * sc2 / 100);
 
-      // Nombre del componente
+      // Nombre
       doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,38);
       doc.text(cl(DIMS_META[dim].name), ML, y);
 
-      // Puntaje y nivel
+      // Porcentaje y nivel
       doc.setTextColor(r3,g3,b3);
-      doc.setFontSize(7); doc.setFont('helvetica','bold');
-      doc.text(sc2+'%  '+nivel, barX + barMaxW + 2, y);
+      doc.setFontSize(8); doc.setFont('helvetica','bold');
+      doc.text(sc2+'%', ML+CW, y, {align:'right'});
+      doc.setFontSize(6.5); doc.setFont('helvetica','normal');
+      doc.text(nivel, ML+CW-18, y+5);
 
-      // Fondo de la barra (gris claro)
-      doc.setFillColor(228,234,240);
-      doc.rect(barX, y-3.5, barMaxW, barH, 'F');
+      // Barra fondo (texto de guiones)
+      doc.setFontSize(6); doc.setFont('helvetica','normal');
+      doc.setTextColor(210,214,220);
+      var bgBar = ''; for(var k=0;k<40;k++) bgBar+='-';
+      doc.text(bgBar, ML+68, y+2);
 
-      // Barra de progreso (coloreada)
-      var fillW = Math.max(2, Math.round(barMaxW * sc2 / 100));
-      doc.setFillColor(r3,g3,b3);
-      doc.rect(barX, y-3.5, fillW, barH, 'F');
+      // Barra progreso (texto de iguales)
+      doc.setTextColor(r3,g3,b3);
+      var filled3 = Math.round(sc2/100*40);
+      var fgBar = ''; for(var k=0;k<filled3;k++) fgBar+='=';
+      doc.text(fgBar, ML+68, y+2);
 
       doc.setTextColor(30,30,28);
-      y += 9;
+      y += 10;
     });
     y += 4;
 
