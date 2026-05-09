@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1B3A6B">
+<title>Sistema de Seguimiento — Ecopetrol Emprende · Unillanos</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1B3A6B; --navy2:#0F2447; --green:#00863E; --green2:#006830;
+  --amber:#E8A020; --red:#C0392B; --purple:#534AB7;
+  --light:#F4F6FA; --white:#FFFFFF; --border:#D8DEE9;
+  --text:#1A202C; --sub:#64748B;
+  --r-sm:6px; --r-md:10px; --r-lg:14px; --r-xl:18px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sora',sans-serif;background:var(--light);color:var(--text);min-height:100vh}
+
+/* ── HEADER ── */
+.hdr{background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;min-height:54px;gap:10px}
+.hdr-logos{display:flex;align-items:center;gap:8px}
+.hlogo{height:36px;border-radius:var(--r-sm);object-fit:contain;background:white;padding:3px 6px}
+.hlogo.eco{background:transparent;padding:0;border-radius:50%}
+.hdr-title{font-size:10px;color:rgba(255,255,255,.7);text-align:right;line-height:1.4}
+.hdr-title strong{display:block;font-size:11px;color:white}
+
+/* ── TABS ── */
+.tabs{background:var(--navy2);display:flex;padding:0 1rem;overflow-x:auto;gap:2px}
+.tab{padding:10px 16px;font-size:12px;font-weight:600;color:rgba(255,255,255,.55);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:'Sora',sans-serif;transition:all .2s}
+.tab:hover{color:rgba(255,255,255,.85)}
+.tab.active{color:white;border-color:var(--green)}
+
+/* ── MAIN ── */
+.main{max-width:900px;margin:0 auto;padding:1.25rem 1rem 3rem}
+.panel{display:none}.panel.active{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:.75rem;display:flex;align-items:center;gap:8px}
+.card-title .icon{width:28px;height:28px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── FORM ── */
+.field{margin-bottom:.85rem}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.req{color:var(--red);margin-left:2px}
+.hint{font-size:11px;color:var(--sub);margin-top:-3px;margin-bottom:5px;line-height:1.5}
+.field input,.field select,.field textarea{
+  width:100%;padding:9px 12px;font-size:13.5px;font-family:'Sora',sans-serif;
+  border:1.5px solid var(--border);border-radius:var(--r-md);
+  background:var(--white);color:var(--text);outline:none;
+  transition:border-color .15s;-webkit-appearance:none
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,58,107,.08)}
+.field textarea{resize:vertical;min-height:65px;line-height:1.6}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* ── RADIO / CHECK ── */
+.opt-group{display:flex;flex-direction:column;gap:6px}
+.opt-item{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border:1.5px solid var(--border);border-radius:var(--r-md);cursor:pointer;background:var(--white);transition:all .15s;user-select:none}
+.opt-item:hover{border-color:var(--navy)}
+.opt-item.sel{border-color:var(--navy);background:rgba(27,58,107,.04)}
+.opt-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;margin-top:1px;transition:all .15s}
+.opt-item.sel .opt-dot{background:var(--navy);border-color:var(--navy);box-shadow:inset 0 0 0 3px white}
+.opt-check{width:16px;height:16px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.opt-item.sel .opt-check{background:var(--navy);border-color:var(--navy)}
+.opt-lbl{font-size:13px;color:var(--text);line-height:1.5}
+
+/* ── SECTION ── */
+.sec-hdr{border-left:4px solid var(--navy);padding-left:10px;margin:1.25rem 0 .85rem;display:flex;align-items:center;gap:8px}
+.sec-letter{font-size:16px;font-weight:700;color:var(--navy);font-family:'IBM Plex Mono',monospace}
+.sec-name{font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.04em}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 20px;font-size:13.5px;font-weight:600;border-radius:var(--r-md);cursor:pointer;font-family:'Sora',sans-serif;border:1.5px solid var(--border);background:var(--white);color:var(--text);transition:all .15s}
+.btn:hover{background:var(--light)}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:white;box-shadow:0 2px 8px rgba(27,58,107,.2)}
+.btn.primary:hover{background:var(--navy2)}
+.btn.success{background:var(--green);border-color:var(--green);color:white}
+.btn.danger{background:var(--red);border-color:var(--red);color:white}
+.btn.sm{padding:6px 14px;font-size:12px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:1rem}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em}
+.badge.emp{background:#FAEEDA;color:#92400E}
+.badge.mip{background:#EAF3DE;color:#276749}
+.badge.ing{background:#EEF0FE;color:#534AB7}
+.badge.sal{background:#E6F1FB;color:#2B6CB0}
+.badge.activo{background:#DCFCE7;color:#14532D}
+.badge.pen{background:#FEF9E7;color:#92400E}
+.badge.fin{background:#F3F4F6;color:#374151}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{background:var(--light);padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--sub);border-bottom:2px solid var(--border)}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+.tbl tr:hover td{background:#FAFBFD}
+.tbl .actions{display:flex;gap:6px}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.25rem}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px}
+.stat-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--sub);margin-bottom:3px}
+.stat-val{font-size:22px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--navy)}
+.stat-sub{font-size:11px;color:var(--sub);margin-top:2px}
+
+/* ── COMPARATIVO ── */
+.comp-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;align-items:center;padding:10px 12px;border-radius:var(--r-md);margin-bottom:6px;font-size:12.5px}
+.comp-row.header{background:var(--navy);color:white;font-size:11px;font-weight:700}
+.comp-row.even{background:#FAFBFD}
+.comp-row.odd{background:var(--white);border:1px solid var(--border)}
+.comp-up{color:var(--green);font-weight:700}
+.comp-dn{color:var(--red);font-weight:700}
+.comp-eq{color:var(--sub)}
+.delta-bar{height:4px;border-radius:2px;margin-top:2px}
+
+/* ── PROGRESS ── */
+.prog-wrap{background:#E8ECF2;height:6px;border-radius:3px;overflow:hidden;margin-top:4px}
+.prog-fill{height:100%;border-radius:3px;transition:width .6s}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:3rem 1rem;color:var(--sub)}
+.empty .emoji{font-size:40px;margin-bottom:.75rem}
+.empty p{font-size:13.5px;line-height:1.7}
+
+/* ── ALERT ── */
+.alert{padding:10px 14px;border-radius:var(--r-md);font-size:13px;margin-bottom:1rem;border:1px solid}
+.alert.info{background:#EEF0FE;border-color:#C7D2FE;color:#3730A3}
+.alert.success{background:#DCFCE7;border-color:#86EFAC;color:#14532D}
+.alert.warn{background:#FAEEDA;border-color:#FCD34D;color:#92400E}
+.alert.error{background:#FEF2F2;border-color:#FCA5A5;color:#7B1F1F}
+
+/* ── SEARCH ── */
+.search-bar{display:flex;gap:8px;margin-bottom:1rem}
+.search-bar input{flex:1;padding:9px 12px;font-size:13.5px;font-family:'Sora',sans-serif;border:1.5px solid var(--border);border-radius:var(--r-md);outline:none}
+.search-bar input:focus{border-color:var(--navy)}
+
+@media(max-width:520px){
+  .field-row,.field-row3{grid-template-columns:1fr}
+  .comp-row{grid-template-columns:1fr 1fr}
+  .hdr-title{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-logos">
+    <img class="hlogo eco" src="logo_ecopetrol.png" alt="Ecopetrol Emprende" onerror="this.style.display='none'">
+    <img class="hlogo" src="logo_unillanos.png" alt="Unillanos" onerror="this.style.display='none'">
+  </div>
+  <div class="hdr-title">
+    <strong>Sistema de Seguimiento</strong>
+    Ecopetrol Emprende · Unillanos
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('tab-registro')">📋 Registro / Caracterización</div>
+  <div class="tab" onclick="showTab('tab-beneficiarios')">👥 Beneficiarios</div>
+  <div class="tab" onclick="showTab('tab-seguimiento')">📈 Seguimiento</div>
+  <div class="tab" onclick="showTab('tab-reporte')">📊 Reporte Comparativo</div>
+</div>
+
+<div class="main">
+
+  <!-- ═══════════════════════════════════════════
+       PANEL 1: REGISTRO Y CARACTERIZACIÓN
+  ═══════════════════════════════════════════ -->
+  <div class="panel active" id="tab-registro">
+    <div id="registro-alert"></div>
+
+    <div class="card">
+      <div class="card-title">
+        <div class="icon" style="background:#EEF0FE;color:#534AB7;font-size:14px">📋</div>
+        Registro de beneficiario — Caracterización inicial
+      </div>
+
+      <!-- A. Datos personales -->
+      <div class="sec-hdr"><span class="sec-letter">A</span><span class="sec-name">Datos personales</span></div>
+      <div class="field-row">
+        <div class="field"><label>Primer nombre <span class="req">*</span></label><input id="r-nombre1" type="text" placeholder=""></div>
+        <div class="field"><label>Otros nombres</label><input id="r-nombre2" type="text" placeholder=""></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Primer apellido <span class="req">*</span></label><input id="r-apellido1" type="text" placeholder=""></div>
+        <div class="field"><label>Segundo apellido</label><input id="r-apellido2" type="text" placeholder=""></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Tipo de documento <span class="req">*</span></label>
+          <select id="r-tipo-doc">
+            <option value="">Selecciona...</option>
+            <option>Cédula de Ciudadanía</option>
+            <option>Cédula de Extranjería</option>
+            <option>Pasaporte</option>
+            <option>Permiso por Protección Temporal</option>
+          </select>
+        </div>
+        <div class="field"><label>Número de documento <span class="req">*</span></label><input id="r-doc" type="text" placeholder=""></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Fecha de nacimiento</label><input id="r-nacimiento" type="date"></div>
+        <div class="field"><label>Sexo <span class="req">*</span></label>
+          <select id="r-sexo">
+            <option value="">Selecciona...</option>
+            <option>F - Femenino</option>
+            <option>M - Masculino</option>
+            <option>NB - No binario</option>
+            <option>T - Trans</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Correo electrónico <span class="req">*</span></label><input id="r-correo" type="email" placeholder="correo@ejemplo.com"></div>
+        <div class="field"><label>Teléfono / Celular <span class="req">*</span></label><input id="r-telefono" type="tel" placeholder="300 000 0000"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Municipio <span class="req">*</span></label>
+          <select id="r-municipio">
+            <option value="">Selecciona...</option>
+            <option>Villavicencio</option><option>Acacías</option><option>Guamal</option>
+            <option>Castilla La Nueva</option><option>Cubarral</option><option>Puerto Gaitán</option>
+            <option>Otro municipio del Meta</option>
+          </select>
+        </div>
+        <div class="field"><label>Nivel educativo</label>
+          <select id="r-edu">
+            <option value="">Selecciona...</option>
+            <option>Primaria</option><option>Bachillerato</option><option>Técnico Laboral</option>
+            <option>Técnico Profesional</option><option>Tecnólogo</option>
+            <option>Universitario</option><option>Posgrado</option><option>Ninguno</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- B. Clasificación del emprendimiento -->
+      <div class="sec-hdr"><span class="sec-letter">B</span><span class="sec-name">Clasificación</span></div>
+      <div class="field-row">
+        <div class="field"><label>Nombre del negocio / iniciativa <span class="req">*</span></label><input id="r-negocio" type="text" placeholder="Razón social o nombre comercial"></div>
+        <div class="field"><label>Sector económico <span class="req">*</span></label>
+          <select id="r-sector">
+            <option value="">Selecciona...</option>
+            <option>Manufacturero / Agroindustrial</option><option>Servicios</option>
+            <option>Comercio</option><option>Agropecuario</option><option>Tecnología</option>
+            <option>Turismo y cultura</option><option>Construcción</option><option>Otro</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>¿Registrado en Cámara de Comercio? <span class="req">*</span></label>
+          <select id="r-camara" onchange="updateClasif()">
+            <option value="">Selecciona...</option>
+            <option value="si">Sí — registro vigente</option>
+            <option value="no">No registrado</option>
+            <option value="vencido">Registrado pero vencido</option>
+          </select>
+        </div>
+        <div class="field"><label>Meses de registro (si aplica)</label>
+          <div class="hint">Meses que lleva registrado al inicio de la convocatoria. Si no está registrado, escriba 0.</div>
+          <input id="r-meses" type="number" min="0" placeholder="0" oninput="updateClasif()">
+        </div>
+      </div>
+      <div class="field" id="clasif-result" style="margin-top:.25rem"></div>
+
+      <div class="field-row">
+        <div class="field"><label>Ventas mensuales actuales (COP)</label><input id="r-ventas" type="number" min="0" placeholder="0"></div>
+        <div class="field"><label>Costos mensuales actuales (COP)</label><input id="r-costos" type="number" min="0" placeholder="0"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Personas ocupadas (incl. propietario/a)</label><input id="r-personal" type="number" min="1" placeholder="1"></div>
+        <div class="field"><label>Tiene RUT activo</label>
+          <select id="r-rut">
+            <option value="">Selecciona...</option>
+            <option>Sí</option><option>No</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- C. Proceso -->
+      <div class="sec-hdr"><span class="sec-letter">C</span><span class="sec-name">Estado en el proceso</span></div>
+      <div class="field-row">
+        <div class="field"><label>Fecha de ingreso al convenio <span class="req">*</span></label><input id="r-fecha-ingreso" type="date"></div>
+        <div class="field"><label>Estado actual <span class="req">*</span></label>
+          <select id="r-estado">
+            <option value="">Selecciona...</option>
+            <option value="activo">Activo — en proceso de acompañamiento</option>
+            <option value="pendiente">Pendiente — diagnóstico de ingreso no realizado</option>
+            <option value="finalizado">Finalizado — completó el acompañamiento</option>
+            <option value="desertado">Desertó — no completó el proceso</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Puntaje diagnóstico de ingreso (0–100)</label>
+        <div class="hint">Registra el puntaje obtenido en el Diagnóstico de Madurez Empresarial de entrada. Puedes actualizarlo después.</div>
+        <input id="r-puntaje-ingreso" type="number" min="0" max="100" placeholder="Ej: 45">
+      </div>
+      <div class="field"><label>Observaciones iniciales</label>
+        <textarea id="r-obs" placeholder="Notas sobre el estado inicial, necesidades identificadas, particularidades del caso..."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn primary" onclick="registrarBeneficiario()">✓ Registrar beneficiario</button>
+        <button class="btn" onclick="limpiarFormulario()">✕ Limpiar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PANEL 2: BENEFICIARIOS
+  ═══════════════════════════════════════════ -->
+  <div class="panel" id="tab-beneficiarios">
+
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card"><div class="stat-lbl">Total registrados</div><div class="stat-val" id="stat-total">0</div></div>
+      <div class="stat-card"><div class="stat-lbl">Emprendimientos</div><div class="stat-val" id="stat-emp">0</div><div class="stat-sub">Sin registro o &lt;4 meses CC</div></div>
+      <div class="stat-card"><div class="stat-lbl">MiPymes</div><div class="stat-val" id="stat-mip">0</div><div class="stat-sub">Registradas ≥4 meses CC</div></div>
+      <div class="stat-card"><div class="stat-lbl">Activos</div><div class="stat-val" id="stat-act">0</div></div>
+      <div class="stat-card"><div class="stat-lbl">Finalizados</div><div class="stat-val" id="stat-fin">0</div></div>
+      <div class="stat-card"><div class="stat-lbl">Puntaje promedio</div><div class="stat-val" id="stat-prom">—</div><div class="stat-sub">Diagnóstico ingreso</div></div>
+    </div>
+
+    <div class="search-bar">
+      <input id="search-input" type="text" placeholder="🔍 Buscar por nombre, documento o negocio..." oninput="renderTabla()">
+      <select id="filter-clasif" onchange="renderTabla()" style="padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r-md);font-family:'Sora',sans-serif;font-size:13px;background:white">
+        <option value="">Todos</option>
+        <option value="Emprendimiento">Emprendimientos</option>
+        <option value="MiPyme">MiPymes</option>
+      </select>
+      <select id="filter-estado" onchange="renderTabla()" style="padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r-md);font-family:'Sora',sans-serif;font-size:13px;background:white">
+        <option value="">Todos los estados</option>
+        <option value="activo">Activos</option>
+        <option value="finalizado">Finalizados</option>
+        <option value="pendiente">Pendientes</option>
+        <option value="desertado">Desertados</option>
+      </select>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Beneficiario</th>
+              <th>Documento</th>
+              <th>Negocio / Sector</th>
+              <th>Clasificación</th>
+              <th>Estado</th>
+              <th>Ptje. Ingreso</th>
+              <th>Ptje. Salida</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-body">
+          </tbody>
+        </table>
+      </div>
+      <div id="tabla-empty" class="empty" style="display:none">
+        <div class="emoji">📋</div>
+        <p>No hay beneficiarios registrados.<br>Usa el formulario de <strong>Registro</strong> para agregar el primero.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PANEL 3: SEGUIMIENTO INDIVIDUAL
+  ═══════════════════════════════════════════ -->
+  <div class="panel" id="tab-seguimiento">
+    <div id="seg-empty" class="empty">
+      <div class="emoji">📈</div>
+      <p>Selecciona un beneficiario desde la pestaña <strong>Beneficiarios</strong><br>para registrar su avance.</p>
+    </div>
+    <div id="seg-form" style="display:none">
+      <div class="alert info" id="seg-info"></div>
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:#E6F1FB;color:#2B6CB0;font-size:14px">📈</div>Actualizar seguimiento</div>
+
+        <div class="field-row">
+          <div class="field"><label>Estado actual</label>
+            <select id="seg-estado">
+              <option value="activo">Activo — en proceso</option>
+              <option value="finalizado">Finalizado</option>
+              <option value="desertado">Desertó</option>
+            </select>
+          </div>
+          <div class="field"><label>Fecha de actualización</label>
+            <input id="seg-fecha" type="date">
+          </div>
+        </div>
+
+        <div class="sec-hdr"><span class="sec-letter">D</span><span class="sec-name">Diagnóstico de salida</span></div>
+        <div class="field"><label>Puntaje diagnóstico de salida (0–100)</label>
+          <div class="hint">Registra el puntaje del Diagnóstico de Madurez Empresarial al finalizar el acompañamiento.</div>
+          <input id="seg-puntaje-salida" type="number" min="0" max="100" placeholder="Ej: 67">
+        </div>
+
+        <div class="sec-hdr"><span class="sec-letter">E</span><span class="sec-name">Indicadores de cierre (línea de salida)</span></div>
+        <div class="field-row">
+          <div class="field"><label>Ventas mensuales al cierre (COP)</label><input id="seg-ventas" type="number" min="0" placeholder="0"></div>
+          <div class="field"><label>Costos mensuales al cierre (COP)</label><input id="seg-costos" type="number" min="0" placeholder="0"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Personas ocupadas al cierre</label><input id="seg-personal" type="number" min="0" placeholder="0"></div>
+          <div class="field"><label>¿Registrado en Cámara de Comercio?</label>
+            <select id="seg-camara">
+              <option value="">Sin dato</option>
+              <option value="si">Sí — vigente</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Clientes segmentados al cierre</label>
+            <select id="seg-segm">
+              <option value="">Sin dato</option>
+              <option value="si">Sí</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+          <div class="field"><label>Innovaciones implementadas (áreas)</label>
+            <input id="seg-innov" type="number" min="0" max="6" placeholder="0">
+          </div>
+        </div>
+        <div class="field"><label>Observaciones de cierre</label>
+          <textarea id="seg-obs" placeholder="Notas sobre el avance, logros, dificultades..."></textarea>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary" onclick="guardarSeguimiento()">✓ Guardar seguimiento</button>
+          <button class="btn" onclick="cancelarSeguimiento()">← Volver</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PANEL 4: REPORTE COMPARATIVO
+  ═══════════════════════════════════════════ -->
+  <div class="panel" id="tab-reporte">
+    <div id="rep-empty" class="empty">
+      <div class="emoji">📊</div>
+      <p>No hay beneficiarios con diagnóstico de salida registrado.<br>El reporte comparativo se genera automáticamente cuando existe tanto el diagnóstico de ingreso como el de salida.</p>
+    </div>
+    <div id="rep-content" style="display:none">
+      <div class="alert info">
+        <strong>Verificación de avance del convenio</strong><br>
+        Este reporte compara los indicadores de ingreso vs. salida para verificar el cumplimiento de las metas del convenio Ecopetrol Emprende - Unillanos.
+      </div>
+
+      <div class="stats-grid" id="rep-stats"></div>
+
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:#EAF3DE;color:#276749;font-size:14px">📊</div>Comparativo antes / después por beneficiario</div>
+        <div id="rep-tabla"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><div class="icon" style="background:#EEF0FE;color:#534AB7;font-size:14px">🎯</div>Cumplimiento de metas del convenio</div>
+        <div id="rep-metas"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ═══════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════
+var DB_KEY = 'ecopetrol_beneficiarios_v1';
+
+function loadDB() {
+  try { return JSON.parse(localStorage.getItem(DB_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function saveDB(data) {
+  try { localStorage.setItem(DB_KEY, JSON.stringify(data)); }
+  catch(e) { alert('Error al guardar datos: '+e.message); }
+}
+
+// ═══════════════════════════════════════════════════
+// CLASSIFICATION
+// ═══════════════════════════════════════════════════
+function getClasif(camara, meses) {
+  var m = parseInt(meses) || 0;
+  if (camara === 'si' && m >= 4) {
+    return { tipo:'MiPyme', desc:'Registrada en CC con '+m+' meses (Ley 590/2000)' };
+  }
+  return { tipo:'Emprendimiento', desc: camara==='si' ? 'Registrada pero con menos de 4 meses ('+m+' meses)' : 'No registrada ante Cámara de Comercio' };
+}
+
+function updateClasif() {
+  var cam   = document.getElementById('r-camara').value;
+  var meses = document.getElementById('r-meses').value;
+  var el    = document.getElementById('clasif-result');
+  if (!cam) { el.innerHTML = ''; return; }
+  var c = getClasif(cam, meses);
+  var bg  = c.tipo==='MiPyme' ? '#EAF3DE' : '#FAEEDA';
+  var col = c.tipo==='MiPyme' ? '#276749'  : '#92400E';
+  el.innerHTML = '<div style="padding:8px 12px;background:'+bg+';border-radius:8px;font-size:12.5px;color:'+col+';font-weight:600">'
+    +'Clasificación: <strong>'+c.tipo+'</strong> — '+c.desc+'</div>';
+}
+
+// ═══════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════
+function showTab(id) {
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(function(t){
+    if (t.getAttribute('onclick') && t.getAttribute('onclick').indexOf(id) >= 0) t.classList.add('active');
+  });
+  if (id === 'tab-beneficiarios') { updateStats(); renderTabla(); }
+  if (id === 'tab-reporte') renderReporte();
+}
+
+// ═══════════════════════════════════════════════════
+// ALERT
+// ═══════════════════════════════════════════════════
+function showAlert(containerId, type, msg) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = '<div class="alert '+type+'">'+msg+'</div>';
+  setTimeout(function(){ el.innerHTML=''; }, 4000);
+}
+
+// ═══════════════════════════════════════════════════
+// REGISTER
+// ═══════════════════════════════════════════════════
+function gv(id) { var e=document.getElementById(id); return e?e.value.trim():''; }
+
+function registrarBeneficiario() {
+  // Validate
+  if (!gv('r-nombre1')) { showAlert('registro-alert','error','Ingresa el primer nombre.'); return; }
+  if (!gv('r-apellido1')) { showAlert('registro-alert','error','Ingresa el primer apellido.'); return; }
+  if (!gv('r-doc')) { showAlert('registro-alert','error','Ingresa el número de documento.'); return; }
+  if (!gv('r-tipo-doc')) { showAlert('registro-alert','error','Selecciona el tipo de documento.'); return; }
+  if (!gv('r-sexo')) { showAlert('registro-alert','error','Selecciona el sexo.'); return; }
+  if (!gv('r-correo')) { showAlert('registro-alert','error','Ingresa el correo electrónico.'); return; }
+  if (!gv('r-telefono')) { showAlert('registro-alert','error','Ingresa el teléfono.'); return; }
+  if (!gv('r-municipio')) { showAlert('registro-alert','error','Selecciona el municipio.'); return; }
+  if (!gv('r-negocio')) { showAlert('registro-alert','error','Ingresa el nombre del negocio.'); return; }
+  if (!gv('r-sector')) { showAlert('registro-alert','error','Selecciona el sector.'); return; }
+  if (!gv('r-camara')) { showAlert('registro-alert','error','Indica si está registrado en Cámara de Comercio.'); return; }
+  if (!gv('r-fecha-ingreso')) { showAlert('registro-alert','error','Indica la fecha de ingreso al convenio.'); return; }
+  if (!gv('r-estado')) { showAlert('registro-alert','error','Selecciona el estado actual.'); return; }
+
+  var db = loadDB();
+  // Check duplicate document
+  var dup = db.find(function(b){ return b.doc === gv('r-doc'); });
+  if (dup) { showAlert('registro-alert','warn','Ya existe un beneficiario con ese número de documento.'); return; }
+
+  var clasif = getClasif(gv('r-camara'), gv('r-meses'));
+
+  var b = {
+    id:             Date.now(),
+    nombre1:        gv('r-nombre1'),
+    nombre2:        gv('r-nombre2'),
+    apellido1:      gv('r-apellido1'),
+    apellido2:      gv('r-apellido2'),
+    tipo_doc:       gv('r-tipo-doc'),
+    doc:            gv('r-doc'),
+    nacimiento:     gv('r-nacimiento'),
+    sexo:           gv('r-sexo'),
+    correo:         gv('r-correo'),
+    telefono:       gv('r-telefono'),
+    municipio:      gv('r-municipio'),
+    edu:            gv('r-edu'),
+    negocio:        gv('r-negocio'),
+    sector:         gv('r-sector'),
+    camara:         gv('r-camara'),
+    meses:          parseInt(gv('r-meses'))||0,
+    rut:            gv('r-rut'),
+    clasificacion:  clasif.tipo,
+    // Línea base (ingreso)
+    ventas_ing:     parseFloat(gv('r-ventas'))||0,
+    costos_ing:     parseFloat(gv('r-costos'))||0,
+    personal_ing:   parseInt(gv('r-personal'))||0,
+    puntaje_ing:    parseInt(gv('r-puntaje-ingreso'))||null,
+    // Proceso
+    fecha_ingreso:  gv('r-fecha-ingreso'),
+    estado:         gv('r-estado'),
+    obs_ingreso:    gv('r-obs'),
+    // Salida (vacío inicialmente)
+    puntaje_sal:    null,
+    ventas_sal:     null,
+    costos_sal:     null,
+    personal_sal:   null,
+    camara_sal:     null,
+    segm_sal:       null,
+    innov_sal:      null,
+    fecha_salida:   null,
+    obs_salida:     null,
+    fecha_reg:      new Date().toISOString()
+  };
+
+  db.push(b);
+  saveDB(db);
+  limpiarFormulario();
+  showAlert('registro-alert','success','✓ Beneficiario registrado exitosamente. Puedes verlo en la pestaña <strong>Beneficiarios</strong>.');
+}
+
+function limpiarFormulario() {
+  ['r-nombre1','r-nombre2','r-apellido1','r-apellido2','r-doc','r-nacimiento',
+   'r-correo','r-telefono','r-obs','r-ventas','r-costos','r-personal',
+   'r-puntaje-ingreso','r-meses'].forEach(function(id){
+    var e=document.getElementById(id); if(e) e.value='';
+  });
+  ['r-tipo-doc','r-sexo','r-municipio','r-edu','r-sector','r-camara','r-rut','r-estado'].forEach(function(id){
+    var e=document.getElementById(id); if(e) e.value='';
+  });
+  document.getElementById('clasif-result').innerHTML='';
+  document.getElementById('r-fecha-ingreso').value = new Date().toISOString().split('T')[0];
+}
+
+// ═══════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════
+function updateStats() {
+  var db = loadDB();
+  var emp  = db.filter(function(b){ return b.clasificacion==='Emprendimiento'; }).length;
+  var mip  = db.filter(function(b){ return b.clasificacion==='MiPyme'; }).length;
+  var act  = db.filter(function(b){ return b.estado==='activo'; }).length;
+  var fin  = db.filter(function(b){ return b.estado==='finalizado'; }).length;
+  var puntajes = db.filter(function(b){ return b.puntaje_ing; }).map(function(b){ return b.puntaje_ing; });
+  var prom = puntajes.length ? Math.round(puntajes.reduce(function(a,b){ return a+b; },0)/puntajes.length) : 0;
+
+  document.getElementById('stat-total').textContent = db.length;
+  document.getElementById('stat-emp').textContent   = emp;
+  document.getElementById('stat-mip').textContent   = mip;
+  document.getElementById('stat-act').textContent   = act;
+  document.getElementById('stat-fin').textContent   = fin;
+  document.getElementById('stat-prom').textContent  = prom ? prom+'%' : '—';
+}
+
+// ═══════════════════════════════════════════════════
+// TABLE
+// ═══════════════════════════════════════════════════
+function renderTabla() {
+  var db    = loadDB();
+  var q     = (document.getElementById('search-input').value||'').toLowerCase();
+  var fcl   = document.getElementById('filter-clasif').value;
+  var fest  = document.getElementById('filter-estado').value;
+
+  var filtered = db.filter(function(b){
+    var matchQ  = !q || (b.nombre1+' '+b.apellido1+' '+b.doc+' '+b.negocio).toLowerCase().indexOf(q)>=0;
+    var matchCl = !fcl || b.clasificacion === fcl;
+    var matchEst= !fest || b.estado === fest;
+    return matchQ && matchCl && matchEst;
+  });
+
+  var tbody = document.getElementById('tabla-body');
+  var empty = document.getElementById('tabla-empty');
+
+  if (!filtered.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map(function(b){
+    var clBadge = b.clasificacion==='MiPyme'
+      ? '<span class="badge mip">MiPyme</span>'
+      : '<span class="badge emp">Emprendimiento</span>';
+    var estBadge = b.estado==='activo' ? '<span class="badge activo">Activo</span>'
+      : b.estado==='finalizado' ? '<span class="badge fin">Finalizado</span>'
+      : b.estado==='desertado' ? '<span class="badge" style="background:#FEF2F2;color:#7B1F1F">Desertó</span>'
+      : '<span class="badge pen">Pendiente</span>';
+    var ingPts = b.puntaje_ing ? b.puntaje_ing+'%' : '<span style="color:var(--sub)">—</span>';
+    var salPts = b.puntaje_sal ? b.puntaje_sal+'%' : '<span style="color:var(--sub)">—</span>';
+    return '<tr>'
+      +'<td><strong>'+b.nombre1+' '+b.apellido1+'</strong><br><span style="font-size:11px;color:var(--sub)">'+b.correo+'</span></td>'
+      +'<td style="font-family:monospace;font-size:12px">'+b.doc+'</td>'
+      +'<td><strong>'+b.negocio+'</strong><br><span style="font-size:11px;color:var(--sub)">'+b.sector+'</span></td>'
+      +'<td>'+clBadge+'</td>'
+      +'<td>'+estBadge+'</td>'
+      +'<td style="font-family:monospace;font-weight:700">'+ingPts+'</td>'
+      +'<td style="font-family:monospace;font-weight:700">'+salPts+'</td>'
+      +'<td><div class="actions">'
+      +'<button class="btn sm" onclick="verSeguimiento('+b.id+')">✏ Seguim.</button>'
+      +'<button class="btn sm danger" onclick="eliminar('+b.id+')">✕</button>'
+      +'</div></td>'
+      +'</tr>';
+  }).join('');
+
+  updateStats();
+}
+
+function eliminar(id) {
+  if (!confirm('¿Eliminar este beneficiario? Esta acción no se puede deshacer.')) return;
+  var db = loadDB().filter(function(b){ return b.id!==id; });
+  saveDB(db);
+  renderTabla();
+}
+
+// ═══════════════════════════════════════════════════
+// SEGUIMIENTO
+// ═══════════════════════════════════════════════════
+var currentId = null;
+
+function verSeguimiento(id) {
+  currentId = id;
+  var db = loadDB();
+  var b  = db.find(function(x){ return x.id===id; });
+  if (!b) return;
+
+  showTab('tab-seguimiento');
+  document.getElementById('seg-empty').style.display='none';
+  document.getElementById('seg-form').style.display='block';
+
+  var ingEl = '<strong>'+b.nombre1+' '+b.apellido1+'</strong> | '+b.negocio
+    +' | <span class="badge '+(b.clasificacion==='MiPyme'?'mip':'emp')+'">'+b.clasificacion+'</span>'
+    +' | Puntaje ingreso: <strong>'+(b.puntaje_ing?b.puntaje_ing+'%':'Sin dato')+'</strong>'
+    +' | Ventas ingreso: <strong>'+(b.ventas_ing?'$'+Math.round(b.ventas_ing).toLocaleString():'Sin dato')+'</strong>';
+  document.getElementById('seg-info').innerHTML = ingEl;
+
+  document.getElementById('seg-estado').value         = b.estado || 'activo';
+  document.getElementById('seg-fecha').value          = b.fecha_salida || new Date().toISOString().split('T')[0];
+  document.getElementById('seg-puntaje-salida').value = b.puntaje_sal || '';
+  document.getElementById('seg-ventas').value         = b.ventas_sal || '';
+  document.getElementById('seg-costos').value         = b.costos_sal || '';
+  document.getElementById('seg-personal').value       = b.personal_sal || '';
+  document.getElementById('seg-camara').value         = b.camara_sal || '';
+  document.getElementById('seg-segm').value           = b.segm_sal || '';
+  document.getElementById('seg-innov').value          = b.innov_sal || '';
+  document.getElementById('seg-obs').value            = b.obs_salida || '';
+}
+
+function guardarSeguimiento() {
+  if (!currentId) return;
+  var db = loadDB();
+  var idx = db.findIndex(function(b){ return b.id===currentId; });
+  if (idx < 0) return;
+
+  db[idx].estado       = gv('seg-estado') || db[idx].estado;
+  db[idx].fecha_salida = gv('seg-fecha');
+  db[idx].puntaje_sal  = parseInt(gv('seg-puntaje-salida'))||null;
+  db[idx].ventas_sal   = parseFloat(gv('seg-ventas'))||null;
+  db[idx].costos_sal   = parseFloat(gv('seg-costos'))||null;
+  db[idx].personal_sal = parseInt(gv('seg-personal'))||null;
+  db[idx].camara_sal   = gv('seg-camara')||null;
+  db[idx].segm_sal     = gv('seg-segm')||null;
+  db[idx].innov_sal    = parseInt(gv('seg-innov'))||null;
+  db[idx].obs_salida   = gv('seg-obs');
+
+  saveDB(db);
+  alert('✓ Seguimiento guardado correctamente.');
+  cancelarSeguimiento();
+  showTab('tab-beneficiarios');
+}
+
+function cancelarSeguimiento() {
+  currentId = null;
+  document.getElementById('seg-empty').style.display='block';
+  document.getElementById('seg-form').style.display='none';
+}
+
+// ═══════════════════════════════════════════════════
+// REPORTE COMPARATIVO
+// ═══════════════════════════════════════════════════
+function renderReporte() {
+  var db   = loadDB();
+  var comp = db.filter(function(b){ return b.puntaje_ing && b.puntaje_sal; });
+
+  var repEmpty   = document.getElementById('rep-empty');
+  var repContent = document.getElementById('rep-content');
+
+  if (!comp.length) {
+    repEmpty.style.display='block';
+    repContent.style.display='none';
+    return;
+  }
+  repEmpty.style.display='none';
+  repContent.style.display='block';
+
+  // Stats
+  var totalComp   = comp.length;
+  var avgIng      = Math.round(comp.reduce(function(a,b){return a+b.puntaje_ing;},0)/totalComp);
+  var avgSal      = Math.round(comp.reduce(function(a,b){return a+b.puntaje_sal;},0)/totalComp);
+  var mejoraron   = comp.filter(function(b){ return b.puntaje_sal > b.puntaje_ing; }).length;
+  var avgDelta    = Math.round(((avgSal - avgIng) / avgIng) * 100);
+
+  // Ventas comparison
+  var conVentas = comp.filter(function(b){ return b.ventas_ing && b.ventas_sal; });
+  var ventasDelta = conVentas.length ? Math.round(conVentas.reduce(function(a,b){
+    return a + ((b.ventas_sal - b.ventas_ing) / b.ventas_ing * 100);
+  },0) / conVentas.length) : null;
+
+  document.getElementById('rep-stats').innerHTML =
+    '<div class="stat-card"><div class="stat-lbl">Con diagnóstico completo</div><div class="stat-val">'+totalComp+'</div></div>'
+   +'<div class="stat-card"><div class="stat-lbl">Puntaje promedio ingreso</div><div class="stat-val">'+avgIng+'%</div></div>'
+   +'<div class="stat-card"><div class="stat-lbl">Puntaje promedio salida</div><div class="stat-val" style="color:var(--green)">'+avgSal+'%</div></div>'
+   +'<div class="stat-card"><div class="stat-lbl">Variación promedio</div><div class="stat-val" style="color:'+(avgDelta>=0?'var(--green)':'var(--red)')+'">'+( avgDelta>=0?'+':'')+avgDelta+'%</div></div>'
+   +'<div class="stat-card"><div class="stat-lbl">Mejoraron puntaje</div><div class="stat-val">'+mejoraron+' / '+totalComp+'</div></div>'
+   +(ventasDelta!==null?'<div class="stat-card"><div class="stat-lbl">Crecim. ventas promedio</div><div class="stat-val" style="color:'+(ventasDelta>=0?'var(--green)':'var(--red)')+'">'+( ventasDelta>=0?'+':'')+ventasDelta+'%</div><div class="stat-sub">Meta: +30%</div></div>':'');
+
+  // Table
+  var tRows = comp.map(function(b){
+    var d   = b.puntaje_sal - b.puntaje_ing;
+    var pct = Math.round(d / b.puntaje_ing * 100);
+    var col = d>=0?'var(--green)':'var(--red)';
+    var arrow = d>0?'▲':d<0?'▼':'═';
+    var vD = b.ventas_ing && b.ventas_sal ? Math.round((b.ventas_sal - b.ventas_ing)/b.ventas_ing*100) : null;
+    return '<div class="comp-row '+(comp.indexOf(b)%2?'even':'odd')+'">'
+      +'<div><strong>'+b.nombre1+' '+b.apellido1+'</strong><br><span style="font-size:11px;color:var(--sub)">'+b.negocio+' · <span class="badge '+(b.clasificacion==='MiPyme'?'mip':'emp')+'">'+b.clasificacion+'</span></span></div>'
+      +'<div style="text-align:center;font-family:monospace;font-weight:600">'+b.puntaje_ing+'%</div>'
+      +'<div style="text-align:center;font-family:monospace;font-weight:700;color:'+col+'">'+b.puntaje_sal+'%</div>'
+      +'<div style="text-align:center;font-weight:700;color:'+col+'">'+arrow+' '+(d>=0?'+':'')+pct+'%'+(vD!==null?'<br><span style="font-size:10px;color:var(--sub)">Ventas: '+(vD>=0?'+':'')+vD+'%</span>':'')+'</div>'
+      +'</div>';
+  }).join('');
+
+  document.getElementById('rep-tabla').innerHTML =
+    '<div class="comp-row header"><div>Beneficiario</div><div style="text-align:center">Ingreso</div><div style="text-align:center">Salida</div><div style="text-align:center">Avance</div></div>'
+    + tRows;
+
+  // Metas del convenio
+  var metaRows = [
+    { meta:'Mejora de ingresos', objetivo:'+20%', campo_ing:'ventas_ing', campo_sal:'ventas_sal' },
+    { meta:'Crecimiento de ventas', objetivo:'+30%', campo_ing:'ventas_ing', campo_sal:'ventas_sal' },
+    { meta:'Crecimiento del empleo', objetivo:'+10%', campo_ing:'personal_ing', campo_sal:'personal_sal' },
+    { meta:'Mejora en puntaje de madurez', objetivo:'+15 pts', campo_ing:'puntaje_ing', campo_sal:'puntaje_sal' }
+  ].map(function(m){
+    var conDatos = comp.filter(function(b){ return b[m.campo_ing] && b[m.campo_sal]; });
+    if (!conDatos.length) return '<div class="field" style="margin-bottom:.5rem"><strong>'+m.meta+'</strong> (Meta: '+m.objetivo+') — Sin datos suficientes</div>';
+    var avgs = conDatos.map(function(b){
+      if (m.campo_sal === 'puntaje_sal') return b.puntaje_sal - b.puntaje_ing;
+      return (b[m.campo_sal] - b[m.campo_ing]) / b[m.campo_ing] * 100;
+    });
+    var avgR = avgs.reduce(function(a,b){return a+b;},0)/avgs.length;
+    var cumple = m.campo_sal==='puntaje_sal' ? avgR >= 15 : avgR >= parseFloat(m.objetivo);
+    var col = cumple ? 'var(--green)' : avgR >= 0 ? 'var(--amber)' : 'var(--red)';
+    var icon = cumple ? '✅' : avgR >= 0 ? '⚠️' : '❌';
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);margin-bottom:8px">'
+      +'<div style="font-size:20px">'+icon+'</div>'
+      +'<div style="flex:1"><strong>'+m.meta+'</strong><br><span style="font-size:11px;color:var(--sub)">Objetivo: '+m.objetivo+' · Beneficiarios con datos: '+conDatos.length+'</span></div>'
+      +'<div style="font-size:16px;font-weight:700;font-family:monospace;color:'+col+'">'+(avgR>=0?'+':'')+Math.round(avgR)+(m.campo_sal==='puntaje_sal'?' pts':'%')+'</div>'
+      +'</div>';
+  }).join('');
+
+  document.getElementById('rep-metas').innerHTML = metaRows;
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+document.getElementById('r-fecha-ingreso').value = new Date().toISOString().split('T')[0];
+updateStats();
+</script>
+</body>
+</html>
