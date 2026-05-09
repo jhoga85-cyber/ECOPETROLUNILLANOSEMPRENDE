@@ -2,16 +2,18 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#1B3A6B">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Diagnóstico Empresarial">
 <link rel="manifest" href="manifest.json">
 <title>Diagnóstico de Madurez Empresarial — Ecopetrol Emprende · Unillanos</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
+
+
 :root{--navy:#1B3A6B;--navy2:#0F2447;--green:#00863E;--amber:#E8A020;--red:#C0392B;--light:#F4F6FA;--white:#FFFFFF;--border:#D8DEE9;--text:#1A202C;--sub:#64748B;--r-sm:6px;--r-md:10px;--r-lg:14px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Sora',sans-serif;background:var(--light);color:var(--text);min-height:100vh}
@@ -159,21 +161,65 @@ body{font-family:'Sora',sans-serif;background:var(--light);color:var(--text);min
 .done-card h2{font-size:17px;font-weight:600;margin-bottom:6px}
 .done-card p{font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:1.25rem}
 @media(max-width:420px){.hdr-title{display:none}.frow{grid-template-columns:1fr}.opt-group.g2{grid-template-columns:1fr}.ind-grid{grid-template-columns:1fr}.res-hero{flex-direction:column;text-align:center}}
+
+
+/* Mode cards */
+.mode-card{display:flex;align-items:flex-start;gap:12px;padding:14px;border:1.5px solid var(--border);border-radius:var(--r-lg);cursor:pointer;background:white;transition:all .2s;user-select:none}
+.mode-card:hover{border-color:var(--navy);background:rgba(27,58,107,.025)}
+.mode-card.sel{border-color:var(--navy);background:rgba(27,58,107,.04);box-shadow:0 0 0 3px rgba(27,58,107,.1)}
+.mc-icon{width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.mc-body{flex:1}
+.mc-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mc-desc{font-size:12.5px;color:var(--sub);line-height:1.65}
+.badge-mode{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+.badge-mode.ing{background:#EEF0FE;color:#534AB7}
+.badge-mode.seg{background:#FAEEDA;color:#92400E}
+.badge-mode.sal{background:#E6F1FB;color:#1D4ED8}
+/* Alert banners */
+.alert-ing{background:#EEF0FE;border-left:4px solid var(--purple);padding:10px 14px;border-radius:0 var(--r-md) var(--r-md) 0;font-size:12.5px;margin-bottom:1rem;color:#3730A3}
+.alert-sal{font-size:12px;margin-bottom:1rem}
+/* Done card */
+.done-card{background:white;border:1px solid var(--border);border-radius:var(--r-lg);padding:2rem;text-align:center}
+.done-icon{font-size:44px;margin-bottom:1rem}
+.done-card h2{font-size:17px;font-weight:600;margin-bottom:6px}
+.done-card p{font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:1.25rem}
+
+
+
+.mode-card{display:flex;align-items:flex-start;gap:12px;padding:14px;border:1.5px solid var(--border);border-radius:var(--r-lg);cursor:pointer;background:white;transition:all .2s;user-select:none;margin-bottom:8px}
+.mode-card:hover{border-color:var(--navy);background:rgba(27,58,107,.025)}
+.mode-card.sel{border-color:var(--navy);background:rgba(27,58,107,.04);box-shadow:0 0 0 3px rgba(27,58,107,.1)}
+.mc-icon{width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;margin-top:2px}
+.mc-body{flex:1}
+.mc-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mc-desc{font-size:12.5px;color:var(--sub);line-height:1.65}
+.badge-mode{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+.badge-mode.ing{background:#EEF0FE;color:#534AB7}
+.badge-mode.seg{background:#FEF9E7;color:#B7791F}
+.badge-mode.sal{background:#E6F1FB;color:#2B6CB0}
+.done-card{background:white;border:1px solid var(--border);border-radius:var(--r-lg);padding:2rem;text-align:center}
+.done-icon{font-size:44px;margin-bottom:1rem}
+.done-card h2{font-size:17px;font-weight:600;margin-bottom:6px}
+.done-card p{font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:1.25rem}
+
 </style>
 </head>
 <body>
 
-<div class="hdr">
-  <div class="hdr-logos">
+<div class="header">
+  <div class="logos">
     <img class="hlogo eco" src="logo_ecopetrol.png" alt="Ecopetrol Emprende">
     <img class="hlogo" src="logo_unillanos.png" alt="Unillanos">
   </div>
-  <div class="hdr-title"><strong>Diagnóstico de Madurez Empresarial</strong> · </div>
+  <div class="header-right">
+    <strong>Diagnóstico de Madurez Empresarial</strong>
+    Ecopetrol Emprende · Universidad de los Llanos
+  </div>
 </div>
 
 <div class="prog">
   <div class="prog-meta">
-    <span class="prog-lbl" id="prog-lbl">Bienvenida</span>
+    <span class="prog-lbl" id="prog-lbl">Tipo de diagnóstico</span>
     <span class="prog-pct" id="prog-pct">0%</span>
   </div>
   <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
@@ -184,10 +230,61 @@ body{font-family:'Sora',sans-serif;background:var(--light);color:var(--text);min
   <div class="results" id="results"></div>
 </div>
 
+<!-- AI MODAL -->
+<div class="ai-modal-overlay" id="ai-overlay" style="display:none" onclick="if(event.target===this)cerrarAI()">
+  <div class="ai-modal">
+    <div class="ai-modal-hdr">
+      <div style="font-size:22px">🤖</div>
+      <h2 id="ai-modal-title">Análisis con Inteligencia Artificial</h2>
+      <span class="badge" id="ai-modal-badge">IA Generativa</span>
+      <button onclick="cerrarAI()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;padding:0 0 0 8px">&times;</button>
+    </div>
+    <div class="ai-modal-body" id="ai-modal-body">
+      <div id="ai-menu">
+        <p style="font-size:13px;color:var(--sub);margin-bottom:1rem;line-height:1.6">Selecciona el tipo de análisis. La IA utilizará todos los datos del diagnóstico para producir un informe personalizado.</p>
+        <button class="ai-section-btn" onclick="generarIA('informe_ingreso')">
+          <div class="ai-icon" style="background:#EEF0FE">📋</div>
+          <div style="flex:1"><div>Informe de Diagnóstico de Ingreso — Línea Base</div><div class="ai-desc">Análisis del estado actual, perfil del negocio, fortalezas, brechas y contexto estratégico</div></div>
+          <div style="font-size:18px;color:var(--sub)">›</div>
+        </button>
+        <button class="ai-section-btn" onclick="generarIA('recomendaciones')">
+          <div class="ai-icon" style="background:#EAF3DE">💡</div>
+          <div style="flex:1"><div>Recomendaciones Estratégicas de Fortalecimiento</div><div class="ai-desc">Acciones concretas por componente para mejorar sostenibilidad, productividad y crecimiento</div></div>
+          <div style="font-size:18px;color:var(--sub)">›</div>
+        </button>
+        <button class="ai-section-btn" onclick="generarIA('plan_fortalecimiento')">
+          <div class="ai-icon" style="background:#FAEEDA">🎯</div>
+          <div style="flex:1"><div>Plan de Fortalecimiento Empresarial Personalizado</div><div class="ai-desc">Cronograma de 6 meses con objetivos, actividades e indicadores de seguimiento</div></div>
+          <div style="font-size:18px;color:var(--sub)">›</div>
+        </button>
+        <button class="ai-section-btn" id="btn-comparativo" onclick="generarIA('comparativo')" style="display:none">
+          <div class="ai-icon" style="background:#E6F1FB">📊</div>
+          <div style="flex:1"><div>Informe Comparativo Antes / Después</div><div class="ai-desc">Variación de indicadores y cumplimiento de metas del convenio</div></div>
+          <div style="font-size:18px;color:var(--sub)">›</div>
+        </button>
+        <button class="ai-section-btn" id="btn-informe_salida" onclick="generarIA('informe_salida')" style="display:none">
+          <div class="ai-icon" style="background:#FBEAF0">🏁</div>
+          <div style="flex:1"><div>Informe de Diagnóstico de Salida</div><div class="ai-desc">Evaluación final, logros, metas cumplidas y sostenibilidad post-convenio</div></div>
+          <div style="font-size:18px;color:var(--sub)">›</div>
+        </button>
+      </div>
+      <div id="ai-result" style="display:none">
+        <button onclick="volverMenu()" style="background:none;border:none;color:var(--navy);font-size:13px;font-weight:600;cursor:pointer;padding:0 0 1rem 0;display:flex;align-items:center;gap:4px">&#8592; Volver al menú</button>
+        <div id="ai-output"></div>
+      </div>
+    </div>
+    <div class="ai-modal-footer">
+      <button class="btn primary" id="ai-copy-btn" style="display:none" onclick="copiarAnalisis()">📋 Copiar texto</button>
+      <button class="btn" onclick="cerrarAI()">Cerrar</button>
+      <div id="ai-footer-note" style="flex:1;font-size:11px;color:var(--sub);text-align:right;line-height:1.4"></div>
+    </div>
+  </div>
+</div>
+
 <script>
-// ============================================================
-// DATA
-// ============================================================
+// ═══════════════════════════════════════════════
+// CONSTANTS & DIMS_META
+// ═══════════════════════════════════════════════
 var MUNICIPIOS = ["Villavicencio","Acacias","Guamal","Castilla La Nueva","Cubarral","Puerto Gaitan","Otro municipio del Meta"];
 var SECTORES   = ["Manufacturero / Agroindustrial","Servicios","Comercio","Agropecuario","Tecnología","Turismo y cultura","Construccion","Otro"];
 var MOTIVOS    = ["No tenia otra alternativa de ingresos","Identifico una oportunidad de negocio en el mercado","Por tradicion familiar o lo heredó","Para complementar o mejorar el ingreso familiar","Para ejercer su oficio, carrera o profesion","No tenia la experiencia o escolaridad para un empleo","Para contar con mas tiempo para actividades de cuidado","Otro"];
@@ -860,6 +957,918 @@ var DIMS_META = {
     crit: 'Nivel de bancarización, procesos internos, estructura organizacional y apropiación tecnológica. Se evalúa formalización (Cámara de Comercio, RUT, trámites), número de tecnologías adoptadas, empleo formal y nivel de planeación estratégica.' }
 };
 
+var DIMS_META = {
+  mercado:      { name:'Mercado objetivo',              color:'#EEF0FE', bar:'#534AB7',
+    crit:'Satisfacción de clientes (50%) — 5 niveles desde sin medición hasta sistema sistematizado. Alcance de ventas (30%) — familia/barrio/ciudad/nacional/internacional. Segmentación documentada (20%). Mayor alcance y mejor medición = puntaje más alto.' },
+  oferta:       { name:'Oferta de valor',               color:'#FAECE7', bar:'#C97A0A',
+    crit:'Descripción de productos/servicios (25 pts) + perfil del cliente documentado (20 pts) + propuesta de valor escrita (15 pts) + elementos comerciales como portafolio, metodología de precios y proceso de ventas (hasta 40 pts).' },
+  rentabilizacion:{ name:'Modelo de rentabilización',  color:'#EAF3DE', bar:'#276749',
+    crit:'Sistema contable (60%): sin registro=0, cuaderno=25, Excel básico=50, software especializado=75, ERP=100. Diversidad de financiamiento (40%): ninguna fuente=0, una=45, dos=70, tres o más=100.' },
+  comercializacion:{ name:'Modelo de comercialización', color:'#FEF9E7', bar:'#B7791F',
+    crit:'Nivel de planeación comercial (40%): sin ideas hasta plan estratégico con indicadores. Canales y escalabilidad (60%): proceso de ventas documentado, plan de crecimiento, equipo comercial con roles definidos y medición de satisfacción.' },
+  madurez:      { name:'Madurez administrativa y financiera', color:'#F0EBF9', bar:'#6B46C1',
+    crit:'Formalización (30%): trámites ante CC, RUT, INVIMA, etc. Tecnología adoptada (30%): cantidad y nivel de herramientas digitales usadas. Seguridad social (20%): pago de aportes a colaboradores. Planeación estratégica (20%): nivel de planificación documentada.' }
+};
+
+// ═══════════════════════════════════════════════
+// APPLICATION CORE (steps, routing, navigation)
+// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// DIAGNÓSTICO DE MADUREZ EMPRESARIAL
+// Ecopetrol Emprende · Universidad de los Llanos
+//
+// TRES MODOS DIFERENCIADOS:
+//   INGRESO     → fotografía del estado actual, línea base
+//   SEGUIMIENTO → monitoreo del avance, requiere valores de ingreso
+//   SALIDA      → evaluación final del impacto, requiere valores de ingreso
+// ═══════════════════════════════════════════════════════════════
+
+// ─── Estado global ────────────────────────────────────────────
+var MODO = null; // 'ingreso' | 'seguimiento' | 'salida'
+
+var ST = {
+  step:     0,
+  info:     {},   // identificación del beneficiario
+  ing:      {},   // valores línea base del diagnóstico de ingreso
+  R:        {},   // respuestas del cuestionario actual
+  logo_b64: null  // logo del emprendimiento (base64)
+};
+
+// ─── Helpers DOM ──────────────────────────────────────────────
+function gid(id)  { return document.getElementById(id); }
+function gv(id)   { var e=gid(id); return e ? e.value.trim() : ''; }
+function mk(tag)  { return document.createElement(tag); }
+function esc(s)   { return (s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function fmtCOP(v){ return (v>0) ? '$'+Math.round(v).toLocaleString('es-CO') : 'Sin dato'; }
+function fmtPct(v){ return (v>=0?'+':'')+Math.round(v)+'%'; }
+
+function clr() { gid('steps').innerHTML = ''; }
+
+function appnd(html) {
+  var d = mk('div');
+  d.innerHTML = html;
+  gid('steps').appendChild(d.firstChild);
+}
+
+// ─── UI helpers ───────────────────────────────────────────────
+function radioGrp(name, opts, saved) {
+  var h = '<div class="opt-group" data-radio="'+name+'">';
+  opts.forEach(function(o) {
+    var s = (saved === o);
+    h += '<div class="opt-item'+(s?' sel':'')+'" data-val="'+esc(o)+'" onclick="selR(this)">'
+       + '<div class="opt-dot'+(s?' filled':'')+'"></div>'
+       + '<div class="opt-lbl">'+o+'</div></div>';
+  });
+  return h + '</div>';
+}
+
+function checkGrp(name, opts, saved) {
+  var v = saved || [];
+  var h = '<div class="opt-group" data-check="'+name+'">';
+  opts.forEach(function(o) {
+    var s = (v.indexOf(o) >= 0);
+    h += '<div class="opt-item'+(s?' sel':'')+'" data-val="'+esc(o)+'" onclick="togC(this)">'
+       + '<div class="opt-check'+(s?' filled':'')+'">'+( s?'<span style="color:white;font-size:10px;font-weight:700">&#10003;</span>':'')+'</div>'
+       + '<div class="opt-lbl">'+o+'</div></div>';
+  });
+  return h + '</div>';
+}
+
+function field(lbl, id, type, ph, val, req) {
+  return '<div class="field"><label>'+lbl+(req?'<span class="req">*</span>':'')+'</label>'
+       + '<input type="'+(type||'text')+'" id="'+id+'" placeholder="'+(ph||'')+'" value="'+(val||'')+'"></div>';
+}
+
+function fieldSel(lbl, id, opts, saved, req) {
+  return '<div class="field"><label>'+lbl+(req?'<span class="req">*</span>':'')+'</label>'
+       + '<select id="'+id+'"><option value="">Selecciona...</option>'
+       + opts.map(function(o){ return '<option'+(saved===o?' selected':'')+'>'+o+'</option>'; }).join('')
+       + '</select></div>';
+}
+
+function fieldTxt(lbl, id, ph, val, req) {
+  return '<div class="field"><label>'+lbl+(req?'<span class="req">*</span>':'')+'</label>'
+       + '<textarea id="'+id+'" placeholder="'+(ph||'')+'">'+( val||'')+'</textarea></div>';
+}
+
+function fieldHint(txt) {
+  return '<div class="hint">'+txt+'</div>';
+}
+
+function divider(t) {
+  return '<div class="divider"><span>'+t+'</span></div>';
+}
+
+function secHdr(letter, name) {
+  return '<div class="sec-hdr"><span class="sec-letter">'+letter+'</span><span class="sec-name">'+name+'</span></div>';
+}
+
+function navBtns(hasPrev, nextLbl) {
+  return '<div class="nav">'
+    + (hasPrev ? '<button class="btn" onclick="goPrev()">&#8592; Atrás</button>' : '<span></span>')
+    + '<button class="btn primary" onclick="goNext()">'+( nextLbl||'Siguiente &#8594;')+'</button>'
+    + '</div>';
+}
+
+function modoBanner() {
+  if (!MODO) return '';
+  var cfg = {
+    ingreso:     { bg:'#EEF0FE', color:'#534AB7', icon:'📋', text:'Diagnóstico de Ingreso — Registra el estado actual como línea base' },
+    seguimiento: { bg:'#FEF9E7', color:'#B7791F', icon:'📈', text:'Diagnóstico de Seguimiento — Mide el avance comparado con la línea base de ingreso' },
+    salida:      { bg:'#E6F1FB', color:'#2B6CB0', icon:'🏁', text:'Diagnóstico de Salida — Evaluación final del impacto del acompañamiento' }
+  }[MODO];
+  return '<div style="background:'+cfg.bg+';border-left:4px solid '+cfg.color+';padding:9px 14px;border-radius:0 var(--r-md) var(--r-md) 0;font-size:12.5px;color:'+cfg.color+';margin-bottom:1rem;font-weight:500">'+cfg.icon+' '+cfg.text+'</div>';
+}
+
+// ─── Interactions ──────────────────────────────────────────────
+function selR(item) {
+  item.closest('[data-radio]').querySelectorAll('.opt-item').forEach(function(i) {
+    i.classList.remove('sel');
+    i.querySelector('.opt-dot').classList.remove('filled');
+  });
+  item.classList.add('sel');
+  item.querySelector('.opt-dot').classList.add('filled');
+}
+
+function togC(item) {
+  item.classList.toggle('sel');
+  var cc = item.querySelector('.opt-check');
+  if (item.classList.contains('sel')) {
+    cc.classList.add('filled');
+    cc.innerHTML = '<span style="color:white;font-size:10px;font-weight:700">&#10003;</span>';
+  } else {
+    cc.classList.remove('filled');
+    cc.innerHTML = '';
+  }
+}
+
+function getR(name) {
+  var g = document.querySelector('[data-radio="'+name+'"]');
+  if (!g) return null;
+  var s = g.querySelector('.opt-item.sel');
+  return s ? s.getAttribute('data-val') : null;
+}
+
+function getC(name) {
+  var g = document.querySelector('[data-check="'+name+'"]');
+  if (!g) return [];
+  return Array.from(g.querySelectorAll('.opt-item.sel')).map(function(i) {
+    return i.getAttribute('data-val');
+  });
+}
+
+function showErr(msg) {
+  document.querySelectorAll('.err-box').forEach(function(e) { e.remove(); });
+  var e = mk('div');
+  e.className = 'err-box';
+  e.textContent = msg;
+  var nav = document.querySelector('.nav');
+  if (nav) {
+    nav.parentNode.insertBefore(e, nav);
+    e.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+  setTimeout(function() { if (e.parentNode) e.remove(); }, 4500);
+}
+
+// ─── Logo upload ───────────────────────────────────────────────
+function cargarLogo(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    ST.logo_b64 = e.target.result;
+    var prev = gid('logo-preview');
+    if (prev) prev.innerHTML = '<img src="'+ST.logo_b64+'" style="height:56px;border-radius:8px;border:1px solid var(--border);margin-top:4px">';
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── Delta calculator (live preview in paso 3B) ────────────────
+function calcDeltaPreview() {
+  var ingV = parseFloat(gid('f-ing-ventas')  && gid('f-ing-ventas').value)  || 0;
+  var curV = parseFloat(gid('f-ventas')      && gid('f-ventas').value)      || 0;
+  var ingC = parseFloat(gid('f-ing-costos')  && gid('f-ing-costos').value)  || 0;
+  var curC = parseFloat(gid('f-costos')      && gid('f-costos').value)      || 0;
+  var ingP = parseInt(gid('f-ing-personal')  && gid('f-ing-personal').value)|| 0;
+  var curP = parseInt(gid('f-personal')      && gid('f-personal').value)    || 0;
+  var el = gid('delta-preview');
+  if (!el || (!ingV && !ingC)) return;
+  var dV = ingV > 0 ? ((curV-ingV)/ingV*100) : null;
+  var dC = ingC > 0 ? ((curC-ingC)/ingC*100) : null;
+  var dP = ingP > 0 ? ((curP-ingP)/ingP*100) : null;
+  function st(d, meta, esMenos) {
+    if (d === null) return '<span style="color:var(--sub)">Sin dato</span>';
+    var ok = esMenos ? d <= meta : d >= meta;
+    var par= esMenos ? d < 0    : d >= meta/2;
+    var ic = ok?'✅':par?'⚠️':'❌';
+    var col= ok?'var(--green)':par?'var(--amber)':'var(--red)';
+    return ic+' <strong style="color:'+col+'">'+(d>=0?'+':'')+Math.round(d)+'%</strong>';
+  }
+  el.innerHTML = '<div style="background:var(--light);border-radius:var(--r-md);padding:10px 12px;font-size:12px;margin-top:.5rem">'
+    + '<div style="font-weight:700;color:var(--navy);margin-bottom:6px">Vista previa de indicadores de avance:</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center">'
+    + '<div><div style="font-size:10px;color:var(--sub);margin-bottom:2px">Ingresos<br>(Meta: +20%)</div>'+st(dV,20,false)+'</div>'
+    + '<div><div style="font-size:10px;color:var(--sub);margin-bottom:2px">Costos<br>(Meta: ≤-10%)</div>'+st(dC,-10,true)+'</div>'
+    + '<div><div style="font-size:10px;color:var(--sub);margin-bottom:2px">Empleo<br>(Meta: +10%)</div>'+st(dP,10,false)+'</div>'
+    + '</div></div>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PASO 0 — Selección del modo de diagnóstico
+// ═══════════════════════════════════════════════════════════════
+function step0() {
+  clr();
+  var html = '<div class="step active">'
+    + '<div class="welcome">'
+    + '<div class="wc-tag">Ecopetrol Emprende · Universidad de los Llanos</div>'
+    + '<h1>Diagnóstico de Madurez Empresarial</h1>'
+    + '<p>Instrumento validado con integración de IA generativa para el fortalecimiento de emprendimientos y MiPymes de la Orinoquía colombiana. El diagnóstico evalúa los 5 componentes fundamentales del modelo de negocio.</p>'
+    + '</div>'
+
+    + '<div class="notice"><strong>Antes de comenzar:</strong> Selecciona el tipo de diagnóstico según el momento del proceso en que te encuentras.</div>'
+
+    + '<div class="s-title">¿Qué tipo de diagnóstico vas a realizar?</div>'
+
+    // MODO INGRESO
+    + '<div class="mode-card" id="mc-ingreso" onclick="selModo(\'ingreso\')">'
+    + '<div class="mc-icon" style="background:#EEF0FE;color:#534AB7">📋</div>'
+    + '<div class="mc-body">'
+    + '<div class="mc-title">Diagnóstico de Ingreso <span class="badge-mode ing">Línea base</span></div>'
+    + '<div class="mc-desc"><strong>Primera aplicación.</strong> Registra el estado actual del emprendimiento o MiPyme. Genera la <strong>línea base</strong> de ingresos, costos, empleo y madurez empresarial que servirá para medir el avance al finalizar el proceso.</div>'
+    + '</div></div>'
+
+    // MODO SEGUIMIENTO
+    + '<div class="mode-card" id="mc-seguimiento" onclick="selModo(\'seguimiento\')">'
+    + '<div class="mc-icon" style="background:#FEF9E7;color:#B7791F">📈</div>'
+    + '<div class="mc-body">'
+    + '<div class="mc-title">Diagnóstico de Seguimiento <span class="badge-mode seg">Monitoreo</span></div>'
+    + '<div class="mc-desc"><strong>Aplicación intermedia.</strong> Monitorea el avance durante el proceso de acompañamiento. <strong>Solicita los valores del diagnóstico de ingreso</strong> para calcular las variaciones reales en ingresos, costos y empleo.</div>'
+    + '</div></div>'
+
+    // MODO SALIDA
+    + '<div class="mode-card" id="mc-salida" onclick="selModo(\'salida\')">'
+    + '<div class="mc-icon" style="background:#E6F1FB;color:#2B6CB0">🏁</div>'
+    + '<div class="mc-body">'
+    + '<div class="mc-title">Diagnóstico de Salida <span class="badge-mode sal">Evaluación final</span></div>'
+    + '<div class="mc-desc"><strong>Aplicación final.</strong> Mide el impacto real del acompañamiento. <strong>Solicita los valores del diagnóstico de ingreso</strong> para calcular el cumplimiento de metas del convenio: ingresos +20%, costos -10%, ventas +30%, empleo +10%.</div>'
+    + '</div></div>'
+
+    + '<div id="modo-alert" style="display:none;margin-top:.75rem;padding:10px 14px;border-radius:var(--r-md);font-size:13px;font-weight:500"></div>'
+    + navBtns(false, 'Comenzar &#8594;')
+    + '</div>';
+  appnd(html);
+}
+
+function selModo(modo) {
+  MODO = modo;
+  ST.info.modo = modo;
+  document.querySelectorAll('.mode-card').forEach(function(c) { c.classList.remove('sel'); });
+  var mc = gid('mc-'+modo);
+  if (mc) mc.classList.add('sel');
+  var cfg = {
+    ingreso:     { bg:'#EEF0FE', color:'#534AB7', text:'📋 Seleccionado: Diagnóstico de Ingreso. Se registrará el estado actual como línea base.' },
+    seguimiento: { bg:'#FEF9E7', color:'#B7791F', text:'📈 Seleccionado: Diagnóstico de Seguimiento. Deberás ingresar los valores registrados al inicio del proceso.' },
+    salida:      { bg:'#E6F1FB', color:'#2B6CB0', text:'🏁 Seleccionado: Diagnóstico de Salida. Deberás ingresar los valores de ingreso (línea base) para calcular el impacto.' }
+  }[modo];
+  var el = gid('modo-alert');
+  el.style.display = 'block';
+  el.style.background = cfg.bg;
+  el.style.color = cfg.color;
+  el.textContent = cfg.text;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PASO 1 — Identificación del negocio (IGUAL EN LOS 3 MODOS)
+// ═══════════════════════════════════════════════════════════════
+function step1() {
+  var I = ST.info;
+  clr();
+  var html = '<div class="step active">'
+    + modoBanner()
+    + secHdr('A', 'Identificación del negocio')
+    + field('Razón social o nombre del negocio', 'f-razon', 'text', 'Ej: Panadería El Trigal', I.razon, true)
+    + '<div class="field-row">'
+    + field('Primer nombre', 'f-nombre1', 'text', '', I.nombre1, true)
+    + field('Primer apellido', 'f-apellido1', 'text', '', I.apellido1, true)
+    + '</div>'
+    + field('Número de documento de identidad', 'f-doc', 'text', '', I.doc, true)
+    + '<div class="field-row">'
+    + fieldSel('Municipio', 'f-municipio', MUNICIPIOS, I.municipio, true)
+    + fieldSel('Sector económico', 'f-sector', SECTORES, I.sector, true)
+    + '</div>'
+    + '<div class="field-row">'
+    + field('Correo electrónico del negocio', 'f-correo', 'email', 'correo@ejemplo.com', I.correo, true)
+    + field('Teléfono / Celular', 'f-telefono', 'tel', '300 000 0000', I.telefono, true)
+    + '</div>'
+    + divider('Formalización')
+    + '<div class="field-row">'
+    + fieldSel('¿Tiene Registro Único Tributario (RUT)?', 'f-rut', ['Sí', 'No'], I.tiene_rut, true)
+    + field('Meses registrado en Cámara de Comercio (0 = no registrado)', 'f-meses', 'number', '0', I.meses_reg || 0, true)
+    + '</div>'
+    + divider('Marca e identidad visual del emprendimiento')
+    + '<div class="field"><label>¿El emprendimiento cuenta con marca registrada?</label>'
+    + radioGrp('tiene_marca', ['Sí, tengo marca y/o logo propio', 'No tengo marca registrada todavía'], I.tiene_marca)
+    + '</div>'
+    + '<div class="field"><label>Logo del emprendimiento (opcional)</label>'
+    + fieldHint('Si cuenta con logo propio, cárgalo aquí. Aparecerá en el informe PDF del diagnóstico.')
+    + '<input type="file" id="f-logo" accept="image/*" onchange="cargarLogo(this)" style="font-size:13px;padding:8px 0">'
+    + '<div id="logo-preview">'
+    + (ST.logo_b64 ? '<img src="'+ST.logo_b64+'" style="height:56px;border-radius:8px;border:1px solid var(--border);margin-top:4px">' : '')
+    + '</div></div>'
+    + navBtns(true)
+    + '</div>';
+  appnd(html);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PASO 2 — Datos del informante (IGUAL EN LOS 3 MODOS)
+// ═══════════════════════════════════════════════════════════════
+function step2() {
+  var I = ST.info;
+  clr();
+  var html = '<div class="step active">'
+    + modoBanner()
+    + secHdr('Datos', 'del informante')
+    + '<div class="field-row">'
+    + fieldSel('Relación con el negocio', 'f-relacion', RELAC_NEG, I.relacion, true)
+    + fieldSel('Sexo (según documento)', 'f-sexo', ['F - Femenino', 'M - Masculino', 'NB - No binario', 'T - Trans'], I.sexo, true)
+    + '</div>'
+    + '<div class="field-row">'
+    + fieldSel('Nivel educativo máximo alcanzado', 'f-edu', NIVEL_EDU, I.edu, true)
+    + field('Fecha de nacimiento', 'f-nacimiento', 'date', '', I.nacimiento, false)
+    + '</div>'
+    + '<div class="field"><label>Principal motivo para iniciar este negocio<span class="req">*</span></label>'
+    + radioGrp('motivo', MOTIVOS, I.motivo)
+    + '</div>'
+    + navBtns(true)
+    + '</div>';
+  appnd(html);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PASO 3-A — SOLO INGRESO: Estado actual + indicadores base
+// ═══════════════════════════════════════════════════════════════
+function step3_ing() {
+  var R = ST.R;
+  clr();
+  var html = '<div class="step active">'
+    + modoBanner()
+    + secHdr('B', 'Desarrollo del producto o servicio — Estado actual')
+    + '<div class="field"><label>¿Hace cuántos años está desarrollando esta actividad?<span class="req">*</span></label>'
+    + radioGrp('anos_act', ANOS_ACT, R.anos_act) + '</div>'
+    + '<div class="field"><label>¿Cuál describe mejor cómo ve el negocio en el futuro?<span class="req">*</span></label>'
+    + radioGrp('vision', VISION_NEG, R.vision) + '</div>'
+    + divider('Personal e indicadores de empleo')
+    + field('Personas ocupadas actualmente (incluyéndote a ti)', 'f-personal', 'number', '1', R.personal, true)
+    + '<div class="field"><label>¿El negocio paga seguridad social (salud/pensión) a sus colaboradores?<span class="req">*</span></label>'
+    + radioGrp('aportes', APORTES_SEG, R.aportes) + '</div>'
+    + divider('Indicadores financieros — Línea base')
+    + fieldHint('📌 <strong>Ingresos (ventas):</strong> todo el dinero que entra al negocio por venta de productos o prestación de servicios. '
+      + '<strong>Costos y gastos:</strong> todo lo que el negocio gasta para funcionar (materia prima, arriendo, servicios, salarios, transporte, etc.).')
+    + '<div class="field-row">'
+    + field('Ingresos (ventas) mensuales promedio — COP', 'f-ventas', 'number', '0', R.ventas, true)
+    + field('Costos y gastos mensuales promedio — COP', 'f-costos', 'number', '0', R.costos, true)
+    + '</div>'
+    + '<div class="field"><label>¿Las ventas del negocio provienen principalmente de…?<span class="req">*</span></label>'
+    + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
+    + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
+    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
+    + navBtns(true)
+    + '</div>';
+  appnd(html);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PASO 3-B — SEGUIMIENTO / SALIDA: Solicita valores de ingreso
+// ═══════════════════════════════════════════════════════════════
+function step3_seg_sal() {
+  var ING = ST.ing;
+  var R   = ST.R;
+  var esSalida = (MODO === 'salida');
+  var tituloModo = esSalida ? 'Diagnóstico de Salida — Evaluación final' : 'Diagnóstico de Seguimiento — Monitoreo';
+  clr();
+  var html = '<div class="step active">'
+    + modoBanner()
+    + '<div class="s-title">Paso 1 de 2: Valores del Diagnóstico de Ingreso (línea base)</div>'
+    + '<div style="background:white;border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1rem">'
+    + '<p style="font-size:12.5px;color:var(--sub);margin-bottom:.85rem;line-height:1.65">Para calcular los indicadores de avance, ingresa los valores que fueron registrados en el <strong>Diagnóstico de Ingreso</strong>. Estos datos permiten calcular las variaciones reales de ingresos, costos y empleo.</p>'
+    + divider('Indicadores financieros al inicio del proceso')
+    + fieldHint('📌 <strong>Ingresos (ventas):</strong> dinero que entraba al negocio por ventas. <strong>Costos y gastos:</strong> lo que gastaba para operar.')
+    + '<div class="field-row">'
+    + field('Ingresos (ventas) mensuales al INICIO — COP', 'f-ing-ventas', 'number', '0', ING.ventas || '', true)
+    + field('Costos y gastos mensuales al INICIO — COP', 'f-ing-costos', 'number', '0', ING.costos || '', true)
+    + '</div>'
+    + divider('Personal al inicio del proceso')
+    + '<div class="field-row">'
+    + field('Personas ocupadas al INICIO del proceso', 'f-ing-personal', 'number', '1', ING.personal || '', true)
+    + field('Empleos con seguridad social al INICIO', 'f-ing-empformal', 'number', '0', ING.emp_formal || '', false)
+    + '</div>'
+    + divider('Puntaje del diagnóstico de ingreso')
+    + '<div class="field-row">'
+    + field('Puntaje global de madurez al INICIO (0–100)', 'f-ing-puntaje', 'number', '0', ING.puntaje || '', false)
+    + field('Nivel de madurez al INICIO', 'f-ing-nivel', 'text', 'Ej: Temprano', ING.nivel || '', false)
+    + '</div>'
+    + '</div>'
+    + '<div class="s-title">Paso 2 de 2: Valores actuales ('+(esSalida?'al cierre':'al momento del seguimiento')+')</div>'
+    + '<div style="background:white;border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1.25rem">'
+    + '<div class="field-row">'
+    + field('Ingresos (ventas) mensuales ACTUALES — COP', 'f-ventas', 'number', '0', R.ventas || '', true)
+    + field('Costos y gastos mensuales ACTUALES — COP', 'f-costos', 'number', '0', R.costos || '', true)
+    + '</div>'
+    + field('Personas ocupadas ACTUALMENTE (incluyéndote a ti)', 'f-personal', 'number', '1', R.personal || '', true)
+    + '<div class="field"><label>¿El negocio paga seguridad social actualmente?<span class="req">*</span></label>'
+    + radioGrp('aportes', APORTES_SEG, R.aportes) + '</div>'
+    + '<div id="delta-preview"></div>'
+    + '</div>'
+    + navBtns(true)
+    + '</div>';
+  appnd(html);
+  // Attach live delta listeners
+  ['f-ventas','f-costos','f-personal','f-ing-ventas','f-ing-costos','f-ing-personal'].forEach(function(id) {
+    var el = gid(id);
+    if (el) el.addEventListener('input', calcDeltaPreview);
+  });
+  calcDeltaPreview();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PASO 4 — Liderazgo y planeación
+// ═══════════════════════════════════════════════════════════════
+function step4() {
+  var R = ST.R;
+  var esModo = (MODO === 'salida' || MODO === 'seguimiento');
+  var planOpts = esModo ? [
+    'Ahora cuento con plan estratégico a más de 3 años con indicadores propios',
+    'Desarrollé un plan de crecimiento a 2-3 años con recursos asignados',
+    'Establecí metas de ventas y plan de trabajo para los próximos 12 meses',
+    'Tengo ideas de crecimiento pero sin plan escrito aún',
+    'No hubo cambios significativos en mi forma de planificar'
+  ] : PLAN_CREC;
+
+  clr();
+  var html = '<div class="step active">'
+    + modoBanner()
+    + secHdr('C', esModo ? 'Liderazgo y planeación — Evolución' : 'Liderazgo y planeación')
+    + '<div class="field"><label>'
+    + (esModo ? '¿Cómo evolucionó su capacidad de planificación durante el proceso?'
+              : 'De las siguientes opciones, ¿cuál describe mejor cómo planifica el crecimiento del negocio?')
+    + '<span class="req">*</span></label>'
+    + radioGrp('plan_crec', planOpts, R.plan_crec) + '</div>'
+    + divider(esModo ? 'Descripción del negocio y logros al '+(MODO==='salida'?'cierre':'seguimiento') : 'Descripción del negocio')
+    + field(
+        esModo ? '¿Qué logros o cambios alcanzó en productos/servicios durante el proceso?' : 'Describe los productos o servicios que ofreces',
+        'f-productos', 'text',
+        esModo ? 'Ej: Lancé línea nueva, mejoré calidad, amplié portafolio...' : '¿Qué vende o produce tu negocio?',
+        R.productos, true)
+    + fieldTxt(
+        esModo ? '¿Cómo evolucionó su propuesta de valor y diferenciación?' : '¿Cuál es tu propuesta de valor? ¿Por qué te eligen a ti?',
+        'f-pv',
+        esModo ? 'Describe cambios en diferenciación, precios, oferta...' : 'Lo que hace diferente y valioso tu negocio...',
+        R.pv, false)
+    + fieldTxt(
+        esModo ? '¿Cómo evolucionó el perfil de su cliente? ¿Amplió segmentos o mercados?' : '¿Quién es tu cliente principal? Describe su perfil',
+        'f-cliente',
+        esModo ? '¿Llegó a nuevas geografías, segmentos o tipos de cliente?' : 'Edad, ubicación, necesidades, comportamiento de compra...',
+        R.cliente, false)
+    + navBtns(true)
+    + '</div>';
+  appnd(html);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PASO 5 — Mercadeo y ventas
+// ═══════════════════════════════════════════════════════════════
+function step5() {
+  var R = ST.R;
+  var esModo = (MODO === 'salida' || MODO === 'seguimiento');
+  var satOpts = esModo ? [
+    'Implementé sistema de monitoreo sistematizado (encuestas periódicas, CRM)',
+    'Realizo ahora encuestas físicas o digitales a mis clientes',
+    'Registro comentarios de clientes de forma organizada',
+    'Recibo retroalimentación pero aún sin registro sistemático',
+    'No hubo cambios en cómo mido la satisfacción de clientes'
+  ] : SATISF_CLI;
+  clr();
+  var html = '<div class="step active">'
+    + modoBanner()
+    + secHdr('D', esModo ? 'Mercadeo y ventas — '+( MODO==='salida'?'Resultados al cierre':'Estado al seguimiento') : 'Mercadeo y ventas')
+    + '<div class="field"><label>'
+    + (esModo ? '¿Cómo mide la satisfacción de sus clientes al '+(MODO==='salida'?'cierre':'momento actual')+'?'
+              : '¿Cuál describe mejor cómo gestiona la satisfacción de sus clientes?')
+    + '<span class="req">*</span></label>'
+    + radioGrp('satisfaccion', satOpts, R.satisfaccion) + '</div>'
+    + divider(esModo ? 'Elementos comerciales '+(MODO==='salida'?'implementados o mejorados':'actuales') : 'Elementos del área comercial')
+    + '<div class="field"><label>'
+    + (esModo ? '¿Qué elementos comerciales implementó o mejoró durante el acompañamiento?'
+              : '¿Con cuáles de estos elementos del área comercial cuenta el negocio?')
+    + '<span class="req">*</span></label>'
+    + checkGrp('elems_com', ELEMS_COMERCIAL, R.elems_com) + '</div>'
+    + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
+    + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
+    + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
+    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
+    + navBtns(true)
+    + '</div>';
+  appnd(html);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PASO 6 — Contabilidad y financiamiento
+// ═══════════════════════════════════════════════════════════════
+function step6() {
+  var R = ST.R;
+  var esModo = (MODO === 'salida' || MODO === 'seguimiento');
+  var contOpts = esModo ? [
+    'Adopté software avanzado de gestión financiera (ERP o similar)',
+    'Uso ahora software especializado de contabilidad',
+    'Migré a Excel sistematizado o programa básico gratuito',
+    'Mejoré mis registros manuales — cuadernos más organizados',
+    'No hubo cambios en mi sistema contable'
+  ] : CONTABILIDAD;
+  clr();
+  var html = '<div class="step active">'
+    + modoBanner()
+    + secHdr('E', esModo ? 'Contabilidad y financiamiento — Evolución' : 'Contabilidad y financiamiento')
+    + '<div class="field"><label>'
+    + (esModo ? '¿Cómo lleva las cuentas del negocio al '+(MODO==='salida'?'cierre':'momento actual')+'?'
+              : '¿Cuál describe mejor cómo lleva actualmente las cuentas del negocio?')
+    + '<span class="req">*</span></label>'
+    + radioGrp('contabilidad', contOpts, R.contabilidad) + '</div>'
+    + divider('Fuentes de financiamiento')
+    + '<div class="field"><label>¿Con qué fuentes de recursos o financiamiento ha operado el negocio? (Selecciona todas las que apliquen)<span class="req">*</span></label>'
+    + checkGrp('financiamiento', FINANCIAMIENTO, R.financiamiento) + '</div>'
+    + divider('Formalización y trámites')
+    + '<div class="field"><label>¿Qué trámites formales realizó o tiene vigentes al '+(esModo?(MODO==='salida'?'cierre':'seguimiento'):'momento actual')+'? (Selecciona todos los que apliquen)<span class="req">*</span></label>'
+    + checkGrp('tramites', TRAMITES, R.tramites) + '</div>'
+    + navBtns(true)
+    + '</div>';
+  appnd(html);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PASO 7 — Innovación
+// ═══════════════════════════════════════════════════════════════
+function step7() {
+  var R = ST.R;
+  var esModo = (MODO === 'salida' || MODO === 'seguimiento');
+  clr();
+  var html = '<div class="step active">'
+    + modoBanner()
+    + secHdr('F', esModo ? 'Innovación — Cambios implementados durante el proceso' : 'Innovación')
+    + '<div class="notice">💡 <strong>Innovación</strong> es la implementación de nuevas ideas, productos, servicios o procesos que generan valor real.'
+    + (esModo ? ' <strong>Registra solo cambios implementados DURANTE el proceso de acompañamiento, no los previos al inicio.</strong>' : ' No contabilices actividades habituales o ideas no realizadas.')
+    + '</div>'
+    + '<div class="field"><label>¿Con cuáles aspectos de innovación cuenta el negocio '+(esModo?'al '+(MODO==='salida'?'cierre':'momento actual'):'hoy')+'?<span class="req">*</span></label>'
+    + checkGrp('innov_asp', INNOV_ASPECTOS, R.innov_asp) + '</div>'
+    + divider('Innovaciones '+(esModo?'implementadas DURANTE el proceso — por área':'implementadas en el último año — por área'))
+    + '<div class="field"><label>¿Cuántas innovaciones implementó en cada área'+(esModo?' durante el proceso de acompañamiento':' durante el último año')+'?<span class="req">*</span></label>'
+    + buildMatrix() + '</div>'
+    + (MODO === 'salida' ?
+        divider('Evaluación del proceso de acompañamiento')
+        + '<div class="field"><label>Valore la calidad del acompañamiento recibido (1=Muy malo — 5=Excelente)<span class="req">*</span></label>'
+        + radioGrp('valoracion', ['1 — Muy malo','2 — Malo','3 — Regular','4 — Bueno','5 — Excelente'], R.valoracion)
+        + '</div>'
+        + '<div class="field"><label>¿En qué áreas considera que el acompañamiento generó mayor impacto?</label>'
+        + checkGrp('impacto_areas', ['Mercado objetivo','Oferta de valor','Modelo de rentabilización','Modelo de comercialización','Madurez administrativa y financiera','Formalización','Innovación y tecnología'], R.impacto_areas)
+        + '</div>'
+        + fieldTxt('¿Qué obstáculos impidieron un mayor avance durante el proceso?','f-obstaculos','Tiempo, recursos, mercado, familia, etc.',R.obstaculos,false)
+        + fieldTxt('¿Qué herramientas o conocimientos planea sostener después del convenio?','f-sostenibilidad','Describe lo que implementaste y mantendrás...',R.sostenibilidad,false)
+      : '')
+    + navBtns(true)
+    + '</div>';
+  appnd(html);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PASO 8 — Tecnología
+// ═══════════════════════════════════════════════════════════════
+function step8() {
+  var R = ST.R;
+  var esModo = (MODO === 'salida' || MODO === 'seguimiento');
+  clr();
+  var html = '<div class="step active">'
+    + modoBanner()
+    + secHdr('G', esModo ? 'Tecnología — Adopción durante el proceso' : 'Tecnología')
+    + '<div class="field"><label>¿Qué tecnologías usa el negocio '+(esModo?'al '+(MODO==='salida'?'cierre':'momento actual'):'actualmente')+'?<span class="req">*</span></label>'
+    + checkGrp('tecnologias', TECNOLOGIAS, R.tecnologias) + '</div>'
+    + (esModo ?
+        '<div class="field"><label>¿Qué herramientas digitales <strong>adoptó durante el proceso</strong> que no tenía al inicio?</label>'
+        + checkGrp('herram_nuevas', [
+            'Software de contabilidad o gestión financiera',
+            'CRM o herramienta de gestión de clientes',
+            'Plataforma de ventas en línea o tienda virtual',
+            'WhatsApp Business',
+            'Redes sociales con estrategia de contenido definida',
+            'Publicidad digital (Meta Ads, Google Ads, TikTok Ads)',
+            'Software de gestión de inventarios',
+            'Billeteras digitales o pasarelas de pago',
+            'Herramientas de videoconferencia para el negocio',
+            'Ninguna herramienta nueva adoptada'
+          ], R.herram_nuevas)
+        + '</div>'
+      : '')
+    + fieldTxt('Observaciones adicionales (opcional)','f-obs','Cualquier información adicional relevante para el diagnóstico...',R.obs,false)
+    + navBtns(true)
+    + '</div>';
+  appnd(html);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PASO 9 — Confirmación y cierre
+// ═══════════════════════════════════════════════════════════════
+function step9() {
+  clr();
+  var icons  = { ingreso:'📋', seguimiento:'📈', salida:'🏁' };
+  var titles = {
+    ingreso:     'Diagnóstico de Ingreso completado',
+    seguimiento: 'Diagnóstico de Seguimiento completado',
+    salida:      'Diagnóstico de Salida completado'
+  };
+  var descs = {
+    ingreso:     'Haz clic en <strong>Ver resultados</strong> para obtener el análisis completo con la línea base, el plan de fortalecimiento y las metas proyectadas del proceso de acompañamiento.',
+    seguimiento: 'Haz clic en <strong>Ver resultados</strong> para ver el análisis de avance, el comparativo de indicadores frente a la línea base y las recomendaciones de ajuste.',
+    salida:      'Haz clic en <strong>Ver resultados</strong> para obtener el informe final de impacto, el comparativo antes/después y el cumplimiento de metas del convenio.'
+  };
+  var html = '<div class="step active">'
+    + '<div class="done-card">'
+    + '<div class="done-icon">'+(icons[MODO]||'✅')+'</div>'
+    + '<h2>'+(titles[MODO]||'Diagnóstico completado')+'</h2>'
+    + '<p>'+(descs[MODO]||'')+'</p>'
+    + '<button class="btn primary" onclick="showResults()" style="display:block;margin:0 auto">Ver resultados &#8594;</button>'
+    + '</div>'
+    + '<div class="nav"><button class="btn" onclick="goPrev()">&#8592; Revisar respuestas</button><span></span></div>'
+    + '</div>';
+  appnd(html);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ROUTING — un único array por modo, seleccionado al navegar
+// ═══════════════════════════════════════════════════════════════
+var STEPS_ING = [step0, step1, step2, step3_ing,     step4, step5, step6, step7, step8, step9];
+var STEPS_SEG = [step0, step1, step2, step3_seg_sal, step4, step5, step6, step7, step8, step9];
+var STEPS_SAL = [step0, step1, step2, step3_seg_sal, step4, step5, step6, step7, step8, step9];
+var TOTAL = 10;
+
+function getStepFn(n) {
+  var arr = MODO === 'salida' ? STEPS_SAL : MODO === 'seguimiento' ? STEPS_SEG : STEPS_ING;
+  return arr[n];
+}
+
+function renderStep(n) {
+  getStepFn(n)();
+  updateProg();
+  window.scrollTo(0, 0);
+}
+
+// ─── Progress bar ──────────────────────────────────────────────
+var LBLS_ING = ['Tipo de diagnóstico','A. Identificación','Datos del informante','B. Producto / Indicadores base','C. Liderazgo y planeación','D. Mercadeo y ventas','E. Contabilidad y finanzas','F. Innovación','G. Tecnología','Resumen'];
+var LBLS_SEG = ['Tipo de diagnóstico','A. Identificación','Datos del informante','Valores de ingreso (línea base)','C. Planeación — evolución','D. Mercadeo — seguimiento','E. Contabilidad — seguimiento','F. Innovación acumulada','G. Tecnología adoptada','Resumen'];
+var LBLS_SAL = ['Tipo de diagnóstico','A. Identificación','Datos del informante','Valores de ingreso + cierre','C. Planeación — impacto','D. Mercadeo — cierre','E. Contabilidad — cierre','F. Innovación — resultados','G. Tecnología — cierre','Evaluación final'];
+
+function updateProg() {
+  var p = Math.round((ST.step / (TOTAL-1)) * 100);
+  gid('prog-fill').style.width = p + '%';
+  gid('prog-pct').textContent  = p + '%';
+  var lbls = MODO === 'salida' ? LBLS_SAL : MODO === 'seguimiento' ? LBLS_SEG : LBLS_ING;
+  gid('prog-lbl').textContent  = lbls[ST.step] || '';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SAVE — captura respuestas de cada paso
+// ═══════════════════════════════════════════════════════════════
+function save1() {
+  Object.assign(ST.info, {
+    razon:      gv('f-razon'),
+    nombre1:    gv('f-nombre1'),
+    apellido1:  gv('f-apellido1'),
+    doc:        gv('f-doc'),
+    municipio:  gv('f-municipio'),
+    sector:     gv('f-sector'),
+    correo:     gv('f-correo'),
+    telefono:   gv('f-telefono'),
+    tiene_rut:  gv('f-rut'),
+    meses_reg:  parseInt(gv('f-meses')) || 0,
+    tiene_marca: getR('tiene_marca')
+  });
+}
+
+function save2() {
+  Object.assign(ST.info, {
+    relacion:   gv('f-relacion'),
+    sexo:       gv('f-sexo'),
+    edu:        gv('f-edu'),
+    nacimiento: gv('f-nacimiento'),
+    motivo:     getR('motivo')
+  });
+}
+
+function save3() {
+  if (MODO === 'ingreso') {
+    Object.assign(ST.R, {
+      anos_act:     getR('anos_act'),
+      vision:       getR('vision'),
+      personal:     gv('f-personal'),
+      aportes:      getR('aportes'),
+      ventas:       gv('f-ventas'),
+      costos:       gv('f-costos'),
+      fuente_ventas: getR('fuente_ventas'),
+      comercio_int: getR('comercio_int')
+    });
+  } else {
+    // Save ingreso (baseline) values
+    Object.assign(ST.ing, {
+      ventas:     parseFloat(gv('f-ing-ventas'))   || 0,
+      costos:     parseFloat(gv('f-ing-costos'))   || 0,
+      personal:   parseInt(gv('f-ing-personal'))   || 0,
+      emp_formal: parseInt(gv('f-ing-empformal'))  || 0,
+      puntaje:    parseInt(gv('f-ing-puntaje'))    || 0,
+      nivel:      gv('f-ing-nivel')
+    });
+    // Save current values
+    Object.assign(ST.R, {
+      ventas:   gv('f-ventas'),
+      costos:   gv('f-costos'),
+      personal: gv('f-personal'),
+      aportes:  getR('aportes')
+    });
+  }
+}
+
+function save4() {
+  Object.assign(ST.R, {
+    plan_crec: getR('plan_crec'),
+    productos: gv('f-productos'),
+    pv:        gv('f-pv'),
+    cliente:   gv('f-cliente')
+  });
+}
+
+function save5() {
+  Object.assign(ST.R, {
+    satisfaccion:  getR('satisfaccion'),
+    elems_com:     getC('elems_com'),
+    fuente_ventas: getR('fuente_ventas'),
+    comercio_int:  getR('comercio_int')
+  });
+}
+
+function save6() {
+  Object.assign(ST.R, {
+    contabilidad:   getR('contabilidad'),
+    financiamiento: getC('financiamiento'),
+    tramites:       getC('tramites')
+  });
+}
+
+function save7() {
+  Object.assign(ST.R, {
+    innov_asp:     getC('innov_asp'),
+    valoracion:    getR('valoracion'),
+    impacto_areas: getC('impacto_areas'),
+    obstaculos:    gv('f-obstaculos'),
+    sostenibilidad: gv('f-sostenibilidad')
+  });
+  // matrix cells saved inline via selMat
+}
+
+function save8() {
+  Object.assign(ST.R, {
+    tecnologias:   getC('tecnologias'),
+    herram_nuevas: getC('herram_nuevas'),
+    obs:           gv('f-obs')
+  });
+}
+
+var SAVES = [null, save1, save2, save3, save4, save5, save6, save7, save8, null];
+
+// ═══════════════════════════════════════════════════════════════
+// VALIDATION
+// ═══════════════════════════════════════════════════════════════
+function validate(n) {
+  var I = ST.info, R = ST.R, ING = ST.ing;
+  if (n === 0) {
+    if (!MODO) { showErr('Por favor selecciona el tipo de diagnóstico.'); return false; }
+  }
+  if (n === 1) {
+    if (!I.razon)    { showErr('Ingresa el nombre del negocio.'); return false; }
+    if (!I.nombre1)  { showErr('Ingresa tu primer nombre.'); return false; }
+    if (!I.apellido1){ showErr('Ingresa tu primer apellido.'); return false; }
+    if (!I.doc)      { showErr('Ingresa tu número de documento.'); return false; }
+    if (!I.municipio){ showErr('Selecciona el municipio.'); return false; }
+    if (!I.sector)   { showErr('Selecciona el sector económico.'); return false; }
+    if (!I.correo)   { showErr('Ingresa el correo electrónico.'); return false; }
+    if (!I.tiene_rut){ showErr('Indica si el negocio tiene RUT.'); return false; }
+  }
+  if (n === 2) {
+    if (!I.relacion){ showErr('Selecciona tu relación con el negocio.'); return false; }
+    if (!I.sexo)    { showErr('Selecciona el sexo.'); return false; }
+    if (!I.edu)     { showErr('Selecciona el nivel educativo.'); return false; }
+    if (!I.motivo)  { showErr('Selecciona el motivo principal de inicio.'); return false; }
+  }
+  if (n === 3) {
+    if (MODO === 'ingreso') {
+      if (!R.anos_act)      { showErr('Indica hace cuántos años desarrollas esta actividad.'); return false; }
+      if (!R.vision)        { showErr('Selecciona cómo ves el futuro del negocio.'); return false; }
+      if (!R.personal)      { showErr('Indica el número de personas ocupadas.'); return false; }
+      if (!R.aportes)       { showErr('Indica si el negocio paga seguridad social.'); return false; }
+      if (!R.ventas || parseFloat(R.ventas) < 0) { showErr('Ingresa los ingresos (ventas) mensuales.'); return false; }
+      if (!R.costos || parseFloat(R.costos) < 0) { showErr('Ingresa los costos y gastos mensuales.'); return false; }
+      if (!R.fuente_ventas) { showErr('Selecciona la fuente principal de ventas.'); return false; }
+      if (!R.comercio_int)  { showErr('Indica si realizas comercio internacional.'); return false; }
+    } else {
+      if (!gv('f-ing-ventas') && !ING.ventas) { showErr('Ingresa los ingresos del diagnóstico de ingreso (línea base).'); return false; }
+      if (!gv('f-ventas') && !R.ventas)       { showErr('Ingresa los ingresos actuales.'); return false; }
+      if (!R.aportes && !getR('aportes'))     { showErr('Indica si el negocio paga seguridad social actualmente.'); return false; }
+    }
+  }
+  if (n === 4) {
+    if (!R.plan_crec){ showErr('Selecciona el nivel de planeación.'); return false; }
+    if (!R.productos){ showErr('Completa el campo de productos/servicios o logros.'); return false; }
+  }
+  if (n === 5) {
+    if (!R.satisfaccion)              { showErr('Selecciona cómo mides la satisfacción de clientes.'); return false; }
+    if (!R.elems_com || !R.elems_com.length) { showErr('Selecciona al menos un elemento comercial.'); return false; }
+    if (!R.fuente_ventas)             { showErr('Selecciona la fuente principal de ventas.'); return false; }
+  }
+  if (n === 6) {
+    if (!R.contabilidad)                       { showErr('Selecciona el sistema contable.'); return false; }
+    if (!R.financiamiento || !R.financiamiento.length) { showErr('Selecciona al menos una fuente de financiamiento.'); return false; }
+    if (!R.tramites || !R.tramites.length)     { showErr('Selecciona los trámites realizados.'); return false; }
+  }
+  if (n === 7) {
+    if (!R.innov_asp || !R.innov_asp.length) { showErr('Selecciona al menos un aspecto de innovación.'); return false; }
+    if (MODO === 'salida' && !R.valoracion)  { showErr('Valora la calidad del acompañamiento.'); return false; }
+  }
+  if (n === 8) {
+    if (!R.tecnologias || !R.tecnologias.length) { showErr('Selecciona las tecnologías que usa el negocio.'); return false; }
+  }
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function goNext() {
+  if (SAVES[ST.step]) SAVES[ST.step]();
+  if (!validate(ST.step)) return;
+  if (ST.step < TOTAL - 1) {
+    ST.step++;
+    renderStep(ST.step);
+  }
+}
+
+function goPrev() {
+  if (ST.step > 0) {
+    ST.step--;
+    renderStep(ST.step);
+  }
+}
+
+function restart() {
+  ST   = { step:0, info:{}, ing:{}, R:{}, logo_b64:null };
+  MODO = null;
+  gid('results').classList.remove('show');
+  gid('results').innerHTML = '';
+  gid('steps').style.display = '';
+  document.querySelector('.prog').style.display = '';
+  renderStep(0);
+}
+
+// INIT
+renderStep(0);
+
+
+// ═══════════════════════════════════════════════
+// SCORING & HELPERS
+// ═══════════════════════════════════════════════
+function clasificar(I, R) {
+  // Classification based on Camara de Comercio registration and months
+  var meses      = parseInt(I.meses_reg) || 0;
+  var tieneRut   = I.tiene_rut === 'Si' || I.tiene_rut === 'Yes';
+  var tieneCamara = R && (R.tramites || []).some(function(t) {
+    return t.indexOf('mara') >= 0 || t.indexOf('Camara') >= 0;
+  });
+  // MiPyme: registered in Camara AND more than 4 months
+  if (tieneCamara && meses >= 4) {
+    return {
+      tipo: 'MiPyme',
+      color: '#276749',
+      bg: '#EAF3DE',
+      badge: 'MiPyme',
+      desc: 'Unidad de explotación económica registrada ante Cámara de Comercio con más de 4 meses al inicio de la convocatoria, con registro vigente. (Ley 590 de 2000)'
+    };
+  }
+  // Emprendimiento: not registered OR less than 4 months
+  return {
+    tipo: 'Emprendimiento',
+    color: '#C97A0A',
+    bg: '#FAEEDA',
+    badge: 'Emprendimiento',
+    desc: 'Idea de negocio o iniciativa empresarial no registrada ante Cámara de Comercio, o registrada con menos de 4 meses al inicio de la convocatoria.'
+  };
+}
+function getOverall(s) { var keys=Object.keys(s),sum=0; for(var i=0;i<keys.length;i++) sum+=s[keys[i]]; return Math.round(sum/keys.length); }
+function getLvl(sc) { return sc >= 75 ? ['Avanzado','good'] : sc >= 50 ? ['En desarrollo','improve'] : ['Temprano','urgent']; }
 function calcScores() {
   var R = ST.R, I = ST.info, s = {};
 
@@ -915,37 +1924,6 @@ function calcScores() {
 
   return s;
 }
-
-function clasificar(I, R) {
-  // Classification based on Camara de Comercio registration and months
-  var meses      = parseInt(I.meses_reg) || 0;
-  var tieneRut   = I.tiene_rut === 'Si' || I.tiene_rut === 'Yes';
-  var tieneCamara = R && (R.tramites || []).some(function(t) {
-    return t.indexOf('mara') >= 0 || t.indexOf('Camara') >= 0;
-  });
-  // MiPyme: registered in Camara AND more than 4 months
-  if (tieneCamara && meses >= 4) {
-    return {
-      tipo: 'MiPyme',
-      color: '#276749',
-      bg: '#EAF3DE',
-      badge: 'MiPyme',
-      desc: 'Unidad de explotación económica registrada ante Cámara de Comercio con más de 4 meses al inicio de la convocatoria, con registro vigente. (Ley 590 de 2000)'
-    };
-  }
-  // Emprendimiento: not registered OR less than 4 months
-  return {
-    tipo: 'Emprendimiento',
-    color: '#C97A0A',
-    bg: '#FAEEDA',
-    badge: 'Emprendimiento',
-    desc: 'Idea de negocio o iniciativa empresarial no registrada ante Cámara de Comercio, o registrada con menos de 4 meses al inicio de la convocatoria.'
-  };
-}
-
-function getOverall(s) { var keys = Object.keys(s), sum = 0; for (var i = 0; i < keys.length; i++) sum += s[keys[i]]; return Math.round(sum / keys.length); }
-function getLvl(sc) { return sc >= 75 ? ['Avanzado','good'] : sc >= 50 ? ['En desarrollo','improve'] : ['Temprano','urgent']; }
-
 function getRec(dim, sc) {
   var texts = {
     mercado: {
@@ -977,7 +1955,6 @@ function getRec(dim, sc) {
   var lv = sc < 40 ? 'low' : sc < 65 ? 'mid' : 'high';
   return texts[dim] ? texts[dim][lv] : '';
 }
-
 function getNeeds(scores) {
   var n = [];
   if ((scores.mercado          || 0) < 60) n.push('Estrategia de mercado y segmentación');
@@ -988,9 +1965,255 @@ function getNeeds(scores) {
   if (n.length === 0) n.push('Escalabilidad y crecimiento sostenido', 'Innovación y diferenciación avanzada');
   return n;
 }
+function cl(s) { return (s || '').replace(/[^\x00-\xFF]/g, '').replace(/\s{2,}/g, ' ').trim(); }
+function buildMatrix() {
+  var html = '<table class="matrix"><thead><tr><th>Area</th><th>Ninguna</th><th>Una (1)</th><th>Más de una</th></tr></thead><tbody>';
+  for (var i = 0; i < INNOV_AREAS.length; i++) {
+    var sv = ST.R['im' + i] || 'Ninguna';
+    var cols = ['Ninguna', 'Una (1)', 'Más de una'];
+    html += '<tr><td>' + INNOV_AREAS[i] + '</td>';
+    for (var j = 0; j < cols.length; j++) {
+      var sel = sv === cols[j];
+      html += '<td class="c"><div class="mat-opt' + (sel ? ' sel' : '') + '" data-key="im' + i + '" data-val="' + esc(cols[j]) + '" onclick="selMat(this)"></div></td>';
+    }
+    html += '</tr>';
+  }
+  return html + '</tbody></table>';
+}
+function selMat(dot) {
+  var key = dot.getAttribute('data-key');
+  var val = dot.getAttribute('data-val');
+  var row = dot.closest('tr');
+  var dots = row.querySelectorAll('.mat-opt');
+  for (var i = 0; i < dots.length; i++) dots[i].classList.remove('sel');
+  dot.classList.add('sel');
+  ST.R[key] = val;
+}
 
+// ═══════════════════════════════════════════════
+// RESULTS
+// ═══════════════════════════════════════════════
+function showResults(){
+  gid('steps').style.display='none';
+  document.querySelector('.prog').style.display='none';
 
+  var scores = calcScores();
+  var ovr    = getOverall(scores);
+  var lvl    = getLvl(ovr);
+  var I=ST.info, R=ST.R, ING=ST.ing;
+  var clasif = clasificar(I, R);
 
+  // Calculated indicators
+  var ventas   = parseFloat(R.ventas)||0;
+  var costos   = parseFloat(R.costos)||0;
+  var personal = parseInt(R.personal)||0;
+  var aportes  = R.aportes||'';
+  var empFormal= aportes.indexOf('salud y')>=0?personal:aportes.indexOf('solo')>=0?Math.ceil(personal*0.5):0;
+  var innCount = 0;
+  for(var ai=0;ai<6;ai++){ if((R['innov_mat_'+ai]||'Ninguna')!=='Ninguna') innCount++; }
+  var tieneCam = (R.tramites||[]).some(function(t){ return t.indexOf('mara')>=0; });
+  var tieneRut = I.tiene_rut==='Sí'||I.tiene_rut==='Si';
+
+  // Deltas (only for seguimiento/salida)
+  var ingV = ING.ventas||0, ingC = ING.costos||0, ingP = ING.personal||0;
+  var dVentas  = (ingV>0 && ventas>0)   ? ((ventas-ingV)/ingV*100)   : null;
+  var dCostos  = (ingC>0 && costos>0)   ? ((costos-ingC)/ingC*100)   : null;
+  var dPersonal= (ingP>0 && personal>0) ? ((personal-ingP)/ingP*100) : null;
+  var dPuntaje = (ING.puntaje>0)        ? (ovr - ING.puntaje)        : null;
+
+  function metaStatus(delta, meta, esMenos){
+    if(delta===null) return null;
+    var ok = esMenos ? delta<=meta : delta>=meta;
+    var parcial = esMenos ? delta<0 : delta>=meta/2;
+    return { ok:ok, parcial:parcial, pct:Math.round(delta),
+      label: ok?'✅ CUMPLIDA': parcial?'⚠️ PARCIAL':'❌ NO CUMPLIDA',
+      color: ok?'var(--green)': parcial?'var(--amber)':'var(--red)' };
+  }
+  var mV = metaStatus(dVentas, 20, false);
+  var mC = metaStatus(dCostos, -10, true);
+  var mP = metaStatus(dPersonal, 10, false);
+  var mPt= dPuntaje!==null ? metaStatus(dPuntaje, 15, false) : null;
+
+  window._DIME = { scores,ovr,lvl,I,R,ING,clasif,MODO,
+    ventas,costos,personal,empFormal,innCount,tieneCam,tieneRut,
+    dVentas,dCostos,dPersonal,dPuntaje, mV,mC,mP,mPt };
+
+  var html = '';
+
+  // ── Hero ──────────────────────────────────────────────
+  html += '<div class="res-hero">'
+    + (ST.logo_b64 ? '<img src="'+ST.logo_b64+'" style="height:48px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.15);padding:4px;flex-shrink:0">' : '')
+    + '<div class="res-pct">'+ovr+'%</div>'
+    + '<div style="flex:1">'
+    + '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px">'
+    + '<span class="res-badge">'+lvl[0]+'</span>'
+    + '<span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:'+(clasif.bg||'#FAEEDA')+';color:'+(clasif.color||'#92400E')+'">'+clasif.tipo+'</span>'
+    + '<span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:'+(MODO==='salida'?'#E6F1FB':MODO==='seguimiento'?'#FAEEDA':'#EEF0FE')+';color:'+(MODO==='salida'?'#1D4ED8':MODO==='seguimiento'?'#92400E':'#534AB7')+'">'+(MODO==='salida'?'🏁 Diagnóstico de Salida':MODO==='seguimiento'?'📈 Seguimiento':'📋 Diagnóstico de Ingreso')+'</span>'
+    + '</div>'
+    + '<div class="res-h2">'+(I.razon||'Tu negocio')+'</div>'
+    + '<div class="res-sub">'+[I.municipio,I.sector].filter(Boolean).join(' · ')+'</div>'
+    + '</div></div>';
+
+  // ── Clasificación ──────────────────────────────────────
+  html += '<div style="border-left:4px solid '+(clasif.color||'#C97A0A')+';background:'+(clasif.bg||'#FAEEDA')+';border-radius:0 var(--r-md) var(--r-md) 0;padding:10px 14px;margin-bottom:1.25rem;font-size:12.5px;color:var(--text);line-height:1.65">'
+    + '<strong>'+clasif.tipo+':</strong> '+clasif.desc+'</div>';
+
+  // ── Cómo se calcula ────────────────────────────────────
+  html += '<div class="s-title">¿Cómo se calcula el diagnóstico?</div>';
+  html += '<div style="background:white;border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1.5rem;font-size:12px;line-height:1.7">'
+    + '<p style="margin-bottom:.75rem">El diagnóstico evalúa <strong>5 componentes</strong> del modelo de negocio y la gestión empresarial. Cada componente recibe un puntaje de 0 a 100. El puntaje global es el promedio de los cinco.</p>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11.5px">'
+    + '<div style="background:var(--light);padding:7px 10px;border-radius:var(--r-sm)"><strong style="color:var(--navy)">Mercado objetivo</strong><br>Satisfacción de clientes (50%) + alcance de ventas (30%) + segmentación (20%)</div>'
+    + '<div style="background:var(--light);padding:7px 10px;border-radius:var(--r-sm)"><strong style="color:var(--navy)">Oferta de valor</strong><br>Propuesta documentada + perfil de cliente + portafolio + elementos comerciales</div>'
+    + '<div style="background:var(--light);padding:7px 10px;border-radius:var(--r-sm)"><strong style="color:var(--navy)">Modelo de rentabilización</strong><br>Sistema contable (60%) + diversidad de fuentes de financiamiento (40%)</div>'
+    + '<div style="background:var(--light);padding:7px 10px;border-radius:var(--r-sm)"><strong style="color:var(--navy)">Modelo de comercialización</strong><br>Nivel de planeación (40%) + canales y proceso comercial (60%)</div>'
+    + '<div style="background:var(--light);padding:7px 10px;border-radius:var(--r-sm);grid-column:span 2"><strong style="color:var(--navy)">Madurez administrativa y financiera</strong><br>Formalización 30% + tecnología adoptada 30% + seguridad social 20% + planeación 20%</div>'
+    + '</div>'
+    + '<div style="margin-top:.75rem;padding:6px 10px;background:#DCFCE7;border-radius:var(--r-sm);font-size:11.5px"><strong>Niveles:</strong> 0–39% Temprano · 40–64% En desarrollo · 65–100% Avanzado</div>'
+    + '</div>';
+
+  // ── Spider chart ───────────────────────────────────────
+  html += '<div class="s-title">Diagrama de madurez empresarial</div>';
+  html += '<div id="spider-container" style="display:flex;justify-content:center;margin:1rem 0 1.5rem"><canvas id="spider-canvas" width="400" height="400" style="max-width:100%"></canvas></div>';
+
+  // ── Indicadores de línea base ──────────────────────────
+  html += '<div class="s-title">Indicadores'+(MODO==='ingreso'?' de línea base':MODO==='seguimiento'?' de seguimiento':' de salida — comparativo')+'</div>';
+
+  if(MODO!=='ingreso'){
+    // Comparative section for seguimiento/salida
+    html += '<div style="background:white;border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1.25rem">'
+      + '<div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:.85rem">Variación de indicadores clave del convenio</div>'
+      + '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px">'
+      + '<thead><tr style="background:var(--navy);color:white">'
+      + '<th style="padding:8px 12px;text-align:left">Indicador</th>'
+      + '<th style="padding:8px 12px;text-align:right">Ingreso (Base)</th>'
+      + '<th style="padding:8px 12px;text-align:right">'+( MODO==='salida'?'Salida':'Actual')+'</th>'
+      + '<th style="padding:8px 12px;text-align:right">Variación</th>'
+      + '<th style="padding:8px 12px;text-align:center">Meta / Estado</th>'
+      + '</tr></thead><tbody>';
+
+    function cmpRow(lbl, ingVal, curVal, delta, metaLbl, metaSt, fmt){
+      var ingStr = fmt==='COP'?formatCOP(ingVal):(ingVal||'-');
+      var curStr = fmt==='COP'?formatCOP(curVal):(curVal||'-');
+      var dStr   = delta!==null ? pct(delta) : '—';
+      var dCol   = delta===null?'var(--sub)':delta>0?'var(--green)':delta<0?'var(--red)':'var(--sub)';
+      var stHtml = metaSt ? '<span style="font-size:11px;font-weight:700;color:'+metaSt.color+'">'+metaSt.label+'</span>' : '<span style="color:var(--sub);font-size:11px">Sin meta definida</span>';
+      return '<tr style="border-bottom:1px solid var(--border)">'
+        + '<td style="padding:8px 12px;font-weight:600">'+lbl+'</td>'
+        + '<td style="padding:8px 12px;text-align:right;font-family:monospace">'+ingStr+'</td>'
+        + '<td style="padding:8px 12px;text-align:right;font-family:monospace;font-weight:700">'+curStr+'</td>'
+        + '<td style="padding:8px 12px;text-align:right;font-weight:700;color:'+dCol+'">'+dStr+'</td>'
+        + '<td style="padding:8px 12px;text-align:center">'+stHtml+'</td>'
+        + '</tr>';
+    }
+    html += cmpRow('Ingresos (ventas) / mes', ingV, ventas, dVentas, '+20%', mV, 'COP');
+    html += cmpRow('Costos y gastos / mes', ingC, costos, dCostos, '≤-10%', mC, 'COP');
+    html += cmpRow('Personas ocupadas', ingP, personal, dPersonal, '+10%', mP, 'num');
+    if(ING.puntaje>0) html += cmpRow('Puntaje de madurez', ING.puntaje+'%', ovr+'%', dPuntaje, '+15 pts', mPt, 'txt');
+    html += '</tbody></table></div>';
+
+    // Metas summary
+    if(MODO==='salida'){
+      var metas = [mV,mC,mP,mPt].filter(Boolean);
+      var cumplidas = metas.filter(function(m){ return m&&m.ok; }).length;
+      html += '<div style="display:flex;align-items:center;gap:12px;margin-top:1rem;padding:10px 12px;background:var(--light);border-radius:var(--r-md)">'
+        + '<div style="font-size:22px;font-weight:700;font-family:monospace;color:var(--navy)">'+cumplidas+'/'+metas.length+'</div>'
+        + '<div><div style="font-size:13px;font-weight:700">metas del convenio cumplidas</div>'
+        + '<div style="font-size:11.5px;color:var(--sub)">Mejora ingresos +20% · Reducción costos ≤-10% · Crecimiento ventas +30% · Crecimiento empleo +10%</div>'
+        + '</div></div>';
+    }
+    html += '</div>';
+  } else {
+    // Ingreso — line base indicators grid
+    html += '<div class="ind-grid">';
+    function ic(icon, lbl, val, nota){
+      return '<div class="ind-card"><div style="font-size:18px;margin-bottom:3px">'+icon+'</div><div class="ind-lbl">'+lbl+'</div><div class="ind-val">'+val+'</div>'+(nota?'<div style="font-size:10px;color:var(--sub);margin-top:2px;line-height:1.4">'+nota+'</div>':'')+'</div>';
+    }
+    html += ic('💰','Ingresos / mes (línea base)', ventas>0?formatCOP(ventas):'Sin dato','Base para meta +20%');
+    html += ic('🏷️','Costos y gastos / mes (línea base)', costos>0?formatCOP(costos):'Sin dato','Base para meta ≤-10%');
+    html += ic('📈','Ingresos anuales estimados', ventas>0?formatCOP(ventas*12):'Sin dato','Proyección × 12');
+    html += ic('💹','Margen bruto estimado', (ventas>0&&costos>0)?formatCOP(ventas-costos)+'/mes':'Sin dato','Ingresos − Costos');
+    html += ic('👥','Personas ocupadas', personal>0?personal+' persona(s)':'Sin dato','Base para meta +10%');
+    html += ic('🛡️','Con seguridad social', empFormal+' de '+personal,'Salud y/o pensión');
+    html += ic('🏢','Cámara de Comercio', tieneCam?'✓ Registrado':'✗ Sin registro','');
+    html += ic('📋','RUT activo', tieneRut?'✓ Tiene RUT':'✗ Sin RUT','');
+    html += ic('💡','Innovaciones (último año)', innCount+' área(s)','Durante el proceso');
+    html += ic('💻','Tecnologías en uso', ((R.tecnologias||[]).filter(function(t){return t!=='Ninguna';}).length)+' herramienta(s)','');
+    html += '</div>';
+    // Metas proyectadas
+    html += '<div class="s-title" style="margin-top:.5rem">Metas proyectadas del convenio</div>';
+    html += '<div style="background:white;border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1.25rem">';
+    html += '<div style="font-size:12px;color:var(--sub);margin-bottom:.75rem;line-height:1.6">Con base en los indicadores de ingreso, estas son las metas que se esperan alcanzar al finalizar el proceso de acompañamiento:</div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12.5px">';
+    html += '<div style="background:#EEF0FE;border-radius:var(--r-md);padding:10px 12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--purple)">Meta: Mejora de ingresos</div><div style="font-size:14px;font-weight:700;color:var(--navy)">'+(ventas>0?formatCOP(ventas*1.2)+'/mes':'Requiere dato')+'</div><div style="font-size:10px;color:var(--sub)">+20% sobre '+(ventas>0?formatCOP(ventas):'la línea base')+'</div></div>';
+    html += '<div style="background:#FEF9E7;border-radius:var(--r-md);padding:10px 12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#92400E">Meta: Reducción de costos</div><div style="font-size:14px;font-weight:700;color:var(--navy)">'+(costos>0?formatCOP(costos*0.9)+'/mes':'Requiere dato')+'</div><div style="font-size:10px;color:var(--sub)">≤-10% sobre '+(costos>0?formatCOP(costos):'la línea base')+'</div></div>';
+    html += '<div style="background:#EAF3DE;border-radius:var(--r-md);padding:10px 12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#276749">Meta: Crecimiento empleo</div><div style="font-size:14px;font-weight:700;color:var(--navy)">'+(personal>0?Math.ceil(personal*1.1)+' persona(s)':'Requiere dato')+'</div><div style="font-size:10px;color:var(--sub)">+10% sobre '+(personal||'N/D')+' persona(s) actuales</div></div>';
+    html += '<div style="background:#E6F1FB;border-radius:var(--r-md);padding:10px 12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#1D4ED8">Meta: Crecimiento de ventas</div><div style="font-size:14px;font-weight:700;color:var(--navy)">'+(ventas>0?formatCOP(ventas*1.3)+'/mes':'Requiere dato')+'</div><div style="font-size:10px;color:var(--sub)">+30% sobre '+(ventas>0?formatCOP(ventas):'la línea base')+'</div></div>';
+    html += '</div></div>';
+  }
+
+  // ── Plan de fortalecimiento ────────────────────────────
+  html += '<div class="s-title" style="margin-top:.5rem">Plan de Fortalecimiento — '+clasif.tipo+' ('+MODO.charAt(0).toUpperCase()+MODO.slice(1)+')</div>';
+  html += '<div style="font-size:11.5px;color:var(--sub);margin-bottom:.85rem;line-height:1.6">'
+    + (MODO==='ingreso'?'Con base en este diagnóstico de ingreso se diseñará el Plan de Fortalecimiento individual, enfocando el acompañamiento en los componentes con mayor necesidad.':MODO==='seguimiento'?'Estado de avance por componente. Los componentes en rojo requieren atención prioritaria antes del cierre.':'Evaluación final del plan de fortalecimiento. Componentes alcanzados y áreas de mejora sostenida post-convenio.')
+    + '</div>';
+
+  var dk = Object.keys(DIMS_META);
+  var sorted = dk.slice().sort(function(a,b){ return scores[a]-scores[b]; });
+  sorted.forEach(function(dim, idx){
+    var sc=scores[dim]||0, m=DIMS_META[dim];
+    var col=sc>=65?m.bar:sc>=40?'#E8A020':'#C0392B';
+    var badge=sc<40?'Prioritario':sc<65?'Mejorar':'Fortaleza';
+    var badgeBg=sc<40?'#FCEBEB':sc<65?'#FAEEDA':'#DCFCE7';
+    var badgeFg=sc<40?'#7B1F1F':sc<65?'#6B3A06':'#14532D';
+    html += '<div style="border:1.5px solid '+(sc<40?'#FCA5A5':sc<65?'#FCD34D':'#86EFAC')+';border-radius:var(--r-lg);margin-bottom:10px;overflow:hidden">'
+      + '<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:'+(sc<40?'#FEF6F5':sc<65?'#FFFBF0':'#F0FDF4')+'">'
+      + '<div style="width:30px;height:30px;border-radius:50%;background:'+col+';color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">'+(idx+1)+'</div>'
+      + '<div style="flex:1">'
+      + '<div style="font-size:13px;font-weight:700;color:var(--text)">'+m.name+'</div>'
+      + '<div style="display:flex;gap:6px;margin-top:3px">'
+      + '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:'+badgeBg+';color:'+badgeFg+'">'+badge+'</span>'
+      + '<span style="font-size:10px;color:'+col+';font-weight:600">'+getLvl(sc)[0]+'</span>'
+      + '</div></div>'
+      + '<div style="font-size:24px;font-weight:700;font-family:IBM Plex Mono,monospace;color:'+col+'">'+sc+'%</div>'
+      + '</div>'
+      + '<div style="height:5px;background:#E8ECF2"><div style="height:100%;width:'+sc+'%;background:'+col+'"></div></div>'
+      + '<div style="padding:12px 14px">'
+      + '<div style="font-size:11px;color:var(--sub);padding:8px 10px;background:var(--light);border-radius:var(--r-sm);border-left:3px solid '+m.bar+';margin-bottom:8px;line-height:1.65">'
+      + '<strong style="font-size:10px;text-transform:uppercase;letter-spacing:.04em">ℹ Cómo se calculó: </strong>'+m.crit+'</div>'
+      + '<div style="font-size:12.5px;color:var(--text);line-height:1.75;padding:10px 12px;background:white;border-radius:var(--r-sm);border:1px solid var(--border);border-left:4px solid '+col+'">'
+      + '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:'+col+';margin-bottom:5px">💡 Recomendación estratégica</div>'
+      + getRec(dim, sc)
+      + '</div>'
+      + '</div></div>';
+  });
+
+  // Needs + Plan
+  var needs = getNeeds(scores);
+  html += '<div class="s-title" style="margin-top:.5rem">Necesidades de acompañamiento</div>';
+  html += '<div class="needs-pills">';
+  needs.forEach(function(n){ html += '<span class="need-pill">'+n+'</span>'; });
+  html += '</div>';
+
+  // Actions
+  html += '<div class="res-actions">'
+    + '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">'
+    + '<button class="btn primary" onclick="abrirAI()" style="background:var(--purple);border-color:var(--purple)">🤖 Análisis con IA</button>'
+    + '<button class="btn" style="background:var(--green);border-color:var(--green);color:white" onclick="exportPDF()">⬇ Descargar PDF</button>'
+    + '<button class="btn" onclick="restart()">⟵ Nuevo diagnóstico</button>'
+    + '</div>'
+    + '<div style="font-size:11px;color:var(--sub);text-align:center;margin-top:4px">La IA genera análisis completo, comparativo antes/después y recomendaciones estratégicas</div>'
+    + '</div>';
+
+  var res = gid('results');
+  res.innerHTML = html;
+  res.classList.add('show');
+  setTimeout(function(){ drawSpider(scores); }, 60);
+}
+
+// ═══════════════════════════════════════════════
+// SPIDER CHART
+// ═══════════════════════════════════════════════
 function drawSpider(scores) {
   var canvas = document.getElementById('spider-canvas');
   if (!canvas || !canvas.getContext) return;
@@ -1105,640 +2328,9 @@ function drawSpider(scores) {
   ctx.fillText('Madurez', cx, cy + 10);
 }
 
-function showResults() {
-  gid('steps').style.display = 'none';
-  document.querySelector('.prog').style.display = 'none';
-  var scores = calcScores();
-  var ovr    = getOverall(scores);
-  var lvl    = getLvl(ovr);
-  var I = ST.info, R = ST.R;
-  var clasif = clasificar(I, R);
-  window._DIME = { scores:scores, ovr:ovr, lvl:lvl, I:I, R:R, clasif:clasif, tipo_diag:I.tipo_diag||'Diagnostico de Ingreso' };
-
-  // ── Cálculo indicadores ──
-  var ventas      = parseFloat(R.ventas)  || 0;
-  var costos      = parseFloat(R.costos)  || 0;
-  var ventasAnual = ventas * 12;
-  var costosAnual = costos * 12;
-  var personal    = parseInt(R.personal)  || 0;
-  var aportes     = R.aportes || '';
-  var empFormal   = aportes.indexOf('salud y') >= 0 ? personal
-                  : aportes.indexOf('solo')    >= 0 ? Math.ceil(personal * 0.5) : 0;
-  var tieneCamara = (R.tramites||[]).some(function(t){ return t.indexOf('mara')>=0; });
-  var tieneRut    = I.tiene_rut==='Sí'||I.tiene_rut==='Si';
-  var tienePresup = R.contabilidad && CONTABILIDAD.indexOf(R.contabilidad)>=2;
-  var tieneSegm   = (R.elems_com||[]).some(function(e){ return e.indexOf('Perfil')>=0; });
-  var tieneMkt    = (R.elems_com||[]).some(function(e){ return e.indexOf('marketing')>=0||e.indexOf('Plan')>=0; });
-  var innCount    = 0;
-  for (var ai=0; ai<6; ai++) { var vv=R['innov_mat_'+ai]||'Ninguna'; if(vv!=='Ninguna') innCount++; }
-  var tecCnt      = (R.tecnologias||[]).filter(function(t){ return t!=='Ninguna'; }).length;
-  var finSrc      = (R.financiamiento||[]).filter(function(f){ return f!=='Ninguno'; }).length;
-
-  // ── HERO ──────────────────────────────────────────────
-  var html = '<div class="res-hero">'
-    + '<div class="res-pct">' + ovr + '%</div>'
-    + '<div style="flex:1">'
-    + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">'
-    + '<span class="res-badge">' + lvl[0] + '</span>'
-    + '<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:' + clasif.bg + ';color:' + clasif.color + '">' + clasif.tipo + '</span>'
-    + '<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:' + (I.tipo_diag&&I.tipo_diag.indexOf('Salida')>=0?'#E6F1FB':'#EEF0FE') + ';color:' + (I.tipo_diag&&I.tipo_diag.indexOf('Salida')>=0?'#2B6CB0':'#534AB7') + '">' + (I.tipo_diag||'Diagnóstico de Ingreso') + '</span>'
-    + '</div>'
-    + '<div class="res-h2">' + (I.razon||'Tu negocio') + '</div>'
-    + '<div class="res-sub">' + [I.municipio,I.sector,I.antiguedad].filter(Boolean).join(' &middot; ') + '</div>'
-    + '</div></div>'
-    // Classification explanation
-    + '<div style="border-left:4px solid ' + clasif.color + ';background:' + clasif.bg + ';border-radius:0 var(--r-md) var(--r-md) 0;padding:10px 14px;margin-bottom:1.25rem;font-size:12.5px;color:var(--text);line-height:1.65">'
-    + '<strong>' + clasif.tipo + ':</strong> ' + clasif.desc + '</div>';
-
-  // ── LÍNEA BASE CON METAS ─────────────────────────────
-  // ── SPIDER CHART ─────────────────────────────────────
-  html += '<div class="s-title">Diagnóstico por componente — Diagrama de madurez</div>';
-  html += '<div id="spider-container" style="display:flex;justify-content:center;margin:1rem 0 1.5rem"><canvas id="spider-canvas" width="400" height="400" style="max-width:100%"></canvas></div>';
-
-    // Scoring explanation section
-  html += '<div class="s-title" style="margin-top:1.5rem">¿Cómo se calcula el diagnóstico?</div>';
-  html += '<div style="background:white;border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1.5rem;font-size:12.5px;line-height:1.75;color:var(--text)">'
-    + '<p style="margin-bottom:.75rem">El diagnóstico evalúa <strong>5 componentes fundamentales del modelo de negocio y la gestión empresarial</strong>, definidos en el convenio Ecopetrol Emprende — Unillanos. Cada componente recibe un puntaje de 0 a 100, y el puntaje global es el promedio de los cinco.</p>'
-    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.75rem">'
-    + '<div style="background:var(--light);border-radius:var(--r-md);padding:8px 10px"><strong style="color:var(--navy)">Mercado objetivo (0-100)</strong><br><span style="font-size:11.5px;color:var(--sub)">Satisfacción del cliente (50%), alcance de ventas (30%) y segmentación (20%)</span></div>'
-    + '<div style="background:var(--light);border-radius:var(--r-md);padding:8px 10px"><strong style="color:var(--navy)">Oferta de valor (0-100)</strong><br><span style="font-size:11.5px;color:var(--sub)">Propuesta documentada, perfil del cliente, descripción de productos y elementos comerciales</span></div>'
-    + '<div style="background:var(--light);border-radius:var(--r-md);padding:8px 10px"><strong style="color:var(--navy)">Modelo de rentabilización (0-100)</strong><br><span style="font-size:11.5px;color:var(--sub)">Sistema contable (60%) y diversidad de fuentes de financiamiento (40%)</span></div>'
-    + '<div style="background:var(--light);border-radius:var(--r-md);padding:8px 10px"><strong style="color:var(--navy)">Modelo de comercialización (0-100)</strong><br><span style="font-size:11.5px;color:var(--sub)">Nivel de planeación (40%), elementos de canal y escalabilidad (60%)</span></div>'
-    + '<div style="background:var(--light);border-radius:var(--r-md);padding:8px 10px;grid-column:span 2"><strong style="color:var(--navy)">Madurez administrativa y financiera (0-100)</strong><br><span style="font-size:11.5px;color:var(--sub)">Formalización 30% + Tecnología adoptada 30% + Seguridad social 20% + Planeación 20%</span></div>'
-    + '</div>'
-    + '<div style="padding:8px 12px;background:#DCFCE7;border-radius:var(--r-sm);border-left:3px solid var(--green);font-size:12px"><strong>Nivel de madurez:</strong> 0-39% Temprano · 40-64% En desarrollo · 65-100% Avanzado</div>'
-    + '</div>';
-  
-  html += '<div class="s-title">Línea base — Indicadores de diagnóstico de entrada</div>';
-  html += '<div style="font-size:11.5px;color:var(--sub);margin-bottom:.85rem;line-height:1.6">'
-    + 'Estos indicadores registran el estado actual del ' + clasif.tipo.toLowerCase() + ' y servirán como punto de comparación para el '
-    + '<strong>Informe de Diagnóstico de Salida</strong> al finalizar el proceso de acompañamiento. '
-    + 'Las celdas con meta muestran el objetivo a alcanzar durante el acompañamiento.'
-    + '</div>';
-
-  function indRow(icon, label, valorActual, meta, nota) {
-    var hasMeta = meta !== null && meta !== undefined;
-    return '<div style="background:white;border:1px solid var(--border);border-radius:var(--r-md);padding:10px 14px;margin-bottom:7px">'
-      + '<div style="display:flex;align-items:flex-start;gap:10px">'
-      + '<div style="font-size:20px;flex-shrink:0;margin-top:2px">' + icon + '</div>'
-      + '<div style="flex:1;min-width:0">'
-      + '<div style="font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:2px">' + label + '</div>'
-      + (nota ? '<div style="font-size:11px;color:var(--sub);margin-bottom:5px;line-height:1.5">' + nota + '</div>' : '')
-      + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
-      + '<span style="font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.04em">Estado actual:</span>'
-      + '<span style="font-size:14px;font-weight:700;color:var(--navy);font-family:IBM Plex Mono,monospace">' + valorActual + '</span>'
-      + (hasMeta ? '<span style="font-size:10px;background:#EEEDFE;color:#534AB7;padding:2px 8px;border-radius:20px;font-weight:600">Meta: ' + meta + '</span>' : '')
-      + '</div>'
-      + '</div></div></div>';
-  }
-
-  // Sección: Financiero
-  html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--navy);margin:.9rem 0 .5rem;display:flex;align-items:center;gap:8px"><span style="flex:1;height:1px;background:var(--border)"></span>Financiero<span style="flex:1;height:1px;background:var(--border)"></span></div>';
-  html += indRow('💰','Ventas mensuales (línea base)', ventas>0?'$'+Math.round(ventas).toLocaleString('es-CO'):'Sin dato', null,
-    'Valor de referencia para calcular la tasa de crecimiento de ventas al finalizar el acompañamiento.');
-  html += indRow('📈','Ventas anuales estimadas', ventasAnual>0?'$'+Math.round(ventasAnual).toLocaleString('es-CO'):'Sin dato', null,
-    'Proyección anual (ventas mes × 12). Base para la meta de mejora de ingresos.');
-  html += indRow('🏷️','Costos mensuales (línea base)', costos>0?'$'+Math.round(costos).toLocaleString('es-CO'):'Sin dato', null,
-    'Base para medir la variación de costos al finalizar el proceso.');
-  var metaIngresos  = ventas > 0 ? '$' + Math.round(ventas * 1.20).toLocaleString('es-CO') + '/mes' : 'Requiere dato de ventas';
-  var metaCostos    = costos > 0 ? '$' + Math.round(costos * 0.90).toLocaleString('es-CO') + '/mes' : 'Requiere dato de costos';
-  var metaVentas    = ventas > 0 ? '$' + Math.round(ventas * 1.30).toLocaleString('es-CO') + '/mes' : 'Requiere dato de ventas';
-  html += indRow('📊','Meta: Mejora de ingresos',
-    ventas > 0 ? 'Actual: $' + Math.round(ventas).toLocaleString('es-CO') + '/mes' : 'Sin dato de ventas',
-    metaIngresos,
-    'Meta +20%: pasar de $' + (ventas>0?Math.round(ventas).toLocaleString('es-CO'):'-') + ' a $' + (ventas>0?Math.round(ventas*1.20).toLocaleString('es-CO'):'-') + ' mensuales al finalizar el acompañamiento.');
-  html += indRow('💹','Meta: Variación de costos',
-    costos > 0 ? 'Actual: $' + Math.round(costos).toLocaleString('es-CO') + '/mes' : 'Sin dato de costos',
-    metaCostos,
-    'Meta reducción ≤10%: bajar de $' + (costos>0?Math.round(costos).toLocaleString('es-CO'):'-') + ' a máximo $' + (costos>0?Math.round(costos*0.90).toLocaleString('es-CO'):'-') + ' mensuales.');
-  html += indRow('🚀','Meta: Crecimiento de ventas',
-    ventas > 0 ? 'Actual: $' + Math.round(ventas).toLocaleString('es-CO') + '/mes' : 'Sin dato de ventas',
-    metaVentas,
-    'Meta +30%: pasar de $' + (ventas>0?Math.round(ventas).toLocaleString('es-CO'):'-') + ' a $' + (ventas>0?Math.round(ventas*1.30).toLocaleString('es-CO'):'-') + ' mensuales al finalizar.');
-
-  // Sección: Empleo
-  html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--navy);margin:.9rem 0 .5rem;display:flex;align-items:center;gap:8px"><span style="flex:1;height:1px;background:var(--border)"></span>Empleo<span style="flex:1;height:1px;background:var(--border)"></span></div>';
-  html += indRow('👥','Personas ocupadas (línea base)', personal>0?personal+' persona(s)':'Sin dato', null,
-    'Incluye al propietario/a y cualquier colaborador fijo o eventual. Base para medir el crecimiento del empleo.');
-  var empDesc = aportes.indexOf('salud y') >= 0 ? 'Salud Y pensión pagados — todos los ocupados cuentan'
-              : aportes.indexOf('solo salud') >= 0 ? 'Solo salud pagada — se estima 50% de ocupados'
-              : aportes.indexOf('solo pensión') >= 0 ? 'Solo pensión pagada — se estima 50% de ocupados'
-              : 'Sin aportes declarados — 0 empleos formales';
-  var metaEmpleo = personal > 0 ? Math.ceil(personal * 1.10) + ' persona(s) (+10%)' : 'Requiere dato de personal';
-  html += indRow('🛡️','Empleos con seguridad social',
-    empFormal + ' de ' + personal + ' persona(s)',
-    null,
-    empDesc);
-  var metaEmpleoVal = personal > 0 ? Math.ceil(personal * 1.10) + ' persona(s)' : 'Requiere dato de personal';
-  html += indRow('📉','Meta: Crecimiento del empleo',
-    personal > 0 ? 'Actual: ' + personal + ' persona(s)' : 'Sin dato',
-    metaEmpleoVal,
-    'Meta +10%: pasar de ' + personal + ' a ' + (personal>0?Math.ceil(personal*1.10):'-') + ' persona(s) ocupadas al finalizar el acompañamiento.');
-
-  // Sección: Formalización
-  html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--navy);margin:.9rem 0 .5rem;display:flex;align-items:center;gap:8px"><span style="flex:1;height:1px;background:var(--border)"></span>Formalización<span style="flex:1;height:1px;background:var(--border)"></span></div>';
-  html += indRow('🏢','Registro Cámara de Comercio', tieneCamara?'✓ Registrado':'✗ Sin registro', null,
-    'Meses de registro: '+(I.meses_reg||0)+'. '+clasif.desc.substring(0,80)+'...');
-  html += indRow('📋','RUT activo', tieneRut?'✓ Tiene RUT':'✗ Sin RUT', null, '');
-  var innAreas = ['Productos/servicios','Procesos productivos','Logística/distribución','Comercialización','Tecnología','Gestión organizativa'];
-  var innDetail = [];
-  for (var ai2=0; ai2<6; ai2++) { var vv2=R['innov_mat_'+ai2]||'Ninguna'; if(vv2!=='Ninguna') innDetail.push(innAreas[ai2]+' ('+vv2+')'); }
-  html += indRow('💡','Innovaciones implementadas (último año)',
-    innCount > 0 ? innCount + ' área(s): ' + innDetail.join(', ') : '0 áreas',
-    null,
-    'Base para medir la innovación al finalizar. Áreas: Productos, Procesos, Logística, Comercialización, Tecnología, Gestión.');
-
-  // Sección: Gestión empresarial
-  html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--navy);margin:.9rem 0 .5rem;display:flex;align-items:center;gap:8px"><span style="flex:1;height:1px;background:var(--border)"></span>Gestión empresarial<span style="flex:1;height:1px;background:var(--border)"></span></div>';
-  html += indRow('📊','Herramientas de presupuesto', tienePresup?'✓ Adoptadas':'✗ No adoptadas', 'Adoptar', 'Nivel contable actual: '+(R.contabilidad||'Sin dato'));
-  html += indRow('🎯','Clientes segmentados', tieneSegm?'✓ Perfil definido':'✗ Sin segmentación', 'Implementar', '');
-  html += indRow('📢','Campañas de marketing', tieneMkt?'✓ Plan activo':'✗ Sin plan', 'Implementar', '');
-  html += indRow('💻','Tecnologías adoptadas', tecCnt>0?tecCnt+' herramienta(s)':'0 herramientas', null, '');
-  html += indRow('🏦','Fuentes de financiamiento', finSrc>0?finSrc+' fuente(s) activa(s)':'0 fuentes', null, '');
-
-  // ── PLAN DE FORTALECIMIENTO ────────────────────────────
-  html += '<div class="s-title" style="margin-top:1.5rem">Plan de Fortalecimiento — ' + clasif.tipo + '</div>';
-  html += '<div style="font-size:11.5px;color:var(--sub);margin-bottom:.85rem;line-height:1.6">'
-    + 'Con base en este diagnóstico de ingreso se diseñará el <strong>Plan de Fortalecimiento individual</strong> para el '
-    + clasif.tipo.toLowerCase() + ', enfocando el acompañamiento formativo y técnico empresarial en los componentes con mayor necesidad, '
-    + 'con el fin de mejorar su <strong>sostenibilidad, productividad y crecimiento</strong>.'
-    + '</div>';
-
-  var dimKeys = Object.keys(DIMS_META);
-  var sorted  = dimKeys.slice().sort(function(a,b){ return scores[a]-scores[b]; });
-  for (var i=0; i<sorted.length; i++) {
-    var dim=sorted[i], sc=scores[dim]||0, m=DIMS_META[dim];
-    var col=sc>=65?m.bar:sc>=40?'#E8A020':'#C0392B';
-    var badge=sc<40?'Prioritario':sc<65?'Mejorar':'Fortaleza';
-    var badgeBg=sc<40?'#FCEBEB':sc<65?'#FAEEDA':'#DCFCE7';
-    var badgeFg=sc<40?'#7B1F1F':sc<65?'#6B3A06':'#14532D';
-    html += '<div style="border:1.5px solid '+(sc<40?'#FCA5A5':sc<65?'#FCD34D':'#86EFAC')+';border-radius:var(--r-lg);margin-bottom:12px;overflow:hidden">'
-      +'<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:'+(sc<40?'#FEF6F5':sc<65?'#FFFBF0':'#F0FDF4')+'">'
-      +'<div style="width:30px;height:30px;border-radius:50%;background:'+col+';display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;flex-shrink:0">'+(i+1)+'</div>'
-      +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:var(--text)">'+m.name+'</div>'
-      +'<div style="display:flex;align-items:center;gap:6px;margin-top:3px">'
-      +'<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:'+badgeBg+';color:'+badgeFg+'">'+badge+'</span>'
-      +'<span style="font-size:10px;color:'+col+';font-weight:600">'+getLvl(sc)[0]+'</span>'
-      +'</div></div>'
-      +'<div style="font-size:24px;font-weight:700;font-family:IBM Plex Mono,monospace;color:'+col+';flex-shrink:0">'+sc+'%</div>'
-      +'</div>'
-      +'<div style="height:5px;background:#E8ECF2"><div style="height:100%;width:'+sc+'%;background:'+col+'"></div></div>'
-      +'<div style="padding:12px 14px">'
-      +'<div style="font-size:12.5px;color:var(--text);line-height:1.75;padding:10px 12px;background:white;border-radius:var(--r-sm);border:1px solid var(--border);border-left:4px solid '+col+'">'
-      +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:'+col+';margin-bottom:5px">&#128161; Recomendación estratégica</div>'
-      +getRec(dim,sc)
-      +'</div></div></div>';
-  }
-
-  // ── NECESIDADES ──────────────────────────────────────
-  var needs=getNeeds(scores);
-  html+='<div class="s-title" style="margin-top:.5rem">Necesidades de acompañamiento identificadas</div>';
-  html+='<div class="needs-pills">';
-  for(var j=0;j<needs.length;j++) html+='<span class="need-pill">'+needs[j]+'</span>';
-  html+='</div>';
-
-  // ── RUTA ─────────────────────────────────────────────
-  html+='<div class="s-title" style="margin-top:1.25rem">Ruta de acompañamiento recomendada</div>';
-  var u2=sorted.filter(function(d){return scores[d]<40;}).slice(0,2);
-  var i2=sorted.filter(function(d){return scores[d]>=40&&scores[d]<65;}).slice(0,2);
-  var g2=sorted.filter(function(d){return scores[d]>=65;}).slice(0,2);
-  function ph2(items,bg,dot,lbl,ico){
-    if(!items.length) return '';
-    var its='';
-    for(var j=0;j<items.length;j++){var d=items[j];its+='<div class="ap-item"><strong>'+DIMS_META[d].name+'</strong> ('+scores[d]+'%) &mdash; '+getRec(d,scores[d]).split('.')[0]+'.</div>';}
-    return '<div style="margin-bottom:.85rem"><div class="ap-head" style="background:'+bg+'"><div class="ap-dot" style="background:'+dot+'"></div><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:'+dot+'">'+ico+' '+lbl+'</span></div><div class="ap-items">'+its+'</div></div>';
-  }
-  html+=ph2(u2,'#FEF2F2','#C0392B','Componentes críticos — atención inmediata','🔴');
-  html+=ph2(i2,'#FFFBF0','#E8A020','Componentes en desarrollo — mejora progresiva','🟡');
-  html+=ph2(g2,'#F0FDF4','#00863E','Componentes sólidos — sostener y potenciar','🟢');
-
-  html+='<div class="res-actions" style="flex-direction:column;gap:12px">'
-    +'<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">'
-    +'<button class="btn primary" onclick="abrirAI()" style="background:var(--purple);border-color:var(--purple);font-size:13.5px">&#129302; An&#225;lisis con IA</button>'
-    +'<button class="btn" style="background:var(--green);border-color:var(--green);color:white" onclick="exportPDF()">&#8595; Descargar PDF</button>'
-    +'<button class="btn" onclick="restart()">&#8592; Nuevo diagn&#243;stico</button>'
-    +'</div>'
-    +'<div style="font-size:11.5px;color:var(--sub);text-align:center;margin-top:4px">La IA genera an&#225;lisis completo, comparativo antes/despu&#233;s y recomendaciones estrat&#233;gicas</div>'
-    +'</div>';
-
-  var res=gid('results');
-  res.innerHTML=html;
-  res.classList.add('show');
-  setTimeout(function(){ drawSpider(scores); }, 50);
-}
-
-function getRec(dim, sc) {
-  var texts = {
-    mercado: {
-      low: 'Define con urgencia quién es tu cliente ideal: edad, ubicación, necesidades y comportamiento de compra. Sin claridad de mercado, los demás esfuerzos serán ineficientes. Inicia con 10 entrevistas a clientes potenciales y registra los resultados.',
-      mid: 'Tienes avances en conocer tu mercado. Profundiza en la segmentación: crea perfiles detallados de cliente, implementa una herramienta básica para medir satisfacción (encuesta sencilla o Google Forms) y analiza desde qué zonas provienen tus ventas.',
-      high: 'Buen conocimiento de tu mercado. Avanza hacia análisis más sofisticados: calcula el tamaño de mercado potencial, implementa Net Promoter Score (NPS) para medir fidelidad y desarrolla estrategias para entrar a nuevos segmentos o geografías.'
-    },
-    oferta: {
-      low: 'Tu propuesta de valor necesita definición urgente. Responde: ¿qué problema concreto resuelves?, ¿por qué un cliente te elegiría a ti y no a la competencia? Documenta tu oferta por escrito, define precios con base en costos y márgenes, y valida con clientes reales antes de escalar.',
-      mid: 'Tienes una oferta básica definida. Fortalécela: documenta formalmente tu portafolio con precios y condiciones, elabora tu propuesta de valor diferencial por escrito y crea una metodología de precios que considere costos, margen y competencia.',
-      high: 'Oferta bien estructurada y diferenciada. Evoluciona hacia innovación incremental: recoge retroalimentación sistemática de clientes para mejorar continuamente, explora extensiones de línea o nuevos servicios complementarios y protege tu diferenciación frente a competidores.'
-    },
-    rentabilizacion: {
-      low: 'Situación financiera crítica. Prioridades: (1) registra todos los ingresos y gastos desde hoy, aunque sea en un cuaderno; (2) separa las finanzas del negocio de las personales; (3) calcula cuánto necesitas vender cada mes para cubrir costos (punto de equilibrio).',
-      mid: 'Control financiero básico en marcha. Avanza hacia: implementar un flujo de caja mensual, adoptar una herramienta digital (Excel o software gratuito), diversificar fuentes de financiamiento y establecer márgenes de rentabilidad por producto o servicio.',
-      high: 'Buena gestión financiera. Optimiza: analiza la rentabilidad por línea de producto, busca reducir costos variables sin afectar calidad, establece reservas de capital y evalúa opciones de crédito para financiar el crecimiento.'
-    },
-    comercializacion: {
-      low: 'Sin estrategia de comercialización definida. Comienza por: (1) elegir 1-2 canales de venta o distribución donde está tu cliente; (2) definir cómo contactarás, venderás y harás seguimiento postventa; (3) documentar el proceso para que sea repetible.',
-      mid: 'Procesos de venta básicos. Formaliza: crea un proceso de ventas documentado paso a paso, establece metas de ventas para los próximos 12 meses, define tus canales de distribución y trabaja en fidelizar a los clientes actuales antes de buscar nuevos.',
-      high: 'Modelo de comercialización sólido. Escala: implementa herramientas de CRM para gestionar clientes, automatiza partes del proceso comercial, analiza el ticket promedio y trabaja en estrategias para aumentarlo (upselling, cross-selling).'
-    },
-    madurez: {
-      low: 'Nivel de madurez empresarial bajo. Prioridades: (1) regístrate ante Cámara de Comercio y obtén el RUT; (2) asegura los aportes de seguridad social; (3) adopta al menos 2-3 herramientas digitales básicas (WhatsApp Business, Drive, billetera digital).',
-      mid: 'Estructura básica en construcción. Fortalece: completa trámites pendientes de formalización, amplía el uso de tecnología en operaciones clave, documenta los procesos principales del negocio y define roles claros en el equipo.',
-      high: 'Buena madurez administrativa. Evoluciona hacia: adoptar tecnologías más avanzadas (CRM, ERP básico, comercio electrónico), implementar indicadores de gestión (KPIs), sistematizar procesos y trabajar en un plan estratégico a 2-3 años.'
-    }
-  };
-  var lv = sc < 40 ? 'low' : sc < 65 ? 'mid' : 'high';
-  return texts[dim] ? texts[dim][lv] : '';
-}
-
-function getNeeds(scores) {
-  var n = [];
-  if ((scores.mercado          || 0) < 60) n.push('Estrategia de mercado y segmentación');
-  if ((scores.oferta           || 0) < 60) n.push('Definición y documentación de oferta de valor');
-  if ((scores.rentabilizacion  || 0) < 60) n.push('Gestión financiera y estructura de costos');
-  if ((scores.comercializacion || 0) < 60) n.push('Modelo y proceso de comercialización');
-  if ((scores.madurez          || 0) < 60) n.push('Formalización y apropiación tecnológica');
-  if (n.length === 0) n.push('Escalabilidad y crecimiento sostenido', 'Innovación y diferenciación avanzada');
-  return n;
-}
-
-
-function showResults() {
-  gid('steps').style.display = 'none';
-  document.querySelector('.prog').style.display = 'none';
-  var scores = calcScores();
-  var ovr    = getOverall(scores);
-  var lvl    = getLvl(ovr);
-  var I = ST.info, R = ST.R;
-  window._DIME = { scores: scores, ovr: ovr, lvl: lvl, I: I, R: R };
-
-  // ── Indicadores base ──
-  var ventas      = parseFloat(R.ventas) || 0;
-  var ventasAnual = ventas * 12;
-  var personal    = parseInt(R.personal) || 0;
-  var aportes     = R.aportes || '';
-  var empFormal   = aportes.indexOf('salud y') >= 0 ? personal : aportes.indexOf('solo') >= 0 ? Math.ceil(personal * 0.5) : 0;
-  var tieneCamara = (R.tramites || []).some(function(t){ return t.indexOf('mara') >= 0; });
-  var tieneRut    = I.tiene_rut === 'Sí' || I.tiene_rut === 'Si';
-  var tienePresup = R.contabilidad && CONTABILIDAD.indexOf(R.contabilidad) >= 2;
-  var tieneSegm   = (R.elems_com || []).some(function(e){ return e.indexOf('Perfil') >= 0; });
-  var tieneMkt    = (R.elems_com || []).some(function(e){ return e.indexOf('marketing') >= 0 || e.indexOf('Plan') >= 0; });
-  var innCount    = 0;
-  for (var ai = 0; ai < 6; ai++) { var vv = R['innov_mat_' + ai] || 'Ninguna'; if (vv !== 'Ninguna') innCount++; }
-  var tecCnt      = (R.tecnologias || []).filter(function(t){ return t !== 'Ninguna'; }).length;
-  var finSrc      = (R.financiamiento || []).filter(function(f){ return f !== 'Ninguno'; }).length;
-
-  // ── Hero ──
-  var html = '<div class="res-hero">'
-    + '<div class="res-pct">' + ovr + '%</div>'
-    + '<div><div class="res-badge">' + lvl[0] + '</div>'
-    + '<div class="res-h2">' + (I.razon || 'Tu negocio') + '</div>'
-    + '<div class="res-sub">' + [I.municipio, I.sector, I.antiguedad].filter(Boolean).join(' &middot; ') + '</div>'
-    + '</div></div>';
-
-  // ── Indicadores de línea base ──
-  html += '<div class="s-title">Indicadores de línea base</div>';
-  html += '<div style="font-size:11.5px;color:var(--sub);margin-bottom:.85rem;line-height:1.6">'
-    + 'Estos indicadores registran el estado actual del emprendimiento y servirán como punto de comparación '
-    + 'para el <strong>Informe de Diagnóstico de Salida</strong> al finalizar el proceso de acompañamiento.'
-    + '</div>';
-
-  function indCard(icon, label, valor, nota) {
-    return '<div class="ind-card">'
-      + '<div style="font-size:18px;margin-bottom:3px">' + icon + '</div>'
-      + '<div class="ind-lbl">' + label + '</div>'
-      + '<div class="ind-val">' + valor + '</div>'
-      + (nota ? '<div style="font-size:10px;color:var(--sub);margin-top:2px;line-height:1.4">' + nota + '</div>' : '')
-      + '</div>';
-  }
-  html += '<div class="ind-grid">';
-  html += indCard('💰', 'Ventas / mes', ventas > 0 ? '$' + Math.round(ventas).toLocaleString('es-CO') : 'Sin dato', 'Línea base');
-  html += indCard('📈', 'Ventas anuales estimadas', ventasAnual > 0 ? '$' + Math.round(ventasAnual).toLocaleString('es-CO') : 'Sin dato', 'Proyección × 12');
-  html += indCard('👥', 'Personas ocupadas', personal > 0 ? personal : 'Sin dato', 'Incl. propietario/a');
-  html += indCard('🛡️', 'Con seguridad social', empFormal > 0 ? empFormal : (personal > 0 ? '0' : 'Sin dato'), 'Salud y/o pensión');
-  html += indCard('🏢', 'Cámara de Comercio', tieneCamara ? '✓ Registrado' : '✗ Sin registro', '');
-  html += indCard('📋', 'RUT activo', tieneRut ? '✓ Tiene RUT' : '✗ Sin RUT', '');
-  html += indCard('📊', 'Herr. presupuesto', tienePresup ? '✓ Adoptadas' : '✗ No adoptadas', 'Objetivo: adoptar');
-  html += indCard('🧩', 'Clientes segmentados', tieneSegm ? '✓ Sí' : '✗ No', 'Perfil definido');
-  html += indCard('📢', 'Marketing activo', tieneMkt ? '✓ Sí' : '✗ No', 'Plan o campaña');
-  html += indCard('💡', 'Innovaciones (último año)', innCount > 0 ? innCount + ' área(s)' : '0', 'Áreas con cambios');
-  html += indCard('💻', 'Tecnologías adoptadas', tecCnt > 0 ? tecCnt : '0', 'Herramientas en uso');
-  html += indCard('🏦', 'Fuentes financiación', finSrc > 0 ? finSrc : '0', 'Fuentes activas');
-  html += '</div>';
-
-  // ── Diagnóstico + Recomendaciones integrados por componente ──
-  html += '<div class="s-title" style="margin-top:1.5rem">Plan de Fortalecimiento Empresarial</div>';
-  html += '<div style="font-size:11.5px;color:var(--sub);margin-bottom:.85rem;line-height:1.6">'
-    + 'Con base en este diagnóstico se diseñará el <strong>Plan de Fortalecimiento</strong> individual, '
-    + 'enfocando el acompañamiento formativo y técnico en los componentes con mayor necesidad de mejora, '
-    + 'para potenciar la <strong>sostenibilidad, productividad y crecimiento</strong> del emprendimiento.'
-    + '</div>';
-
-  var dimKeys = Object.keys(DIMS_META);
-  var sorted  = dimKeys.slice().sort(function(a,b){ return scores[a] - scores[b]; });
-
-  for (var i = 0; i < sorted.length; i++) {
-    var dim = sorted[i], sc = scores[dim] || 0, m = DIMS_META[dim];
-    var col     = sc >= 65 ? m.bar : sc >= 40 ? '#E8A020' : '#C0392B';
-    var cls     = sc < 40 ? 'urgent' : sc < 65 ? 'improve' : 'good';
-    var badge   = sc < 40 ? 'Prioritario' : sc < 65 ? 'Mejorar' : 'Fortaleza';
-    var badgeBg = sc < 40 ? '#FCEBEB' : sc < 65 ? '#FAEEDA' : '#DCFCE7';
-    var badgeFg = sc < 40 ? '#7B1F1F' : sc < 65 ? '#6B3A06' : '#14532D';
-    var rec = getRec(dim, sc);
-    var num = i + 1;
-
-    html += '<div style="border:1.5px solid ' + (sc < 40 ? '#FCA5A5' : sc < 65 ? '#FCD34D' : '#86EFAC') + ';border-radius:var(--r-lg);margin-bottom:12px;overflow:hidden">'
-      // Header
-      + '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:' + (sc < 40 ? '#FEF6F5' : sc < 65 ? '#FFFBF0' : '#F0FDF4') + '">'
-      + '<div style="width:28px;height:28px;border-radius:50%;background:' + col + ';display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;flex-shrink:0">' + num + '</div>'
-      + '<div style="flex:1;min-width:0">'
-      + '<div style="font-size:13px;font-weight:700;color:var(--text)">' + m.name + '</div>'
-      + '<div style="display:flex;align-items:center;gap:6px;margin-top:3px">'
-      + '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:' + badgeBg + ';color:' + badgeFg + '">' + badge + '</span>'
-      + '<span style="font-size:10px;color:' + col + ';font-weight:600">' + getLvl(sc)[0] + '</span>'
-      + '</div></div>'
-      + '<div style="font-size:24px;font-weight:700;font-family:IBM Plex Mono,monospace;color:' + col + ';flex-shrink:0">' + sc + '%</div>'
-      + '</div>'
-      // Progress bar
-      + '<div style="height:5px;background:#E8ECF2"><div style="height:100%;width:' + sc + '%;background:' + col + '"></div></div>'
-      // Body
-      + '<div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">'
-      // Recommendation
-      + '<div style="font-size:12.5px;color:var(--text);line-height:1.75;padding:10px 12px;background:white;border-radius:var(--r-sm);border:1px solid var(--border);border-left:4px solid ' + col + '">'
-      + '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:' + col + ';margin-bottom:5px">&#128161; Recomendación estratégica</div>'
-      + rec
-      + '</div>'
-      + '</div></div>';
-  }
-
-  // ── Necesidades + Plan ──
-  var needs = getNeeds(scores);
-  html += '<div class="s-title" style="margin-top:.5rem">Necesidades de acompañamiento identificadas</div>';
-  html += '<div class="needs-pills">';
-  for (var j = 0; j < needs.length; j++) html += '<span class="need-pill">' + needs[j] + '</span>';
-  html += '</div>';
-
-  html += '<div class="s-title" style="margin-top:1.25rem">Ruta de acompañamiento recomendada</div>';
-  var urgent2  = sorted.filter(function(d){ return scores[d] < 40; }).slice(0, 2);
-  var improve2 = sorted.filter(function(d){ return scores[d] >= 40 && scores[d] < 65; }).slice(0, 2);
-  var good2    = sorted.filter(function(d){ return scores[d] >= 65; }).slice(0, 2);
-
-  function ph2(items, bg, dot, lbl, icon) {
-    if (!items.length) return '';
-    var its = '';
-    for (var j = 0; j < items.length; j++) {
-      var d = items[j];
-      its += '<div class="ap-item"><strong>' + DIMS_META[d].name + '</strong> (' + scores[d] + '%) &mdash; ' + getRec(d, scores[d]).split('.')[0] + '.</div>';
-    }
-    return '<div style="margin-bottom:.85rem">'
-      + '<div class="ap-head" style="background:' + bg + '">'
-      + '<div class="ap-dot" style="background:' + dot + '"></div>'
-      + '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:' + dot + '">' + icon + ' ' + lbl + '</span>'
-      + '</div><div class="ap-items">' + its + '</div></div>';
-  }
-
-  html += ph2(urgent2,  '#FEF2F2', '#C0392B', 'Componentes críticos — atención inmediata',   '🔴');
-  html += ph2(improve2, '#FFFBF0', '#E8A020', 'Componentes en desarrollo — mejora progresiva','🟡');
-  html += ph2(good2,    '#F0FDF4', '#00863E', 'Componentes sólidos — sostener y potenciar',  '🟢');
-
-  html += '<div class="res-actions">'
-    + '<button class="btn primary" onclick="exportPDF()">&#8595; Descargar informe PDF</button>'
-    + '<button class="btn" onclick="restart()">&#8592; Nuevo diagnóstico</button>'
-    + '</div>';
-
-  var res = gid('results');
-  res.innerHTML = html;
-  res.classList.add('show');
-}
-
-function getRec(dim, sc) {
-  var texts = {
-    mercado: {
-      low: 'Define con urgencia quién es tu cliente ideal: edad, ubicación, necesidades y comportamiento de compra. Sin claridad de mercado, los demás esfuerzos serán ineficientes. Inicia con 10 entrevistas a clientes potenciales y registra los resultados.',
-      mid: 'Tienes avances en conocer tu mercado. Profundiza en la segmentación: crea perfiles detallados de cliente, implementa una herramienta básica para medir satisfacción (encuesta sencilla o Google Forms) y analiza desde qué zonas provienen tus ventas.',
-      high: 'Buen conocimiento de tu mercado. Avanza hacia análisis más sofisticados: calcula el tamaño de mercado potencial, implementa Net Promoter Score (NPS) para medir fidelidad y desarrolla estrategias para entrar a nuevos segmentos o geografías.'
-    },
-    oferta: {
-      low: 'Tu propuesta de valor necesita definición urgente. Responde: ¿qué problema concreto resuelves?, ¿por qué un cliente te elegiría a ti y no a la competencia? Documenta tu oferta por escrito, define precios con base en costos y márgenes, y valida con clientes reales antes de escalar.',
-      mid: 'Tienes una oferta básica definida. Fortalécela: documenta formalmente tu portafolio con precios y condiciones, elabora tu propuesta de valor diferencial por escrito y crea una metodología de precios que considere costos, margen y competencia.',
-      high: 'Oferta bien estructurada y diferenciada. Evoluciona hacia innovación incremental: recoge retroalimentación sistemática de clientes para mejorar continuamente, explora extensiones de línea o nuevos servicios complementarios y protege tu diferenciación frente a competidores.'
-    },
-    rentabilizacion: {
-      low: 'Situación financiera crítica. Prioridades: (1) registra todos los ingresos y gastos desde hoy, aunque sea en un cuaderno; (2) separa las finanzas del negocio de las personales; (3) calcula cuánto necesitas vender cada mes para cubrir costos (punto de equilibrio).',
-      mid: 'Control financiero básico en marcha. Avanza hacia: implementar un flujo de caja mensual, adoptar una herramienta digital (Excel o software gratuito), diversificar fuentes de financiamiento y establecer márgenes de rentabilidad por producto o servicio.',
-      high: 'Buena gestión financiera. Optimiza: analiza la rentabilidad por línea de producto, busca reducir costos variables sin afectar calidad, establece reservas de capital y evalúa opciones de crédito para financiar el crecimiento.'
-    },
-    comercializacion: {
-      low: 'Sin estrategia de comercialización definida. Comienza por: (1) elegir 1-2 canales de venta o distribución donde está tu cliente; (2) definir cómo contactarás, venderás y harás seguimiento postventa; (3) documentar el proceso para que sea repetible.',
-      mid: 'Procesos de venta básicos. Formaliza: crea un proceso de ventas documentado paso a paso, establece metas de ventas para los próximos 12 meses, define tus canales de distribución y trabaja en fidelizar a los clientes actuales antes de buscar nuevos.',
-      high: 'Modelo de comercialización sólido. Escala: implementa herramientas de CRM para gestionar clientes, automatiza partes del proceso comercial, analiza el ticket promedio y trabaja en estrategias para aumentarlo (upselling, cross-selling).'
-    },
-    madurez: {
-      low: 'Nivel de madurez empresarial bajo. Prioridades: (1) regístrate ante Cámara de Comercio y obtén el RUT; (2) asegura los aportes de seguridad social; (3) adopta al menos 2-3 herramientas digitales básicas (WhatsApp Business, Drive, billetera digital).',
-      mid: 'Estructura básica en construcción. Fortalece: completa trámites pendientes de formalización, amplía el uso de tecnología en operaciones clave, documenta los procesos principales del negocio y define roles claros en el equipo.',
-      high: 'Buena madurez administrativa. Evoluciona hacia: adoptar tecnologías más avanzadas (CRM, ERP básico, comercio electrónico), implementar indicadores de gestión (KPIs), sistematizar procesos y trabajar en un plan estratégico a 2-3 años.'
-    }
-  };
-  var lv = sc < 40 ? 'low' : sc < 65 ? 'mid' : 'high';
-  return texts[dim] ? texts[dim][lv] : '';
-}
-
-function getNeeds(scores) {
-  var n = [];
-  if ((scores.mercado          || 0) < 60) n.push('Estrategia de mercado y segmentación');
-  if ((scores.oferta           || 0) < 60) n.push('Definición y documentación de oferta de valor');
-  if ((scores.rentabilizacion  || 0) < 60) n.push('Gestión financiera y estructura de costos');
-  if ((scores.comercializacion || 0) < 60) n.push('Modelo y proceso de comercialización');
-  if ((scores.madurez          || 0) < 60) n.push('Formalización y apropiación tecnológica');
-  if (n.length === 0) n.push('Escalabilidad y crecimiento sostenido', 'Innovación y diferenciación avanzada');
-  return n;
-}
-
-
-function showResults() {
-  gid('steps').style.display = 'none';
-  document.querySelector('.prog').style.display = 'none';
-  var scores = calcScores();
-  var ovr = getOverall(scores);
-  var lvl = getLvl(ovr);
-  var I = ST.info, R = ST.R;
-  window._DIME = { scores: scores, ovr: ovr, lvl: lvl, I: I, R: R };
-
-  // ── Indicadores  ──
-  var ventas      = parseFloat(R.ventas) || 0;
-  var ventasAnual = ventas * 12;
-  var personal    = parseInt(R.personal) || 0;
-  var finSrc      = (R.financiamiento || []).filter(function(f){ return f !== 'Ninguno'; }).length;
-  var tecCnt      = (R.tecnologias || R.tecnologias || []).filter(function(t){ return t !== 'Ninguna'; }).length;
-  var tieneCamara = (R.tramites || []).some(function(t){ return t.indexOf('Cámara') >= 0 || t.indexOf('Camara') >= 0; });
-  var tieneRut    = I.tiene_rut === 'Sí' || I.tiene_rut === 'Si';
-  var tienePresup = R.contabilidad && CONTABILIDAD.indexOf(R.contabilidad) >= 2;
-  var tieneSegm   = (R.elems_com || []).some(function(e){ return e.indexOf('Perfil') >= 0 || e.indexOf('perfil') >= 0; });
-  var tieneMkt    = (R.elems_com || []).some(function(e){ return e.indexOf('marketing') >= 0 || e.indexOf('Plan') >= 0; });
-  var innCount    = 0;
-  for (var ai = 0; ai < 6; ai++) { var v = R['innov_mat_' + ai] || 'Ninguna'; if (v !== 'Ninguna') innCount++; }
-  var aportes     = R.aportes || '';
-  var empleoFormal = aportes.indexOf('salud y') >= 0 ? personal : aportes.indexOf('solo') >= 0 ? Math.ceil(personal * 0.5) : 0;
-
-  // ── Hero ──
-  var html = '<div class="res-hero">'
-    + '<div class="res-pct">' + ovr + '%</div>'
-    + '<div><div class="res-badge">' + lvl[0] + '</div>'
-    + '<div class="res-h2">' + (I.razon || 'Tu negocio') + '</div>'
-    + '<div class="res-sub">' + [I.municipio, I.sector, I.antiguedad].filter(Boolean).join(' &middot; ') + '</div>'
-    + '</div></div>';
-
-  // ── Indicadores  con metas ──
-  html += '<div class="s-title">Indicadores del convenio</div>';
-  html += '<div style="font-size:11.5px;color:var(--sub);margin-bottom:.85rem;line-height:1.6">'
-    + 'Estos son los indicadores de seguimiento definidos en el convenio Ecopetrol Emprende &mdash; Unillanos. '
-    + 'El semáforo muestra el estado actual frente a las metas establecidas.'
-    + '</div>';
-
-  function indRow(label, valor, meta, unidad, notas) {
-    var hasMeta = meta !== null && meta !== undefined;
-    var pct = hasMeta && meta > 0 ? Math.min(100, Math.round((valor / meta) * 100)) : null;
-    var col = !hasMeta ? '#64748B' : (valor >= meta ? '#00863E' : valor >= meta * 0.5 ? '#E8A020' : '#C0392B');
-    var semaforo = !hasMeta ? '⬜' : (valor >= meta ? '🟢' : valor >= meta * 0.5 ? '🟡' : '🔴');
-    var display = unidad === 'COP' ? (valor > 0 ? '$' + Math.round(valor).toLocaleString('es-CO') : 'Sin dato')
-                : unidad === '%'   ? (valor > 0 ? valor + '%' : 'Sin dato')
-                : unidad === 'bool'? (valor ? 'Sí' : 'No')
-                : (valor > 0 ? valor : 'Sin dato');
-    var metaDisplay = hasMeta && meta > 0 ? ('Meta: ' + (unidad === 'COP' ? '$' + Math.round(meta).toLocaleString('es-CO') : meta + (unidad === '%' ? '%' : ''))) : 'Sin meta definida';
-    return '<div style="display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--border);border-radius:var(--r-md);padding:10px 12px;margin-bottom:6px">'
-      + '<div style="font-size:18px;flex-shrink:0">' + semaforo + '</div>'
-      + '<div style="flex:1;min-width:0">'
-      + '<div style="font-size:12px;font-weight:600;color:var(--text)">' + label + '</div>'
-      + (notas ? '<div style="font-size:10.5px;color:var(--sub);margin-top:1px">' + notas + '</div>' : '')
-      + '</div>'
-      + '<div style="text-align:right;flex-shrink:0">'
-      + '<div style="font-size:15px;font-weight:700;font-family:IBM Plex Mono,monospace;color:' + col + '">' + display + '</div>'
-      + '<div style="font-size:10px;color:var(--sub)">' + metaDisplay + '</div>'
-      + '</div></div>';
-  }
-
-  // Indicadores financieros
-  html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--navy);margin:.75rem 0 .5rem;padding-left:4px;border-left:3px solid var(--navy)">Financiero</div>';
-  html += indRow('Ventas mensuales (línea de base)', ventas, null, 'COP', 'Se usarán para calcular la tasa de crecimiento al finalizar el acompañamiento');
-  html += indRow('Ventas anuales estimadas', ventasAnual, null, 'COP', 'Proyección: ventas mes × 12');
-  html += indRow('Meta: mejora de ingresos', 0, null, null, 'Meta del convenio: 20% de mejora. Se medirá al finalizar el proceso');
-  html += indRow('Meta: variación de costos', 0, null, null, 'Meta del convenio: reducción ≤10%. Se medirá al finalizar el proceso');
-  html += indRow('Herramientas de presupuesto adoptadas', tienePresup ? 1 : 0, 1, 'bool', 'Según nivel de sistema contable actual (básico o superior)');
-
-  // Indicadores comerciales
-  html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--navy);margin:.85rem 0 .5rem;padding-left:4px;border-left:3px solid var(--navy)">Comercial</div>';
-  html += indRow('Clientes segmentados', tieneSegm ? 1 : 0, 1, 'bool', 'Tiene perfil de clientes definido (edad, ubicación, tipo de cliente)');
-  html += indRow('Campañas de marketing activas', tieneMkt ? 1 : 0, 1, 'bool', 'Cuenta con plan de crecimiento comercial o proceso de ventas documentado');
-  html += indRow('Meta: crecimiento de ventas', 0, null, null, 'Meta del convenio: 30%. Se medirá al finalizar el proceso de acompañamiento');
-
-  // Indicadores de empleo
-  html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--navy);margin:.85rem 0 .5rem;padding-left:4px;border-left:3px solid var(--navy)">Empleo</div>';
-  html += indRow('Personas ocupadas (línea de base)', personal, null, null, 'Incluye al propietario/a. Base para medir crecimiento del empleo');
-  html += indRow('Empleos con seguridad social', empleoFormal, null, null, 'Estimado según el pago de aportes de salud y/o pensión declarado');
-  html += indRow('Meta: crecimiento del empleo', 0, null, null, 'Meta del convenio: 10%. Se medirá al finalizar el acompañamiento');
-
-  // Indicadores de formalización e innovación
-  html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--navy);margin:.85rem 0 .5rem;padding-left:4px;border-left:3px solid var(--navy)">Formalización e Innovación</div>';
-  html += indRow('Registrado ante Cámara de Comercio', tieneCamara ? 1 : 0, 1, 'bool', 'Meta del convenio: formalizar ideas de negocio');
-  html += indRow('Tiene RUT activo', tieneRut ? 1 : 0, 1, 'bool', '');
-  html += indRow('Innovaciones implementadas (último año)', innCount, null, null, 'Número de áreas del negocio donde implementó innovaciones');
-
-  // ── Diagnóstico por dimensión CON recomendación inline ──
-  html += '<div class="s-title" style="margin-top:1.5rem">Diagnóstico por dimensión y recomendaciones</div>';
-  html += '<div style="font-size:11.5px;color:var(--sub);margin-bottom:.85rem;line-height:1.6">'
-    + 'Cada dimensión muestra el puntaje, el nivel de madurez, cómo se calcula y la recomendación específica para mejorar.'
-    + '</div>';
-
-  var dimKeys = Object.keys(DIMS_META);
-  var sorted  = dimKeys.slice().sort(function(a,b){ return scores[a] - scores[b]; });
-
-  for (var i = 0; i < sorted.length; i++) {
-    var dim = sorted[i], sc = scores[dim] || 0, m = DIMS_META[dim];
-    var col   = sc >= 65 ? m.bar : sc >= 40 ? '#E8A020' : '#C0392B';
-    var cls   = sc < 40 ? 'urgent' : sc < 65 ? 'improve' : 'good';
-    var badge = sc < 40 ? 'Prioritario' : sc < 65 ? 'Mejorar' : 'Sostener';
-    var badgeBg = sc < 40 ? '#FCEBEB' : sc < 65 ? '#FAEEDA' : '#DCFCE7';
-    var badgeFg = sc < 40 ? '#7B1F1F' : sc < 65 ? '#6B3A06' : '#14532D';
-    var rec = getRec(dim, sc);
-
-    html += '<div style="border:1.5px solid ' + (sc < 40 ? '#FCA5A5' : sc < 65 ? '#FCD34D' : '#86EFAC') + ';border-radius:var(--r-lg);margin-bottom:12px;overflow:hidden">'
-      // Header row: icon + name + badge + score
-      + '<div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:' + (sc < 40 ? '#FEF6F5' : sc < 65 ? '#FFFBF0' : '#F0FDF4') + '">'
-      + '<div style="width:38px;height:38px;border-radius:var(--r-sm);background:' + m.color + ';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:IBM Plex Mono,monospace;color:' + col + ';flex-shrink:0">' + sc + '%</div>'
-      + '<div style="flex:1;min-width:0">'
-      + '<div style="font-size:13px;font-weight:700;color:var(--text)">' + m.name + '</div>'
-      + '<div style="display:flex;align-items:center;gap:6px;margin-top:3px">'
-      + '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:' + badgeBg + ';color:' + badgeFg + '">' + badge + '</span>'
-      + '<span style="font-size:10px;color:' + col + ';font-weight:600">' + getLvl(sc)[0] + '</span>'
-      + '</div></div>'
-      + '<div style="text-align:right;flex-shrink:0"><span style="font-size:22px;font-weight:700;font-family:IBM Plex Mono,monospace;color:' + col + '">' + sc + '%</span></div>'
-      + '</div>'
-      // Progress bar
-      + '<div style="height:6px;background:#E8ECF2"><div style="height:100%;width:' + sc + '%;background:' + col + ';transition:width .6s"></div></div>'
-      // Body: cómo se calcula + recomendación
-      + '<div style="padding:12px 14px">'
-      + '<div style="font-size:11px;color:#64748B;line-height:1.65;margin-bottom:10px;padding:8px 10px;background:#F8F9FB;border-radius:var(--r-sm);border-left:3px solid ' + m.bar + '">'
-      + '<strong style="color:#374151;font-size:10px;text-transform:uppercase;letter-spacing:.04em">&#8505; Cómo se calcula: </strong>' + m.crit
-      + '</div>'
-      + '<div style="font-size:12.5px;color:var(--text);line-height:1.7;padding:8px 10px;background:white;border-radius:var(--r-sm);border:1px solid var(--border)">'
-      + '<strong style="font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:' + col + '">&#128161; Recomendación: </strong>' + rec
-      + '</div>'
-      + '</div>'
-      + '</div>';
-  }
-
-  // ── Necesidades + Plan de acompañamiento ──
-  var needs = getNeeds(scores);
-  html += '<div class="s-title" style="margin-top:.5rem">Necesidades para el acompañamiento</div>';
-  html += '<div class="needs-pills">';
-  for (var i = 0; i < needs.length; i++) html += '<span class="need-pill">' + needs[i] + '</span>';
-  html += '</div>';
-
-  html += '<div class="s-title" style="margin-top:1.25rem">Plan de acompañamiento recomendado</div>';
-  var urgent2  = sorted.filter(function(d){ return scores[d] < 40; }).slice(0,3);
-  var improve2 = sorted.filter(function(d){ return scores[d] >= 40 && scores[d] < 65; }).slice(0,3);
-  var good2    = sorted.filter(function(d){ return scores[d] >= 65; }).slice(0,2);
-
-  function ph2(items, bg, dot, lbl) {
-    if (!items.length) return '';
-    var its = '';
-    for (var i = 0; i < items.length; i++) {
-      var d = items[i];
-      its += '<div class="ap-item"><strong>' + DIMS_META[d].name + '</strong> (' + scores[d] + '%) &mdash; ' + getRec(d, scores[d]).split('.')[0] + '.</div>';
-    }
-    return '<div style="margin-bottom:.85rem"><div class="ap-head" style="background:' + bg + '">'
-      + '<div class="ap-dot" style="background:' + dot + '"></div>'
-      + '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:' + dot + '">' + lbl + '</span>'
-      + '</div><div class="ap-items">' + its + '</div></div>';
-  }
-
-  html += ph2(urgent2,  '#FEF2F2', '#C0392B', 'Acción inmediata — Primeras 4 semanas');
-  html += ph2(improve2, '#FFFBF0', '#E8A020', 'Mejora progresiva — Primeros 3 meses');
-  html += ph2(good2,    '#F0FDF4', '#00863E', 'Sostener y optimizar');
-
-  html += '<div class="res-actions">'
-    + '<button class="btn primary" onclick="exportPDF()">&#8595; Descargar PDF</button>'
-    + '<button class="btn" onclick="restart()">&#8592; Nuevo diagnóstico</button>'
-    + '</div>';
-
-  var res = gid('results');
-  res.innerHTML = html;
-  res.classList.add('show');
-}
-
-// ============================================================
+// ═══════════════════════════════════════════════
 // PDF EXPORT
-// ============================================================
-function cl(s) { return (s || '').replace(/[^\x00-\xFF]/g, '').replace(/\s{2,}/g, ' ').trim(); }
-
+// ═══════════════════════════════════════════════
 function exportPDF() {
   if (!window.jspdf) { alert('La libreria PDF aun esta cargando. Intenta en un momento.'); return; }
   var D = window._DIME;
@@ -1868,7 +2460,7 @@ function exportPDF() {
     var metaHdr=[D.I.municipio,D.I.sector,D.I.antiguedad].filter(Boolean).map(cl).join('  ·  ');
     if(metaHdr) doc.text(metaHdr, centerX, 57, {align:'center'});
     doc.setFontSize(6.5); doc.setTextColor(180,200,240);
-    var tipoDiagText = D.I && D.I.tipo_diag ? cl(D.I.tipo_diag) : 'Diagnostico de Ingreso — Linea Base';
+    var tipoDiagText = D.MODO==='salida'?'Diagnostico de Salida - Evaluacion Final':D.MODO==='seguimiento'?'Diagnostico de Seguimiento - Monitoreo':'Diagnostico de Ingreso - Linea Base';
     doc.text(tipoDiagText+' · '+new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'long',year:'numeric'}), centerX, 63, {align:'center'});
     doc.setTextColor(30,30,28);
     y = 76;
@@ -1876,7 +2468,7 @@ function exportPDF() {
     // ═══════════════════════════════════════════════════
     // CLASIFICACIÓN Y RESULTADO GLOBAL
     // ═══════════════════════════════════════════════════
-    var clasif = D.clasif || clasificar(D.I, D.R) || {tipo:'Emprendimiento', color:'#C97A0A'};
+    var clasif = D.clasif || {tipo:'Emprendimiento', color:'#C97A0A', bg:'#FAEEDA'};
     doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(27,58,107);
     doc.text('Clasificacion: '+clasif.tipo, ML, y); y+=6;
     doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(60,60,58);
@@ -2161,410 +2753,128 @@ function exportPDF() {
   } catch(e){ console.error('PDF error:', e); alert('Error al generar PDF: '+e.message); }
 }
 
-// ============================================================
-// RESTART
-// ============================================================
-function restart() {
-  ST = { step: 0, info: {}, R: {} };
-  gid('results').classList.remove('show'); gid('results').innerHTML = '';
-  gid('steps').style.display = '';
-  document.querySelector('.prog').style.display = '';
-  renderStep(0);
-}
-
-// INIT
-renderStep(0);
 </script>
-<!-- AI MODAL -->
-<div class="ai-modal-overlay" id="ai-overlay" style="display:none" onclick="if(event.target===this)cerrarAI()">
-  <div class="ai-modal">
-    <div class="ai-modal-hdr">
-      <div style="font-size:22px">🤖</div>
-      <h2 id="ai-modal-title">Análisis con Inteligencia Artificial</h2>
-      <span class="badge" id="ai-modal-badge">IA Generativa</span>
-      <button onclick="cerrarAI()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;padding:0 0 0 8px">&times;</button>
-    </div>
-    <div class="ai-modal-body" id="ai-modal-body">
-      <!-- Menu de opciones IA -->
-      <div id="ai-menu">
-        <p style="font-size:13px;color:var(--sub);margin-bottom:1rem;line-height:1.6">
-          Selecciona el tipo de análisis que deseas generar. La IA utilizará todos los datos del diagnóstico para producir un informe personalizado.
-        </p>
-        <button class="ai-section-btn" onclick="generarIA('informe_ingreso')">
-          <div class="ai-icon" style="background:#EEF0FE">📋</div>
-          <div style="flex:1">
-            <div>Informe de Diagnóstico de Ingreso — Línea Base</div>
-            <div class="ai-desc">Análisis completo del estado actual del emprendimiento con fortalezas, brechas y contexto estratégico</div>
-          </div>
-          <div style="font-size:18px;color:var(--sub)">›</div>
-        </button>
-        <button class="ai-section-btn" onclick="generarIA('recomendaciones')">
-          <div class="ai-icon" style="background:#EAF3DE">💡</div>
-          <div style="flex:1">
-            <div>Recomendaciones Estratégicas de Fortalecimiento</div>
-            <div class="ai-desc">Plan de acción personalizado por componente con acciones concretas, herramientas y recursos específicos</div>
-          </div>
-          <div style="font-size:18px;color:var(--sub)">›</div>
-        </button>
-        <button class="ai-section-btn" onclick="generarIA('plan_fortalecimiento')">
-          <div class="ai-icon" style="background:#FAEEDA">🎯</div>
-          <div style="flex:1">
-            <div>Plan de Fortalecimiento Empresarial Personalizado</div>
-            <div class="ai-desc">Hoja de ruta con objetivos, actividades, indicadores y cronograma para el período de acompañamiento</div>
-          </div>
-          <div style="font-size:18px;color:var(--sub)">›</div>
-        </button>
-        <button class="ai-section-btn" id="btn-comparativo" onclick="generarIA('comparativo')" style="display:none">
-          <div class="ai-icon" style="background:#E6F1FB">📊</div>
-          <div style="flex:1">
-            <div>Informe Comparativo Antes / Después</div>
-            <div class="ai-desc">Análisis del avance real, cumplimiento de metas del convenio y evaluación de impacto del acompañamiento</div>
-          </div>
-          <div style="font-size:18px;color:var(--sub)">›</div>
-        </button>
-        <button class="ai-section-btn" id="btn-informe_salida" onclick="generarIA('informe_salida')" style="display:none">
-          <div class="ai-icon" style="background:#FBEAF0">🏁</div>
-          <div style="flex:1">
-            <div>Informe de Diagnóstico de Salida</div>
-            <div class="ai-desc">Evaluación final del proceso, logros alcanzados, metas cumplidas y sostenibilidad del emprendimiento</div>
-          </div>
-          <div style="font-size:18px;color:var(--sub)">›</div>
-        </button>
-      </div>
-      <!-- Resultado IA -->
-      <div id="ai-result" style="display:none">
-        <button onclick="volverMenu()" style="background:none;border:none;color:var(--navy);font-size:13px;font-weight:600;cursor:pointer;padding:0 0 1rem 0;display:flex;align-items:center;gap:4px">&#8592; Volver al menú</button>
-        <div id="ai-output"></div>
-      </div>
-    </div>
-    <div class="ai-modal-footer">
-      <button class="btn primary" id="ai-copy-btn" style="display:none" onclick="copiarAnalisis()">📋 Copiar texto</button>
-      <button class="btn" onclick="cerrarAI()">Cerrar</button>
-      <div id="ai-footer-note" style="flex:1;font-size:11px;color:var(--sub);text-align:right;line-height:1.4"></div>
-    </div>
-  </div>
-</div>
 
 <script>
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 // AI INTEGRATION — Claude API
-// ═══════════════════════════════════════════════════════
-
-var AI_CURRENT_TYPE = null;
+// ═══════════════════════════════════════════════
 var AI_CURRENT_TEXT = '';
 
 function abrirAI() {
   var D = window._DIME;
   if (!D) { alert('Primero completa el diagnóstico.'); return; }
-
-  // Show/hide comparativo buttons based on tipo_diag
-  var esSalida = D.I.tipo_diag && D.I.tipo_diag.indexOf('Salida') >= 0;
-  document.getElementById('btn-comparativo').style.display    = esSalida ? 'flex' : 'none';
-  document.getElementById('btn-informe_salida').style.display = esSalida ? 'flex' : 'none';
-
-  document.getElementById('ai-menu').style.display   = 'block';
-  document.getElementById('ai-result').style.display = 'none';
-  document.getElementById('ai-copy-btn').style.display = 'none';
-  document.getElementById('ai-overlay').style.display = 'flex';
-  document.getElementById('ai-modal-badge').textContent = D.clasif ? D.clasif.tipo : 'IA Generativa';
-  document.getElementById('ai-footer-note').textContent = 'Análisis generado por IA · Basado en datos del diagnóstico';
+  var esModoAvanzado = D.MODO === 'salida' || D.MODO === 'seguimiento';
+  gid('btn-comparativo').style.display    = esModoAvanzado ? 'flex' : 'none';
+  gid('btn-informe_salida').style.display = D.MODO === 'salida' ? 'flex' : 'none';
+  gid('ai-menu').style.display   = 'block';
+  gid('ai-result').style.display = 'none';
+  gid('ai-copy-btn').style.display = 'none';
+  gid('ai-overlay').style.display  = 'flex';
+  gid('ai-modal-badge').textContent = D.clasif ? D.clasif.tipo : 'IA';
 }
-
-function cerrarAI() {
-  document.getElementById('ai-overlay').style.display = 'none';
-}
-
+function cerrarAI()  { gid('ai-overlay').style.display = 'none'; }
 function volverMenu() {
-  document.getElementById('ai-menu').style.display   = 'block';
-  document.getElementById('ai-result').style.display = 'none';
-  document.getElementById('ai-copy-btn').style.display = 'none';
+  gid('ai-menu').style.display   = 'block';
+  gid('ai-result').style.display = 'none';
+  gid('ai-copy-btn').style.display = 'none';
 }
 
 function construirContexto() {
-  var D = window._DIME;
-  if (!D) return '';
-  var I = D.I, R = D.R, scores = D.scores;
-
-  var dimNames = {
-    mercado:'Mercado objetivo',
-    oferta:'Oferta de valor',
-    rentabilizacion:'Modelo de rentabilización',
-    comercializacion:'Modelo de comercialización',
-    madurez:'Madurez administrativa y financiera'
-  };
-
-  var puntajes = Object.keys(scores).map(function(k) {
-    return dimNames[k]+': '+( scores[k]||0)+'% ('+( scores[k]>=65?'Avanzado':scores[k]>=40?'En desarrollo':'Temprano')+')';
-  }).join('
-');
-
-  var ventas   = parseFloat(R.ventas)||0;
-  var costos   = parseFloat(R.costos)||0;
-  var personal = parseInt(R.personal)||0;
-  var aportes  = R.aportes||'Sin dato';
-
-  var innAreas = ['Productos/servicios','Procesos','Logística','Comercialización','Tecnología','Gestión organizativa'];
-  var innDet = [];
-  for(var ai=0;ai<6;ai++){ var vv=R['innov_mat_'+ai]||'Ninguna'; if(vv!=='Ninguna') innDet.push(innAreas[ai]+':'+vv); }
-
-  var tecList = (R.tecnologias||[]).filter(function(t){return t!=='Ninguna';}).join(', ') || 'Ninguna';
-  var tramList= (R.tramites||[]).join(', ') || 'Ninguno';
-  var finList = (R.financiamiento||[]).filter(function(f){return f!=='Ninguno';}).join(', ') || 'Ninguno';
-
-  return [
-    '=== DATOS DEL DIAGNÓSTICO ===',
-    'Tipo de diagnóstico: '+(I.tipo_diag||'Diagnóstico de Ingreso'),
-    'Clasificación: '+(D.clasif?D.clasif.tipo:'Sin clasificar'),
-    'Nombre del negocio: '+(I.razon||'Sin nombre'),
-    'Sector: '+(I.sector||'Sin dato'),
-    'Municipio: '+(I.municipio||'Sin dato'),
-    'Antigüedad: '+(I.antiguedad||'Sin dato'),
-    'Responsable: '+(I.nombre1||'')+' '+(I.apellido1||''),
-    'Registro CC: '+(I.tiene_rut||'Sin dato')+' | Meses CC: '+(I.meses_reg||0),
+  var D = window._DIME; if (!D) return '';
+  var I=D.I, R=D.R, ING=D.ING||{};
+  var dimLines = Object.keys(D.scores).map(function(k) {
+    return DIMS_META[k].name+': '+(D.scores[k]||0)+'% ('+(D.scores[k]>=65?'Avanzado':D.scores[k]>=40?'En desarrollo':'Temprano')+')';
+  }).join('\n');
+  var lines = [
+    '=== MODO: '+(D.MODO||'ingreso').toUpperCase()+' ===',
+    'Clasificación: '+(D.clasif?D.clasif.tipo:'—'),
+    'Negocio: '+(I.razon||'—')+' | Sector: '+(I.sector||'—')+' | Municipio: '+(I.municipio||'—'),
+    'Antigüedad CC: '+(I.meses_reg||0)+' meses | RUT: '+(I.tiene_rut||'—'),
     '',
-    '=== PUNTAJES POR COMPONENTE (sobre 100) ===',
-    puntajes,
-    'PUNTAJE GLOBAL: '+D.ovr+'% — '+D.lvl[0],
+    '=== PUNTAJES POR COMPONENTE ===',
+    dimLines,
+    'GLOBAL: '+D.ovr+'% — '+D.lvl[0],
     '',
-    '=== INDICADORES DE LÍNEA BASE ===',
-    'Ventas mensuales: $'+(ventas>0?Math.round(ventas).toLocaleString():'Sin dato'),
-    'Costos mensuales: $'+(costos>0?Math.round(costos).toLocaleString():'Sin dato'),
-    'Ventas anuales estimadas: $'+(ventas>0?Math.round(ventas*12).toLocaleString():'Sin dato'),
-    'Personal ocupado: '+( personal||'Sin dato')+' persona(s)',
-    'Seguridad social: '+aportes,
-    'Innovaciones implementadas: '+(innDet.length?innDet.join(', '):'Ninguna'),
-    'Tecnologías en uso: '+tecList,
-    'Trámites de formalización: '+tramList,
-    'Fuentes de financiamiento: '+finList,
-    '',
-    '=== RESPUESTAS CUALITATIVAS ===',
-    'Productos/Servicios: '+(R.productos||'Sin dato'),
-    'Cliente objetivo: '+(R.cliente||'Sin dato'),
-    'Propuesta de valor: '+(R.pv||'Sin dato'),
-    'Nivel de planeación: '+(R.plan_crec||'Sin dato'),
-    'Sistema contable: '+(R.contabilidad||'Sin dato'),
-    'Satisfacción de clientes: '+(R.satisfaccion||'Sin dato'),
-    'Visión del negocio: '+(R.vision||'Sin dato'),
-  ].join('
-');
+    '=== INDICADORES ACTUALES ===',
+    'Ingresos (ventas)/mes: '+(D.ventas>0?'$'+Math.round(D.ventas).toLocaleString('es-CO'):'Sin dato'),
+    'Costos y gastos/mes: '+(D.costos>0?'$'+Math.round(D.costos).toLocaleString('es-CO'):'Sin dato'),
+    'Personal: '+D.personal+' persona(s)',
+    'Productos/servicios: '+(R.productos||'—'),
+    'Propuesta de valor: '+(R.pv||'—'),
+  ];
+  if (D.MODO !== 'ingreso') {
+    lines.push('', '=== LÍNEA BASE DE INGRESO ===');
+    lines.push('Ingresos al inicio: '+(ING.ventas>0?'$'+Math.round(ING.ventas).toLocaleString('es-CO'):'Sin dato'));
+    lines.push('Costos al inicio: '+(ING.costos>0?'$'+Math.round(ING.costos).toLocaleString('es-CO'):'Sin dato'));
+    lines.push('Personal al inicio: '+(ING.personal||'—'));
+    if (D.dVentas !== null) lines.push('Variación ingresos: '+(D.dVentas>=0?'+':'')+Math.round(D.dVentas)+'% (Meta +20%) — '+(D.mV?D.mV.label:'—'));
+    if (D.dCostos !== null) lines.push('Variación costos: '+(D.dCostos>=0?'+':'')+Math.round(D.dCostos)+'% (Meta ≤-10%) — '+(D.mC?D.mC.label:'—'));
+    if (D.dPersonal !== null) lines.push('Variación empleo: '+(D.dPersonal>=0?'+':'')+Math.round(D.dPersonal)+'% (Meta +10%) — '+(D.mP?D.mP.label:'—'));
+  }
+  return lines.join('\n');
 }
 
 function construirPrompt(tipo) {
-  var D = window._DIME;
   var ctx = construirContexto();
-  var negocio = D.I.razon || 'el negocio';
-  var clasif  = D.clasif ? D.clasif.tipo : 'emprendimiento';
-  var sector  = D.I.sector || 'sin sector definido';
-  var municipio = D.I.municipio || '';
-  var puntaje = D.ovr;
-
+  var D = window._DIME;
+  var base = 'Eres experto en fortalecimiento empresarial del convenio Ecopetrol Emprende - Universidad de los Llanos, Orinoquía colombiana. Responde en español formal con markdown (###, **, listas).\n\n';
   var prompts = {
-
-    informe_ingreso: [
-      'Eres un experto en desarrollo empresarial y análisis de negocios del convenio Ecopetrol Emprende - Universidad de los Llanos.',
-      'Con base en los siguientes datos del diagnóstico de ingreso, genera un INFORME DE DIAGNÓSTICO DE INGRESO (LÍNEA BASE) profesional y estructurado.',
-      '',
-      ctx,
-      '',
-      'INSTRUCCIONES:',
-      '1. Redacta el informe en español formal, orientado a un proceso de acompañamiento empresarial en la Orinoquía colombiana.',
-      '2. Estructura el informe con estas secciones:',
-      '   ### Resumen ejecutivo',
-      '   ### Perfil del emprendimiento / MiPyme',
-      '   ### Análisis por componente (uno por uno, fortalezas y brechas)',
-      '   ### Análisis de indicadores de línea base',
-      '   ### Principales hallazgos',
-      '   ### Áreas prioritarias de intervención',
-      '3. Sé específico y concreto — menciona los datos reales (ventas, puntajes, sector).',
-      '4. Identifica patrones y relaciones entre los componentes.',
-      '5. El tono debe ser propositivo y orientado al fortalecimiento.',
-      'Genera el informe ahora:'
-    ].join('
-'),
-
-    recomendaciones: [
-      'Eres un consultor estratégico especializado en fortalecimiento de MiPymes y emprendimientos en Colombia.',
-      'Con base en los datos del diagnóstico, genera RECOMENDACIONES ESTRATÉGICAS DETALLADAS para el fortalecimiento empresarial.',
-      '',
-      ctx,
-      '',
-      'INSTRUCCIONES:',
-      '1. Para cada componente con puntaje inferior a 65%, genera mínimo 3 recomendaciones concretas.',
-      '2. Cada recomendación debe incluir:',
-      '   - Acción específica a realizar',
-      '   - Herramienta o recurso recomendado (gratuito o de bajo costo)',
-      '   - Resultado esperado medible',
-      '   - Prioridad (Alta / Media / Baja)',
-      '3. Para los componentes con puntaje ≥65%, indica cómo sostener y potenciar lo logrado.',
-      '4. Incluye una sección de "Ruta de implementación" con secuencia lógica de acciones.',
-      '5. Considera el contexto de '+municipio+', sector '+sector+', clasificación '+clasif+'.',
-      '6. Cierra con las 3 acciones más urgentes que el emprendedor debe tomar esta semana.',
-      'Genera las recomendaciones ahora:'
-    ].join('
-'),
-
-    plan_fortalecimiento: [
-      'Eres un experto en diseño de programas de acompañamiento empresarial para el convenio Ecopetrol Emprende - Unillanos.',
-      'Con base en el diagnóstico, diseña un PLAN DE FORTALECIMIENTO EMPRESARIAL PERSONALIZADO.',
-      '',
-      ctx,
-      '',
-      'INSTRUCCIONES — genera el plan con esta estructura exacta:',
-      '### Objetivo general del plan',
-      '### Objetivos específicos por componente (máximo 2 por componente)',
-      '### Cronograma de actividades (organizado por mes, para 6 meses de acompañamiento)',
-      '### Indicadores de seguimiento por componente',
-      '### Recursos y herramientas recomendadas',
-      '### Compromisos del beneficiario',
-      '### Indicadores de logro al finalizar el proceso',
-      '',
-      'El plan debe ser realista para un '+clasif+' del sector '+sector+' en '+municipio+'.',
-      'Usa el puntaje actual de '+puntaje+'% como punto de partida.',
-      'Genera el plan ahora:'
-    ].join('
-'),
-
-    comparativo: [
-      'Eres un evaluador de impacto de programas de desarrollo empresarial del convenio Ecopetrol Emprende - Unillanos.',
-      'Con base en los datos del diagnóstico de SALIDA, genera un INFORME COMPARATIVO ANTES/DESPUÉS.',
-      '',
-      ctx,
-      '',
-      'NOTA IMPORTANTE: Este es el diagnóstico de SALIDA. Los datos reflejan el estado al FINALIZAR el acompañamiento.',
-      'Compara con la línea base establecida al inicio del proceso.',
-      '',
-      'INSTRUCCIONES:',
-      '1. Genera una tabla comparativa de puntajes por componente (ingreso vs. salida)',
-      '2. Calcula la variación porcentual en ventas, costos y empleo',
-      '3. Evalúa el cumplimiento de cada meta del convenio:',
-      '   - Mejora de ingresos: meta +20%',
-      '   - Reducción de costos: meta ≤-10%',
-      '   - Crecimiento de ventas: meta +30%',
-      '   - Crecimiento del empleo: meta +10%',
-      '4. Para cada meta indica: ✅ CUMPLIDA / ⚠️ PARCIAL / ❌ NO CUMPLIDA + % de avance',
-      '5. Sección "Análisis de impacto": qué cambió realmente en el negocio',
-      '6. Sección "Lecciones aprendidas": qué funcionó y qué no durante el proceso',
-      '7. Conclusión: ¿El proceso generó el impacto esperado? Justifica con datos.',
-      'Genera el informe comparativo ahora:'
-    ].join('
-'),
-
-    informe_salida: [
-      'Eres un experto en evaluación de programas de fortalecimiento empresarial del convenio Ecopetrol Emprende - Unillanos.',
-      'Con base en los datos del diagnóstico de SALIDA, genera el INFORME FINAL DE DIAGNÓSTICO DE SALIDA.',
-      '',
-      ctx,
-      '',
-      'INSTRUCCIONES — estructura el informe con estas secciones:',
-      '### Resumen ejecutivo de cierre',
-      '### Estado del emprendimiento al finalizar (perfil de cierre)',
-      '### Logros alcanzados durante el proceso de acompañamiento',
-      '### Cumplimiento de metas del convenio (con datos específicos)',
-      '### Análisis de sostenibilidad (¿puede el negocio sostenerse sin el acompañamiento?)',
-      '### Recomendaciones para la continuidad y crecimiento post-convenio',
-      '### Conclusiones',
-      '',
-      'Sé específico, usa los datos del diagnóstico y mantén un tono evaluativo profesional.',
-      'Genera el informe de salida ahora:'
-    ].join('
-')
+    informe_ingreso: base+'Genera un INFORME DE DIAGNÓSTICO DE INGRESO (LÍNEA BASE) con: ### Resumen ejecutivo ### Perfil del emprendimiento / MiPyme ### Análisis por componente (fortalezas y brechas) ### Indicadores de línea base ### Áreas prioritarias de intervención.\n\nDATA:\n'+ctx,
+    recomendaciones: base+'Genera RECOMENDACIONES ESTRATÉGICAS para cada componente con puntaje < 65%, incluyendo: acción específica, herramienta recomendada, resultado esperado y prioridad. Cierra con las 3 acciones más urgentes para esta semana.\n\nDATA:\n'+ctx,
+    plan_fortalecimiento: base+'Diseña PLAN DE FORTALECIMIENTO de 6 meses con: ### Objetivo general ### Objetivos por componente ### Cronograma mensual ### Indicadores de seguimiento ### Compromisos del beneficiario.\n\nDATA:\n'+ctx,
+    comparativo: base+'Genera INFORME COMPARATIVO ANTES/DESPUÉS con: ### Tabla comparativa de puntajes ### Variación de indicadores financieros y de empleo ### Cumplimiento de metas (✅/⚠️/❌ para cada meta) ### Análisis de impacto ### Conclusiones.\n\nDATA:\n'+ctx,
+    informe_salida: base+'Genera INFORME FINAL DE DIAGNÓSTICO DE SALIDA con: ### Resumen de cierre ### Logros del proceso ### Cumplimiento de metas del convenio ### Análisis de sostenibilidad ### Recomendaciones post-convenio ### Conclusiones.\n\nDATA:\n'+ctx
   };
-
   return prompts[tipo] || '';
 }
 
 async function generarIA(tipo) {
-  var D = window._DIME;
-  if (!D) return;
-
-  AI_CURRENT_TYPE = tipo;
-  AI_CURRENT_TEXT = '';
-
-  var titulos = {
-    informe_ingreso:    'Informe de Diagnóstico de Ingreso — Línea Base',
-    recomendaciones:    'Recomendaciones Estratégicas de Fortalecimiento',
-    plan_fortalecimiento:'Plan de Fortalecimiento Empresarial',
-    comparativo:        'Informe Comparativo Antes / Después',
-    informe_salida:     'Informe de Diagnóstico de Salida'
-  };
-
-  document.getElementById('ai-modal-title').textContent = titulos[tipo] || 'Análisis IA';
-  document.getElementById('ai-menu').style.display   = 'none';
-  document.getElementById('ai-result').style.display = 'block';
-  document.getElementById('ai-copy-btn').style.display = 'none';
-
-  var output = document.getElementById('ai-output');
-  output.innerHTML = '<div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span>Analizando datos del diagnóstico y generando informe...</span></div>';
-
+  var titulos = {informe_ingreso:'Informe de Ingreso — Línea Base', recomendaciones:'Recomendaciones Estratégicas', plan_fortalecimiento:'Plan de Fortalecimiento', comparativo:'Comparativo Antes/Después', informe_salida:'Informe de Salida'};
+  gid('ai-modal-title').textContent = titulos[tipo] || 'Análisis IA';
+  gid('ai-menu').style.display = 'none';
+  gid('ai-result').style.display = 'block';
+  gid('ai-copy-btn').style.display = 'none';
+  var out = gid('ai-output');
+  out.innerHTML = '<div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span>Analizando datos y generando informe...</span></div>';
   try {
-    var prompt = construirPrompt(tipo);
-
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: 'Eres un experto consultor empresarial del convenio Ecopetrol Emprende - Universidad de los Llanos, especializado en diagnóstico y fortalecimiento de emprendimientos y MiPymes en la región de la Orinoquía colombiana. Generas informes profesionales, concretos y orientados a la acción. Usa markdown con encabezados (###), listas y negritas para estructurar el contenido. Responde siempre en español.',
-        messages: [{ role: 'user', content: prompt }]
-      })
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1000,
+        system:'Eres consultor empresarial experto en MiPymes y emprendimientos de la Orinoquía colombiana. Genera análisis profesionales, concretos y orientados a la acción.',
+        messages:[{role:'user', content:construirPrompt(tipo)}]})
     });
-
-    if (!response.ok) {
-      throw new Error('Error de API: ' + response.status + ' ' + response.statusText);
-    }
-
-    var data = await response.json();
+    if (!resp.ok) throw new Error('Error API '+resp.status);
+    var data = await resp.json();
     var text = data.content && data.content[0] ? data.content[0].text : '';
-
-    if (!text) throw new Error('La API no devolvió contenido.');
-
+    if (!text) throw new Error('Sin contenido');
     AI_CURRENT_TEXT = text;
-    output.innerHTML = '<div class="ai-content">' + formatearMarkdown(text) + '</div>';
-    document.getElementById('ai-copy-btn').style.display = 'block';
-    document.getElementById('ai-footer-note').textContent = 'Generado: ' + new Date().toLocaleString('es-CO');
-
+    out.innerHTML = '<div class="ai-content">'+fmtMd(text)+'</div>';
+    gid('ai-copy-btn').style.display = 'block';
+    gid('ai-footer-note').textContent = 'Generado: '+new Date().toLocaleString('es-CO');
   } catch(e) {
-    output.innerHTML = '<div class="alert error"><strong>Error al generar el análisis:</strong><br>' + e.message + '<br><br>'
-      + '<strong>¿Por qué ocurre esto?</strong><br>'
-      + 'La integración con IA requiere que la aplicación esté publicada en la web con acceso a internet. '
-      + 'Si estás ejecutando el archivo localmente (desde tu computador), el navegador bloquea las llamadas a la API por seguridad (CORS).<br><br>'
-      + '<strong>Solución:</strong> Publica la app en Netlify o GitHub Pages (ver README.md) y el botón de IA funcionará correctamente.</div>';
+    out.innerHTML = '<div class="alert error"><strong>Error:</strong> '+e.message+'<br><br>La integración con IA funciona cuando la app está publicada en la web (GitHub Pages, Netlify). Ejecutar el archivo localmente bloquea las llamadas a la API por política CORS del navegador.</div>';
   }
 }
 
-function formatearMarkdown(text) {
-  return text
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^## (.+)$/gm,  '<h3>$1</h3>')
-    .replace(/^# (.+)$/gm,   '<h3>$1</h3>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g,     '<em>$1</em>')
-    .replace(/^- (.+)$/gm,    '<li>$1</li>')
-    .replace(/^(\d+)\. (.+)$/gm,'<li>$2</li>')
-    .replace(/(<li>.*<\/li>)/gs, function(m){ return '<ul>'+m+'</ul>'; })
-    .replace(/✅/g, '<span class="good">✅</span>')
-    .replace(/⚠️/g, '<span class="warn">⚠️</span>')
-    .replace(/❌/g, '<span class="bad">❌</span>')
-    .replace(/
-
-/g, '</p><p>')
-    .replace(/^(?!<[h|u|l|p])(.+)$/gm, function(m){ return m.startsWith('<') ? m : '<p>'+m+'</p>'; })
-    .replace(/<p><\/p>/g, '')
-    .replace(/<p>(<h\d|<ul|<li)/g, '$1')
-    .replace(/<\/h\d><\/p>/g, function(m){ return m.replace('</p>',''); });
+function fmtMd(t) {
+  return t.replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h3>$1</h3>').replace(/^# (.+)$/gm,'<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^- (.+)$/gm,'<li>$1</li>').replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs,function(m){return '<ul>'+m+'</ul>';})
+    .replace(/✅/g,'<span class="good">✅</span>').replace(/⚠️/g,'<span class="warn">⚠️</span>').replace(/❌/g,'<span class="bad">❌</span>')
+    .replace(/\n\n/g,'</p><p>').replace(/^(?!<[hup])(.+)$/gm,function(m){return m.startsWith('<')?m:'<p>'+m+'</p>';}).replace(/<p><\/p>/g,'');
 }
 
 function copiarAnalisis() {
   if (!AI_CURRENT_TEXT) return;
   navigator.clipboard.writeText(AI_CURRENT_TEXT).then(function() {
-    var btn = document.getElementById('ai-copy-btn');
-    btn.textContent = '✓ Copiado';
-    setTimeout(function(){ btn.textContent = '📋 Copiar texto'; }, 2000);
+    var b = gid('ai-copy-btn'); b.textContent='✓ Copiado';
+    setTimeout(function(){b.textContent='📋 Copiar texto';}, 2000);
   });
 }
 </script>
 
-<script>if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}</script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}</script>
 </body>
 </html>
