@@ -333,6 +333,23 @@ var SEXO       = ["F - Femenino","M - Masculino","NB - No binario","T - Trans"];
 var ANOS_ACT   = ["Menos de 1 año","De 1 año a menos de 3 años","De 3 a menos de 5 años","De 5 a menos de 10 años","De 10 o más años"];
 var COM_INT    = ["No realiza ninguna","Solo importa","Solo exporta","Importa y exporta"];
 
+// ── Componentes del diagnóstico ────────────────────────────────
+var DIMS_META = {
+  mercado:         { name:'Mercado objetivo',                    color:'#EEF0FE', bar:'#534AB7',
+    crit:'Satisfacción de clientes (50%) — 5 niveles. Alcance de ventas (30%). Segmentación documentada (20%).' },
+  oferta:          { name:'Oferta de valor',                     color:'#FAECE7', bar:'#C97A0A',
+    crit:'Descripción de productos (25 pts) + perfil de cliente (20 pts) + propuesta de valor (15 pts) + elementos comerciales (40 pts).' },
+  rentabilizacion: { name:'Modelo de rentabilización',           color:'#EAF3DE', bar:'#276749',
+    crit:'Sistema contable (60%): sin registro=0, cuaderno=25, Excel=50, software=75, ERP=100. Financiamiento (40%): ninguna=0, una=45, dos=70, tres+=100.' },
+  comercializacion:{ name:'Modelo de comercialización',          color:'#FEF9E7', bar:'#B7791F',
+    crit:'Nivel de planeación (40%). Canales y escalabilidad (60%): proceso de ventas, plan de crecimiento, equipo y medición.' },
+  madurez:         { name:'Madurez administrativa y financiera', color:'#F0EBF9', bar:'#6B46C1',
+    crit:'Formalización (30%) + Tecnología adoptada (30%) + Seguridad social (20%) + Planeación (20%).' }
+};
+
+// ── Helpers de formato ──────────────────────────────────────────
+function pct(v) { return (v >= 0 ? '+' : '') + Math.round(v) + '%'; }
+
 // ── Estado global ──────────────────────────────────────────────
 var MODO = null; // 'ingreso' | 'seguimiento' | 'salida'
 var ST   = { step:0, info:{}, ing:{}, R:{}, logo_b64:null };
@@ -704,6 +721,7 @@ function step2() {
 // ═══════════════════════════════════════════════════════════════
 function step3_ing() {
   var R = ST.R;
+  var esSalSeg = false; // always ingreso mode
   clr();
   var html = '<div class="step active">'
     + modoBanner()
@@ -720,10 +738,10 @@ function step3_ing() {
     + hint('📌 <strong>Ingresos (ventas):</strong> dinero que entra al negocio por ventas o servicios. <strong>Costos y gastos:</strong> lo que gasta para operar (insumos, arriendo, salarios, servicios, etc.).')
     + fieldMoney('Ingresos (ventas) mensuales promedio', 'f-ventas', R.ventas||0, true)
     + fieldMoney('Costos y gastos mensuales promedio', 'f-costos', R.costos||0, true)
-    + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
+    + (esSalSeg ? '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
     + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
     + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
-    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
+    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>' : '')
     + navBtns(true)
     + '</div>';
   appnd(html);
@@ -847,10 +865,10 @@ function step5() {
     + divider(esSalSeg ? 'Elementos comerciales ' + (MODO==='salida'?'implementados':'actuales') : 'Elementos del área comercial')
     + '<div class="field"><label>' + elemLbl + '<span class="req">*</span></label>'
     + checkGrp('elems_com', ELEMS_COM, R.elems_com) + '</div>'
-    + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
+    + (esSalSeg ? '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
     + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
     + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
-    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
+    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>' : '')
     + navBtns(true)
     + '</div>';
   appnd(html);
@@ -1142,7 +1160,7 @@ function validate(n) {
   if (n===5) {
     if (!R.satisfaccion)                      { showErr('Selecciona cómo mides la satisfacción de clientes.'); return false; }
     if (!R.elems_com || !R.elems_com.length)  { showErr('Selecciona al menos un elemento comercial.'); return false; }
-    if (!R.fuente_ventas)                     { showErr('Selecciona la fuente principal de ventas.'); return false; }
+    if ((MODO==='salida'||MODO==='seguimiento') && !R.fuente_ventas) { showErr('Selecciona la fuente principal de ventas.'); return false; }
   }
   if (n===6) {
     if (!R.contabilidad)                             { showErr('Selecciona el sistema contable.'); return false; }
@@ -1439,8 +1457,8 @@ function showResults(){
       + '</tr></thead><tbody>';
 
     function cmpRow(lbl, ingVal, curVal, delta, metaLbl, metaSt, fmt){
-      var ingStr = fmt==='COP'?formatCOP(ingVal):(ingVal||'-');
-      var curStr = fmt==='COP'?formatCOP(curVal):(curVal||'-');
+      var ingStr = fmt==='COP'?fmtCOP(ingVal):(ingVal||'-');
+      var curStr = fmt==='COP'?fmtCOP(curVal):(curVal||'-');
       var dStr   = delta!==null ? pct(delta) : '—';
       var dCol   = delta===null?'var(--sub)':delta>0?'var(--green)':delta<0?'var(--red)':'var(--sub)';
       var stHtml = metaSt ? '<span style="font-size:11px;font-weight:700;color:'+metaSt.color+'">'+metaSt.label+'</span>' : '<span style="color:var(--sub);font-size:11px">Sin meta definida</span>';
@@ -1475,10 +1493,10 @@ function showResults(){
     function ic(icon, lbl, val, nota){
       return '<div class="ind-card"><div style="font-size:18px;margin-bottom:3px">'+icon+'</div><div class="ind-lbl">'+lbl+'</div><div class="ind-val">'+val+'</div>'+(nota?'<div style="font-size:10px;color:var(--sub);margin-top:2px;line-height:1.4">'+nota+'</div>':'')+'</div>';
     }
-    html += ic('💰','Ingresos / mes (línea base)', ventas>0?formatCOP(ventas):'Sin dato','Base para meta +20%');
-    html += ic('🏷️','Costos y gastos / mes (línea base)', costos>0?formatCOP(costos):'Sin dato','Base para meta ≤-10%');
-    html += ic('📈','Ingresos anuales estimados', ventas>0?formatCOP(ventas*12):'Sin dato','Proyección × 12');
-    html += ic('💹','Margen bruto estimado', (ventas>0&&costos>0)?formatCOP(ventas-costos)+'/mes':'Sin dato','Ingresos − Costos');
+    html += ic('💰','Ingresos / mes (línea base)', ventas>0?fmtCOP(ventas):'Sin dato','Base para meta +20%');
+    html += ic('🏷️','Costos y gastos / mes (línea base)', costos>0?fmtCOP(costos):'Sin dato','Base para meta ≤-10%');
+    html += ic('📈','Ingresos anuales estimados', ventas>0?fmtCOP(ventas*12):'Sin dato','Proyección × 12');
+    html += ic('💹','Margen bruto estimado', (ventas>0&&costos>0)?fmtCOP(ventas-costos)+'/mes':'Sin dato','Ingresos − Costos');
     html += ic('👥','Personas ocupadas', personal>0?personal+' persona(s)':'Sin dato','Base para meta +10%');
     html += ic('🛡️','Con seguridad social', empFormal+' de '+personal,'Salud y/o pensión');
     html += ic('🏢','Cámara de Comercio', tieneCam?'✓ Registrado':'✗ Sin registro','');
@@ -1491,10 +1509,10 @@ function showResults(){
     html += '<div style="background:white;border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1.25rem">';
     html += '<div style="font-size:12px;color:var(--sub);margin-bottom:.75rem;line-height:1.6">Con base en los indicadores de ingreso, estas son las metas que se esperan alcanzar al finalizar el proceso de acompañamiento:</div>';
     html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12.5px">';
-    html += '<div style="background:#EEF0FE;border-radius:var(--r-md);padding:10px 12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--purple)">Meta: Mejora de ingresos</div><div style="font-size:14px;font-weight:700;color:var(--navy)">'+(ventas>0?formatCOP(ventas*1.2)+'/mes':'Requiere dato')+'</div><div style="font-size:10px;color:var(--sub)">+20% sobre '+(ventas>0?formatCOP(ventas):'la línea base')+'</div></div>';
-    html += '<div style="background:#FEF9E7;border-radius:var(--r-md);padding:10px 12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#92400E">Meta: Reducción de costos</div><div style="font-size:14px;font-weight:700;color:var(--navy)">'+(costos>0?formatCOP(costos*0.9)+'/mes':'Requiere dato')+'</div><div style="font-size:10px;color:var(--sub)">≤-10% sobre '+(costos>0?formatCOP(costos):'la línea base')+'</div></div>';
+    html += '<div style="background:#EEF0FE;border-radius:var(--r-md);padding:10px 12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--purple)">Meta: Mejora de ingresos</div><div style="font-size:14px;font-weight:700;color:var(--navy)">'+(ventas>0?fmtCOP(ventas*1.2)+'/mes':'Requiere dato')+'</div><div style="font-size:10px;color:var(--sub)">+20% sobre '+(ventas>0?fmtCOP(ventas):'la línea base')+'</div></div>';
+    html += '<div style="background:#FEF9E7;border-radius:var(--r-md);padding:10px 12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#92400E">Meta: Reducción de costos</div><div style="font-size:14px;font-weight:700;color:var(--navy)">'+(costos>0?fmtCOP(costos*0.9)+'/mes':'Requiere dato')+'</div><div style="font-size:10px;color:var(--sub)">≤-10% sobre '+(costos>0?fmtCOP(costos):'la línea base')+'</div></div>';
     html += '<div style="background:#EAF3DE;border-radius:var(--r-md);padding:10px 12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#276749">Meta: Crecimiento empleo</div><div style="font-size:14px;font-weight:700;color:var(--navy)">'+(personal>0?Math.ceil(personal*1.1)+' persona(s)':'Requiere dato')+'</div><div style="font-size:10px;color:var(--sub)">+10% sobre '+(personal||'N/D')+' persona(s) actuales</div></div>';
-    html += '<div style="background:#E6F1FB;border-radius:var(--r-md);padding:10px 12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#1D4ED8">Meta: Crecimiento de ventas</div><div style="font-size:14px;font-weight:700;color:var(--navy)">'+(ventas>0?formatCOP(ventas*1.3)+'/mes':'Requiere dato')+'</div><div style="font-size:10px;color:var(--sub)">+30% sobre '+(ventas>0?formatCOP(ventas):'la línea base')+'</div></div>';
+    html += '<div style="background:#E6F1FB;border-radius:var(--r-md);padding:10px 12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:#1D4ED8">Meta: Crecimiento de ventas</div><div style="font-size:14px;font-weight:700;color:var(--navy)">'+(ventas>0?fmtCOP(ventas*1.3)+'/mes':'Requiere dato')+'</div><div style="font-size:10px;color:var(--sub)">+30% sobre '+(ventas>0?fmtCOP(ventas):'la línea base')+'</div></div>';
     html += '</div></div>';
   }
 
