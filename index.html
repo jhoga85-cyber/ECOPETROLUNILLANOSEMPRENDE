@@ -14,6 +14,7 @@
 <style>
 
 
+
 :root{--navy:#1B3A6B;--navy2:#0F2447;--green:#00863E;--amber:#E8A020;--red:#C0392B;--light:#F4F6FA;--white:#FFFFFF;--border:#D8DEE9;--text:#1A202C;--sub:#64748B;--r-sm:6px;--r-md:10px;--r-lg:14px}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Sora',sans-serif;background:var(--light);color:var(--text);min-height:100vh}
@@ -202,19 +203,40 @@ body{font-family:'Sora',sans-serif;background:var(--light);color:var(--text);min
 .done-card h2{font-size:17px;font-weight:600;margin-bottom:6px}
 .done-card p{font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:1.25rem}
 
+
+.mode-card{display:flex;align-items:flex-start;gap:12px;padding:14px;border:1.5px solid var(--border);border-radius:var(--r-lg);cursor:pointer;background:white;transition:all .2s;user-select:none;margin-bottom:8px}
+.mode-card:hover{border-color:var(--navy)}
+.mode-card.sel{border-color:var(--navy);background:rgba(27,58,107,.04);box-shadow:0 0 0 3px rgba(27,58,107,.1)}
+.mc-icon{width:40px;height:40px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;margin-top:2px}
+.mc-body{flex:1}
+.mc-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mc-desc{font-size:12.5px;color:var(--sub);line-height:1.65}
+.badge-mode{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+.badge-mode.ing{background:#EEF0FE;color:#534AB7}
+.badge-mode.seg{background:#FEF9E7;color:#B7791F}
+.badge-mode.sal{background:#E6F1FB;color:#2B6CB0}
+.done-card{background:white;border:1px solid var(--border);border-radius:var(--r-lg);padding:2rem;text-align:center}
+.done-icon{font-size:44px;margin-bottom:1rem}
+.done-card h2{font-size:17px;font-weight:600;margin-bottom:6px}
+.done-card p{font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:1.25rem}
+/* Toast notification */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#1B3A6B;color:white;padding:11px 18px;border-radius:var(--r-md);font-size:13px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="logos">
-    <img class="hlogo eco" src="logo_ecopetrol.png" alt="Ecopetrol Emprende">
-    <img class="hlogo" src="logo_unillanos.png" alt="Unillanos">
+    <img class="hlogo eco" src="logo_ecopetrol.png" alt="Ecopetrol">
+    <img class="hlogo"     src="logo_unillanos.png" alt="Unillanos">
   </div>
   <div class="header-right">
     <strong>Diagnóstico de Madurez Empresarial</strong>
-    Ecopetrol Emprende · Universidad de los Llanos
+    Ecopetrol Emprende · Unillanos
   </div>
+  <button onclick="abrirHistorial()" style="margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;border-radius:8px;padding:6px 12px;font-size:12px;font-family:'Sora',sans-serif;cursor:pointer;font-weight:600">📂 Mis diagnósticos</button>
 </div>
 
 <div class="prog">
@@ -230,6 +252,10 @@ body{font-family:'Sora',sans-serif;background:var(--light);color:var(--text);min
   <div class="results" id="results"></div>
 </div>
 
+<div id="app-toast" class="toast"></div>
+
+<!-- HISTORIAL MODAL inserted dynamically -->
+
 <!-- AI MODAL -->
 <div class="ai-modal-overlay" id="ai-overlay" style="display:none" onclick="if(event.target===this)cerrarAI()">
   <div class="ai-modal">
@@ -241,20 +267,20 @@ body{font-family:'Sora',sans-serif;background:var(--light);color:var(--text);min
     </div>
     <div class="ai-modal-body" id="ai-modal-body">
       <div id="ai-menu">
-        <p style="font-size:13px;color:var(--sub);margin-bottom:1rem;line-height:1.6">Selecciona el tipo de análisis. La IA utilizará todos los datos del diagnóstico para producir un informe personalizado.</p>
+        <p style="font-size:13px;color:var(--sub);margin-bottom:1rem;line-height:1.6">Selecciona el tipo de análisis. La IA usará todos los datos del diagnóstico para producir un informe personalizado.</p>
         <button class="ai-section-btn" onclick="generarIA('informe_ingreso')">
           <div class="ai-icon" style="background:#EEF0FE">📋</div>
-          <div style="flex:1"><div>Informe de Diagnóstico de Ingreso — Línea Base</div><div class="ai-desc">Análisis del estado actual, perfil del negocio, fortalezas, brechas y contexto estratégico</div></div>
+          <div style="flex:1"><div>Informe de Diagnóstico de Ingreso — Línea Base</div><div class="ai-desc">Análisis del estado actual, fortalezas, brechas y contexto estratégico</div></div>
           <div style="font-size:18px;color:var(--sub)">›</div>
         </button>
         <button class="ai-section-btn" onclick="generarIA('recomendaciones')">
           <div class="ai-icon" style="background:#EAF3DE">💡</div>
-          <div style="flex:1"><div>Recomendaciones Estratégicas de Fortalecimiento</div><div class="ai-desc">Acciones concretas por componente para mejorar sostenibilidad, productividad y crecimiento</div></div>
+          <div style="flex:1"><div>Recomendaciones Estratégicas de Fortalecimiento</div><div class="ai-desc">Acciones concretas por componente para mejorar sostenibilidad y crecimiento</div></div>
           <div style="font-size:18px;color:var(--sub)">›</div>
         </button>
         <button class="ai-section-btn" onclick="generarIA('plan_fortalecimiento')">
           <div class="ai-icon" style="background:#FAEEDA">🎯</div>
-          <div style="flex:1"><div>Plan de Fortalecimiento Empresarial Personalizado</div><div class="ai-desc">Cronograma de 6 meses con objetivos, actividades e indicadores de seguimiento</div></div>
+          <div style="flex:1"><div>Plan de Fortalecimiento Empresarial Personalizado</div><div class="ai-desc">Cronograma de 6 meses con objetivos, actividades e indicadores por componente</div></div>
           <div style="font-size:18px;color:var(--sub)">›</div>
         </button>
         <button class="ai-section-btn" id="btn-comparativo" onclick="generarIA('comparativo')" style="display:none">
@@ -350,776 +376,135 @@ function field(lbl, id, type, ph, val, req) {
     + '<input type="' + (type || 'text') + '" id="' + id + '" placeholder="' + (ph || '') + '" value="' + esc(val || '') + '"></div>';
 }
 
-function fieldSel(lbl, id, opts, saved, req) {
-  var options = '<option value="">Selecciona...</option>';
-  for (var i = 0; i < opts.length; i++) {
-    options += '<option value="' + esc(opts[i]) + '"' + (saved === opts[i] ? ' selected' : '') + '>' + opts[i] + '</option>';
-  }
-  return '<div class="field"><label>' + lbl + (req ? '<span class="req">*</span>' : '') + '</label><select id="' + id + '">' + options + '</select></div>';
+function fmtNum(v) {
+  // Format number with $ and thousands separator as user types
+  var n = parseFloat(String(v).replace(/[^0-9.]/g,'')) || 0;
+  return n > 0 ? n.toLocaleString('es-CO') : '';
 }
 
-function fieldTxt(lbl, id, ph, val, req) {
-  return '<div class="field"><label>' + lbl + (req ? '<span class="req">*</span>' : '') + '</label>'
-    + '<textarea id="' + id + '" placeholder="' + (ph || '') + '">' + esc(val || '') + '</textarea></div>';
-}
-
-function radioGrp(name, opts, saved) {
-  var html = '<div class="opt-group" data-radio="' + name + '">';
-  for (var i = 0; i < opts.length; i++) {
-    var sel = saved === opts[i];
-    html += '<div class="opt-item' + (sel ? ' sel' : '') + '" data-val="' + esc(opts[i]) + '" onclick="selR(this)">'
-      + '<div class="opt-dot' + (sel ? ' filled' : '') + '"></div>'
-      + '<div class="opt-lbl">' + opts[i] + '</div></div>';
-  }
-  return html + '</div>';
-}
-
-function checkGrp(name, opts, saved, g2) {
-  var vals = saved || [];
-  var html = '<div class="opt-group' + (g2 ? ' g2' : '') + '" data-check="' + name + '">';
-  for (var i = 0; i < opts.length; i++) {
-    var sel = vals.indexOf(opts[i]) >= 0;
-    html += '<div class="opt-item' + (sel ? ' sel' : '') + '" data-val="' + esc(opts[i]) + '" onclick="togC(this)">'
-      + '<div class="opt-check' + (sel ? ' filled' : '') + '">' + (sel ? '<span style="color:white;font-size:10px;font-weight:700">&#10003;</span>' : '') + '</div>'
-      + '<div class="opt-lbl">' + opts[i] + '</div></div>';
-  }
-  return html + '</div>';
-}
-
-function navBtns(hasPrev, nextLbl) {
-  return '<div class="nav">'
-    + (hasPrev ? '<button class="btn" onclick="goPrev()">&#8592; Atrás</button>' : '<span></span>')
-    + '<button class="btn primary" onclick="goNext()">' + (nextLbl || 'Siguiente &#8594;') + '</button>'
-    + '</div>';
-}
-
-function buildMatrix() {
-  var html = '<table class="matrix"><thead><tr><th>Area</th><th>Ninguna</th><th>Una (1)</th><th>Más de una</th></tr></thead><tbody>';
-  for (var i = 0; i < INNOV_AREAS.length; i++) {
-    var sv = ST.R['im' + i] || 'Ninguna';
-    var cols = ['Ninguna', 'Una (1)', 'Más de una'];
-    html += '<tr><td>' + INNOV_AREAS[i] + '</td>';
-    for (var j = 0; j < cols.length; j++) {
-      var sel = sv === cols[j];
-      html += '<td class="c"><div class="mat-opt' + (sel ? ' sel' : '') + '" data-key="im' + i + '" data-val="' + esc(cols[j]) + '" onclick="selMat(this)"></div></td>';
-    }
-    html += '</tr>';
-  }
-  return html + '</tbody></table>';
-}
-
-// ============================================================
-// INTERACTION
-// ============================================================
-function selR(item) {
-  var grp = item.parentNode;
-  var items = grp.querySelectorAll('.opt-item');
-  for (var i = 0; i < items.length; i++) {
-    items[i].classList.remove('sel');
-    var dot = items[i].querySelector('.opt-dot');
-    if (dot) dot.classList.remove('filled');
-  }
-  item.classList.add('sel');
-  var dot2 = item.querySelector('.opt-dot');
-  if (dot2) dot2.classList.add('filled');
-}
-
-function togC(item) {
-  item.classList.toggle('sel');
-  var cc = item.querySelector('.opt-check');
-  if (item.classList.contains('sel')) {
-    cc.classList.add('filled');
-    cc.innerHTML = '<span style="color:white;font-size:10px;font-weight:700">&#10003;</span>';
-  } else {
-    cc.classList.remove('filled');
-    cc.innerHTML = '';
-  }
-}
-
-function selMat(dot) {
-  var key = dot.getAttribute('data-key');
-  var val = dot.getAttribute('data-val');
-  var row = dot.closest('tr');
-  var dots = row.querySelectorAll('.mat-opt');
-  for (var i = 0; i < dots.length; i++) dots[i].classList.remove('sel');
-  dot.classList.add('sel');
-  ST.R[key] = val;
-}
-
-function getR(name) {
-  var grp = document.querySelector('[data-radio="' + name + '"]');
-  if (!grp) return null;
-  var sel = grp.querySelector('.opt-item.sel');
-  return sel ? sel.getAttribute('data-val') : null;
-}
-
-function getC(name) {
-  var grp = document.querySelector('[data-check="' + name + '"]');
-  if (!grp) return [];
-  var sels = grp.querySelectorAll('.opt-item.sel');
-  var vals = [];
-  for (var i = 0; i < sels.length; i++) vals.push(sels[i].getAttribute('data-val'));
-  return vals;
-}
-
-function showErr(msg) {
-  var existing = document.querySelectorAll('.err-box');
-  for (var i = 0; i < existing.length; i++) existing[i].parentNode.removeChild(existing[i]);
-  var e = mk('div'); e.className = 'err-box'; e.textContent = msg;
-  var nav = document.querySelector('.nav');
-  if (nav) { nav.parentNode.insertBefore(e, nav); e.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-  setTimeout(function() { if (e.parentNode) e.parentNode.removeChild(e); }, 4500);
-}
-
-// ============================================================
-// STEP RENDERERS
-// ============================================================
-// ═══════════════════════════════════════════════════════
-// PASOS DE DIAGNÓSTICO DE SALIDA — EVALUACIÓN FINAL
-// Las preguntas miden CAMBIOS y RESULTADOS, no estado inicial
-// ═══════════════════════════════════════════════════════
-
-var ANOS_ACT_SAL  = ['Menos de 1 año','De 1 a 3 años','De 3 a 5 años','De 5 a 10 años','Más de 10 años'];
-var VISION_SAL    = [
-  'El negocio creció y se estabilizó con estructura sólida',
-  'El negocio mejoró su operación y amplió su oferta',
-  'El negocio se mantiene con mejoras moderadas',
-  'El negocio se mantiene igual que al inicio',
-  'El negocio enfrenta dificultades mayores que al inicio'
-];
-var PLAN_CREC_SAL = [
-  'Ahora tengo un plan estratégico a más de 3 años con indicadores',
-  'Desarrollé un plan de crecimiento a 2-3 años con recursos asignados',
-  'Establecí metas de ventas y plan de trabajo para los próximos 12 meses',
-  'Tengo ideas de crecimiento pero aún sin plan escrito',
-  'No hubo cambios en mi forma de planificar'
-];
-var SATISF_SAL    = [
-  'Implementé estrategia sistematizada con análisis de múltiples aspectos',
-  'Realizo encuestas periódicas físicas o digitales',
-  'Registro comentarios de clientes en WhatsApp o cuaderno organizado',
-  'Recibo comentarios pero no los registro',
-  'No mido la satisfacción de clientes'
-];
-var CONTAB_SAL    = [
-  'Adopté sistema ERP o software avanzado de gestión financiera',
-  'Uso ahora software especializado de contabilidad',
-  'Migré a Excel sistematizado o programa gratuito',
-  'Mejoré mi registro manual en cuadernos',
-  'No hubo cambios en mi sistema contable'
-];
-var INNOV_SAL_OPTS = ['Ninguna','Una (1)','Dos (2)','Tres o más'];
-var HERRAMIENTAS_NUEVAS = [
-  'Software de contabilidad o gestión financiera',
-  'CRM o gestión de clientes',
-  'Plataforma de ventas en línea o comercio electrónico',
-  'WhatsApp Business o herramientas de comunicación',
-  'Redes sociales con estrategia de contenido',
-  'Herramientas de publicidad digital (Meta Ads, Google Ads)',
-  'Software de gestión de inventarios',
-  'Plataformas de videoconferencia para negocio',
-  'Billeteras digitales o pasarelas de pago',
-  'Ninguna nueva herramienta'
-];
-
-function step3sal() {
-  var R = ST.R; clr();
-  var html = '<div class="step active">'
-    + secHdr('B', 'Desarrollo del producto o servicio — Evaluación de cierre')
-    + '<div class="alert-info" style="background:#EEF0FE;border-left:4px solid var(--navy);padding:10px 14px;border-radius:0 var(--r-md) var(--r-md) 0;font-size:12.5px;margin-bottom:1rem;color:var(--navy)">📊 <strong>Diagnóstico de Salida:</strong> Estas preguntas evalúan los cambios y resultados alcanzados durante el proceso de acompañamiento.</div>'
-    + '<div class="field"><label>¿Cómo describe el estado actual del negocio al FINALIZAR el acompañamiento?<span class="req">*</span></label>'
-    + radioGrp('vision', VISION_SAL, R.vision) + '</div>'
-    + divider('Resultados al cierre')
-    + '<div class="field"><label>Personas ocupadas al CIERRE del acompañamiento (incluyéndote a ti)<span class="req">*</span></label>'
-    + '<input type="number" id="f-personal" min="1" placeholder="1" value="' + esc(R.personal||'') + '">'
-    + '<div class="hint">Compara con el número inicial para medir el crecimiento del empleo</div></div>'
-    + '<div class="field"><label>¿El negocio paga seguridad social al CIERRE?<span class="req">*</span></label>'
-    + radioGrp('aportes', APORTES_SEG, R.aportes) + '</div>'
-    + divider('Indicadores financieros al cierre')
-    + '<div class="field"><label>Ventas mensuales promedio al CIERRE (COP)<span class="req">*</span></label>'
-    + '<div class="hint">Línea de salida — se comparará con las ventas registradas al inicio para calcular el crecimiento</div>'
-    + '<input type="number" id="f-ventas" min="0" placeholder="Valor en pesos colombianos" value="' + esc(R.ventas||'') + '"></div>'
-    + '<div class="field"><label>Costos mensuales promedio al CIERRE (COP)<span class="req">*</span></label>'
-    + '<div class="hint">Línea de salida — se comparará con los costos iniciales para calcular la variación</div>'
-    + '<input type="number" id="f-costos" min="0" placeholder="Valor en pesos colombianos" value="' + esc(R.costos||'') + '"></div>'
-    + '<div class="field"><label>¿Sus ventas al cierre provienen principalmente de?<span class="req">*</span></label>'
-    + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step4sal() {
-  var R = ST.R; clr();
-  var html = '<div class="step active">'
-    + secHdr('C', 'Liderazgo y planeación — Impacto del acompañamiento')
-    + '<div class="field"><label>¿Cómo describe su capacidad de planificación empresarial al CIERRE?<span class="req">*</span></label>'
-    + radioGrp('plan_crec', PLAN_CREC_SAL, R.plan_crec) + '</div>'
-    + divider('Logros en planeación estratégica')
-    + field('¿Qué metas de ventas o crecimiento logró durante el proceso?', 'f-productos', 'text', 'Ej: Aumenté ventas un 25%, abrí nuevo canal digital, formalicé la empresa...', R.productos, true)
-    + field('¿Cómo evolucionó su propuesta de valor? ¿Qué mejoró?', 'f-pv', 'text', 'Describe los cambios en diferenciación, precios o servicios...', R.pv, false)
-    + field('¿Quiénes son ahora sus clientes objetivo? ¿Cambió o amplió su mercado?', 'f-cliente', 'text', 'Describe si amplió segmentos, geografías o tipos de cliente...', R.cliente, false)
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step5sal() {
-  var R = ST.R; clr();
-  var html = '<div class="step active">'
-    + secHdr('D', 'Mercadeo y ventas — Resultados al cierre')
-    + '<div class="field"><label>¿Cómo mide la satisfacción de sus clientes al CIERRE del acompañamiento?<span class="req">*</span></label>'
-    + radioGrp('satisfaccion', SATISF_SAL, R.satisfaccion) + '</div>'
-    + divider('Evolución comercial')
-    + '<div class="field"><label>¿Qué elementos comerciales IMPLEMENTÓ o MEJORÓ durante el acompañamiento? (seleccione todos)<span class="req">*</span></label>'
-    + checkGrp('elems_com', ELEMS_COMERCIAL, R.elems_com) + '</div>'
-    + '<div class="field"><label>¿Realizó actividades de comercio internacional al cierre?<span class="req">*</span></label>'
-    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step6sal() {
-  var R = ST.R; clr();
-  var html = '<div class="step active">'
-    + secHdr('E', 'Contabilidad y financiamiento — Evolución al cierre')
-    + '<div class="field"><label>¿Cómo lleva las cuentas del negocio al CIERRE del acompañamiento?<span class="req">*</span></label>'
-    + radioGrp('contabilidad', CONTAB_SAL, R.contabilidad) + '</div>'
-    + divider('Fuentes de financiamiento al cierre')
-    + '<div class="field"><label>¿Con qué fuentes de financiamiento operó durante el proceso? (seleccione todas)<span class="req">*</span></label>'
-    + checkGrp('financiamiento', FINANCIAMIENTO, R.financiamiento) + '</div>'
-    + divider('Trámites y formalización al cierre')
-    + '<div class="field"><label>¿Qué trámites de formalización realizó o tiene vigentes al cierre?<span class="req">*</span></label>'
-    + checkGrp('tramites', TRAMITES, R.tramites) + '</div>'
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step7sal() {
-  var R = ST.R; clr();
-  var html = '<div class="step active">'
-    + secHdr('F', 'Innovación — Cambios implementados')
-    + '<div class="notice" style="background:#FFFBF0;border-left:3px solid var(--amber);padding:10px 14px;border-radius:0 var(--r-md) var(--r-md) 0;font-size:12.5px;margin-bottom:1rem">💡 <strong>Innovación de salida:</strong> Registra únicamente los cambios implementados DURANTE el proceso de acompañamiento, no los previos.</div>'
-    + '<div class="field"><label>¿Con qué aspectos de innovación cuenta su negocio AL CIERRE?<span class="req">*</span></label>'
-    + checkGrp('innov_aspectos', INNOV_ASPECTOS, R.innov_aspectos) + '</div>'
-    + divider('Innovaciones implementadas DURANTE el acompañamiento')
-    + '<div class="field"><label>¿Cuántas innovaciones implementó en cada área DURANTE el proceso?<span class="req">*</span></label>'
-    + '<div class="hint">Cuenta solo los cambios nuevos implementados durante el convenio, no los que ya existían</div>'
-    + buildMatrix() + '</div>'
-    + divider('Satisfacción con el proceso')
-    + '<div class="field"><label>Valore la calidad del acompañamiento recibido (1=Muy malo, 5=Excelente)<span class="req">*</span></label>'
-    + radioGrp('valoracion_proc', ['1 — Muy malo','2 — Malo','3 — Regular','4 — Bueno','5 — Excelente'], R.valoracion_proc) + '</div>'
-    + '<div class="field"><label>¿En qué área(s) generó mayor impacto el acompañamiento? (seleccione todas)</label>'
-    + checkGrp('impacto_areas', ['Mercado objetivo','Oferta de valor','Modelo de rentabilización','Modelo de comercialización','Madurez administrativa','Formalización','Innovación tecnológica'], R.impacto_areas) + '</div>'
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step8sal() {
-  var R = ST.R; clr();
-  var html = '<div class="step active">'
-    + secHdr('G', 'Tecnología — Adopción durante el proceso')
-    + '<div class="field"><label>¿Qué tecnologías usa el negocio AL CIERRE del acompañamiento?<span class="req">*</span></label>'
-    + checkGrp('tecnologias', TECNOLOGIAS, R.tecnologias) + '</div>'
-    + '<div class="field"><label>¿Qué herramientas o tecnologías ADOPTÓ durante el proceso que no tenía al inicio? (seleccione todas)</label>'
-    + checkGrp('herram_nuevas', HERRAMIENTAS_NUEVAS, R.herram_nuevas) + '</div>'
-    + divider('Reflexión final del proceso')
-    + fieldTxt('¿Qué obstáculos impidieron un mayor avance durante el acompañamiento?', 'f-obs', 'Describe los principales barreras (tiempo, recursos, mercado, familia, etc.)', R.obs, false)
-    + fieldTxt('¿Qué herramientas o conocimientos adquiridos planea sostener en el tiempo?', 'f-sostenibilidad', 'Describe lo que implementaste y mantendrás después del convenio...', R.sostenibilidad, false)
-    + '<div class="field"><label>¿Recomendaría este proceso a otro emprendedor?</label>'
-    + radioGrp('recomienda', ['Sí, definitivamente','Sí, con algunas reservas','No lo recomendaría'], R.recomienda) + '</div>'
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-
-function step0() {
-  clr();
-  var html = '<div class="step active">'
-    + '<div class="welcome"><div class="wc-tag">Ecopetrol Emprende - Universidad de los Llanos</div>'
-    + '<h1>Diagnóstico de Madurez Empresarial</h1>'
-    + '<p>Unillanos busca conocer la situacion de los emprendimientos y MiPymes beneficiarios del convenio, para identificar su nivel de madurez y necesidades. Con esta información, fortaleceremos las estrategias de acompaniamiento empresarial y formativo.</p>'
+function fieldMoney(lbl, id, val, req) {
+  var display = (parseFloat(val) > 0) ? Math.round(parseFloat(val)).toLocaleString('es-CO') : '';
+  return '<div class="field">'
+    + '<label>' + lbl + (req ? '<span class="req">*</span>' : '') + '</label>'
+    + '<div style="position:relative;display:flex;align-items:center">'
+    + '<span style="position:absolute;left:11px;font-weight:700;color:var(--sub);font-size:14px;pointer-events:none;z-index:1">$</span>'
+    + '<input type="text" id="' + id + '" inputmode="numeric" placeholder="0" value="' + esc(display) + '" style="padding-left:26px" oninput="formatMoneyInput(this)">'
     + '</div>'
-    + '<div style="background:white;border:1px solid var(--border);border-radius:var(--r-lg);padding:1rem;margin-bottom:1.25rem">'
-    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
-    + '<div style="border:1.5px solid #C7D2FE;border-radius:var(--r-md);padding:10px 12px;background:#EEF0FE">'
-    + '<div style="font-size:11px;font-weight:700;color:#3730A3;margin-bottom:4px">📋 DIAGNÓSTICO DE INGRESO</div>'
-    + '<div style="font-size:12px;color:#374151;line-height:1.6">Establece la <strong>línea base</strong> del estado actual. Las preguntas miden el estado del negocio <em>hoy</em>.</div>'
-    + '</div>'
-    + '<div style="border:1.5px solid #93C5FD;border-radius:var(--r-md);padding:10px 12px;background:#E6F1FB">'
-    + '<div style="font-size:11px;font-weight:700;color:#1D4ED8;margin-bottom:4px">🏁 DIAGNÓSTICO DE SALIDA</div>'
-    + '<div style="font-size:12px;color:#374151;line-height:1.6">Mide los <strong>cambios y resultados</strong> del acompañamiento. Preguntas diferentes orientadas al impacto.</div>'
-    + '</div>'
-    + '</div>'
-    + '<div style="font-size:11.5px;color:var(--sub);margin-top:.75rem">⚠ Registre información veraz. Datos incorrectos afectan los resultados del diagnóstico.</div>'
-    + '</div>'
-    + '<div class="field" style="font-size:12px;color:var(--sub);line-height:1.65;background:white;border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;">'
-    + 'En cumplimiento de la Ley 1581 de 2012, la información suministrada sera utilizada para fines de acompaniamiento empresarial y analisis del convenio.'
-    + '</div>'
-    + '<div class="field" style="margin-top:1rem"><label style="font-size:14px;font-weight:700;color:var(--navy)">Tipo de diagnóstico<span class="req">*</span></label>'
-    + '<div class="hint">Indica si este es el diagnóstico inicial (ingreso — línea base) o el diagnóstico final (salida — evaluación).</div>'
-    + radioGrp('tipo_diag', ['Diagnóstico de Ingreso — línea base', 'Diagnóstico de Salida — evaluación final'], ST.info.tipo_diag)
-    + '</div>'
-    + navBtns(false, 'Comenzar &#8594;')
+    + '<div class="hint">Valor en pesos colombianos (COP). Ej: 2.500.000</div>'
     + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
 }
-
-function step1() {
-  var I = ST.info; clr();
-  var html = '<div class="step active">'
-    + secHdr('A', 'Identificacion del negocio')
-    + '<div class="field"><label>Razon social o nombre del negocio<span class="req">*</span></label>'
-    + '<input type="text" id="f-razon" placeholder="Ej: Panaderia El Trigal" value="' + esc(I.razon || '') + '"></div>'
-    + '<div class="field"><label>Cuál es su relación con este negocio?<span class="req">*</span></label>'
-    + radioGrp('relación', RELAC_NEG, I.relación) + '</div>'
-    + divider('Ubicacion')
-    + fieldSel('Municipio del negocio', 'f-municipio', MUNICIPIOS, I.municipio, true)
-    + field('Direccion principal del negocio', 'f-direccion', 'text', 'Tipo de via + Nombre + Numero + Complemento', I.direccion, false)
-    + fieldSel('Como se desarrolla principalmente el negocio?', 'f-ubicacion', UBICAC_NEG, I.ubicacion, false)
-    + divider('Actividad economica')
-    + fieldSel('Sector', 'f-sector', SECTORES, I.sector, true)
-    + field('Hace cuánto tiempo existe el negocio?', 'f-antiguedad', 'text', 'Ej: 2 años y 3 meses', I.antiguedad, false)
-    + '<div class="field"><label>Meses de registro en Cámara de Comercio<span class="req">*</span></label>'
-    + '<div class="hint">Si NO está registrado escriba 0. Si está registrado, indique cuántos meses lleva vigente.</div>'
-    + '<input type="number" id="f-meses-reg" min="0" max="600" placeholder="0" value="' + esc(String(I.meses_reg||0)) + '"></div>'
-    + '<div class="field"><label>Tiene Registro Único Tributario (RUT)?<span class="req">*</span></label>'
-    + radioGrp('tiene_rut', ['Si','No'], I.tiene_rut) + '</div>'
-    + divider('Contacto')
-    + field('Correo electrónico del negocio', 'f-correo', 'email', 'correo@ejemplo.com', I.correo, true)
-    + field('Telefono del negocio', 'f-telefono', 'tel', '300 000 0000', I.telefono, true)
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step2() {
-  var I = ST.info; clr();
-  var html = '<div class="step active">'
-    + secHdr('Datos', 'del informante')
-    + '<div class="frow">'
-    + field('Primer nombre', 'f-nombre1', 'text', '', I.nombre1, true)
-    + field('Otros nombres', 'f-nombre2', 'text', '', I.nombre2, false)
-    + '</div>'
-    + '<div class="frow">'
-    + field('Primer apellido', 'f-apellido1', 'text', '', I.apellido1, true)
-    + field('Segundo apellido', 'f-apellido2', 'text', '', I.apellido2, false)
-    + '</div>'
-    + field('Fecha de nacimiento', 'f-nacimiento', 'date', '', I.nacimiento, false)
-    + '<div class="field"><label>Sexo<span class="req">*</span></label>'
-    + '<div class="hint">Segun consta en su documento de identificacion</div>'
-    + radioGrp('sexo', SEXO, I.sexo) + '</div>'
-    + '<div class="field"><label>Es o se reconoce como parte de alguno de los siguientes grupos poblacionales?<span class="req">*</span></label>'
-    + checkGrp('grupos_pob', GRUPOS_POB, I.grupos_pob) + '</div>'
-    + fieldSel('Maximo nivel educativo alcanzado', 'f-edu', NIVEL_EDU, I.edu, true)
-    + '<div class="field"><label>Cual fue el principal motivo para iniciar su negocio?<span class="req">*</span></label>'
-    + radioGrp('motivo', MOTIVOS, I.motivo) + '</div>'
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step3() {
-  var R = ST.R; clr();
-  var html = '<div class="step active">'
-    + secHdr('B', 'Desarrollo del producto o servicio')
-    + '<div class="field"><label>Hace cuántos años esta desarrollando esta actividad?<span class="req">*</span></label>'
-    + radioGrp('anos_act', ANOS_ACT, R.anos_act) + '</div>'
-    + '<div class="field"><label>Cual describe mejor como ve su negocio en el futuro?<span class="req">*</span></label>'
-    + radioGrp('vision', VISION_NEG, R.vision) + '</div>'
-    + divider('Personal ocupado')
-    + '<div class="field"><label>Incluido/a usted, cuántas personas ocupadas tiene el negocio actualmente?<span class="req">*</span></label>'
-    + '<div class="hint">Personas fijas y eventuales que ejercen una labor, remunerada o no, para el negocio.</div>'
-    + '<input type="number" id="f-personal" min="1" placeholder="Ej: 3" value="' + esc(R.personal || '') + '">'
-    + '</div>'
-    + '<div class="field"><label>El negocio paga la salud y/o pension de sus ocupados, o verifica que ellos realicen estos aportes?<span class="req">*</span></label>'
-    + radioGrp('aportes', APORTES_SEG, R.aportes) + '</div>'
-    + divider('Ventas e ingresos')
-    + '<div class="field"><label>Cuál es el valor promedio de las ventas mensuales del negocio (ultimo año)?<span class="req">*</span></label>'
-    + '<div class="hint">Esta información es clave para identificar la etapa de madurez del negocio.</div>'
-    + '<input type="number" id="f-ventas" min="0" placeholder="Valor en pesos colombianos (COP)" value="' + esc(R.ventas || '') + '">'
-    + '</div>'
-    + '<div class="field"><label>Costos mensuales promedio del negocio<span class="req">*</span></label>'
-    + '<div class="hint">Incluye producción, arriendo, salarios, insumos, etc. Línea base para medir variación de costos.</div>'
-    + '<input type="number" id="f-costos" min="0" placeholder="Valor en pesos colombianos (COP)" value="' + esc(R.costos || '') + '">'
-    + '</div>'
-    + '<div class="field"><label>Actualmente estas ventas provienen principalmente de...?<span class="req">*</span></label>'
-    + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
-    + '<div class="field"><label>El negocio realiza actividades de comercio internacional (importaciones o exportaciones)?<span class="req">*</span></label>'
-    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step4() {
-  var R = ST.R; clr();
-  var html = '<div class="step active">'
-    + secHdr('C', 'Liderazgo y planeación')
-    + '<div class="field"><label>Cual describe mejor la forma en que planifica el crecimiento del negocio?<span class="req">*</span></label>'
-    + radioGrp('plan_crec', PLAN_CREC, R.plan_crec) + '</div>'
-    + divider('Descripcion del negocio')
-    + fieldTxt('Describe brevemente los productos o servicios que ofreces', 'f-productos', 'Que vende o produce tu negocio?', R.productos, true)
-    + fieldTxt('Quien es tu cliente principal? Describe su perfil', 'f-cliente', 'Edad, ubicacion, necesidades, comportamiento de compra...', R.cliente, false)
-    + fieldTxt('Cuál es tu propuesta de valor? Por que te eligen a ti?', 'f-pv', 'Lo que hace diferente y valioso tu negocio frente a la competencia...', R.pv, false)
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step5() {
-  var R = ST.R; clr();
-  var html = '<div class="step active">'
-    + secHdr('D', 'Mercadeo y ventas')
-    + '<div class="field"><label>Cual describe mejor la gestión para medir la satisfaccion de los clientes?<span class="req">*</span></label>'
-    + radioGrp('satisfaccion', SATISF_CLI, R.satisfaccion) + '</div>'
-    + divider('Elementos comerciales')
-    + '<div class="field"><label>Seleccione todos los elementos comerciales con los que cuenta el negocio<span class="req">*</span></label>'
-    + checkGrp('elems_com', ELEMS_COM, R.elems_com) + '</div>'
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step6() {
-  var R = ST.R; clr();
-  var html = '<div class="step active">'
-    + secHdr('E', 'Contabilidad y financiamiento')
-    + '<div class="field"><label>Cual describe mejor la forma en que actualmente lleva las cuentas del negocio?<span class="req">*</span></label>'
-    + radioGrp('contabilidad', CONTABILIDAD, R.contabilidad) + '</div>'
-    + divider('Financiamiento')
-    + '<div class="field"><label>En los ultimos 2 años, con que fuentes de financiamiento ha operado el negocio? (Seleccione todas las que apliquen)<span class="req">*</span></label>'
-    + checkGrp('financiamiento', FINANCIAMIENTO, R.financiamiento) + '</div>'
-    + divider('Formalizacion y trámites')
-    + '<div class="field"><label>En el ultimo año, el negocio realizo alguno de los siguientes trámites? (Seleccione todas las que apliquen)<span class="req">*</span></label>'
-    + checkGrp('tramites', TRAMITES, R.tramites) + '</div>'
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step7() {
-  var R = ST.R; clr();
-  var html = '<div class="step active">'
-    + secHdr('F', 'Innovación')
-    + '<div class="notice" style="margin-bottom:1rem"><strong>Innovación</strong>Es la IMPLEMENTACION de nuevas ideas, productos, servicios o procesos que mejoran o transforman significativamente las operaciones o la oferta de una empresa.</div>'
-    + '<div class="field"><label>Con cuales de los siguientes aspectos de innovación cuenta actualmente su negocio?<span class="req">*</span></label>'
-    + checkGrp('innov_asp', INNOV_ASP, R.innov_asp) + '</div>'
-    + divider('Innovaciónes implementadas en el ultimo año')
-    + '<div class="field"><label>Cuántas innovaciónes ha implementado en cada una de las siguientes areas?<span class="req">*</span></label>'
-    + '<div class="hint">Una innovación es un cambio implementado que genera valor. No contabilice actividades habituales o ideas no realizadas.</div>'
-    + buildMatrix()
-    + '</div>'
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step8() {
-  var R = ST.R; clr();
-  var html = '<div class="step active">'
-    + secHdr('G', 'Tecnología')
-    + '<div class="field"><label>Seleccione las tecnologías que usan en su negocio o empresa<span class="req">*</span></label>'
-    + checkGrp('tecnologias', TECNOLOGIAS, R.tecnologias) + '</div>'
-    + divider('Observaciones')
-    + fieldTxt('Observaciones adicionales (opcional)', 'f-obs', 'Cualquier información adicional que considere relevante...', R.obs, false)
-    + navBtns(true)
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-function step9() {
-  clr();
-  var html = '<div class="step active">'
-    + '<div class="done-card"><div class="done-icon">&#9989;</div>'
-    + '<h2>Gracias por participar!</h2>'
-    + '<p>Has completado el Diagnóstico de Madurez Empresarial. Haz clic en <strong>Ver diagnóstico</strong> para obtener tu analisis personalizado con el nivel de madurez, recomendaciónes y plan de acompaniamiento.</p>'
-    + '<button class="btn primary" onclick="showResults()" style="margin:0 auto;display:block">Ver diagnóstico completo &#8594;</button>'
-    + '</div>'
-    + '<div class="nav" style="margin-top:.75rem">'
-    + '<button class="btn" onclick="goPrev()">&#8592; Revisar</button><span></span></div>'
-    + '</div>';
-  var wrap = mk('div'); wrap.innerHTML = html; gid('steps').appendChild(wrap.firstChild);
-}
-
-// ============================================================
-// SAVE FUNCTIONS
-// ============================================================
-function save1() { Object.assign(ST.info, { relación:getR('relación'), razon:gv('f-razon'), municipio:gv('f-municipio'), direccion:gv('f-direccion'), ubicacion:gv('f-ubicacion'), sector:gv('f-sector'), antiguedad:gv('f-antiguedad'), tiene_rut:getR('tiene_rut'), correo:gv('f-correo'), telefono:gv('f-telefono'), meses_reg:parseInt(gv('f-meses-reg'))||0 }); }
-function save2() { Object.assign(ST.info, { nombre1:gv('f-nombre1'), nombre2:gv('f-nombre2'), apellido1:gv('f-apellido1'), apellido2:gv('f-apellido2'), nacimiento:gv('f-nacimiento'), sexo:getR('sexo'), grupos_pob:getC('grupos_pob'), edu:gv('f-edu'), motivo:getR('motivo') }); }
-function save3() {
-  if (MODO === 'ingreso') {
-    Object.assign(ST.R, {
-      anos_act:      getR('anos_act'),
-      vision:        getR('vision'),
-      personal:      gv('f-personal'),
-      aportes:       getR('aportes'),
-      ventas:        gv('f-ventas'),
-      costos:        gv('f-costos'),
-      fuente_ventas: getR('fuente_ventas'),
-      comercio_int:  getR('comercio_int')
-    });
-  } else {
-    // Save ingreso (baseline) values
-    Object.assign(ST.ing, {
-      ventas:     parseFloat(gv('f-ing-ventas'))  || ST.ing.ventas  || 0,
-      costos:     parseFloat(gv('f-ing-costos'))  || ST.ing.costos  || 0,
-      personal:   parseInt(gv('f-ing-personal'))  || ST.ing.personal|| 0,
-      emp_formal: parseInt(gv('f-ing-empformal')) || ST.ing.emp_formal || 0,
-      puntaje:    parseInt(gv('f-ing-puntaje'))   || ST.ing.puntaje || 0,
-      nivel:      gv('f-ing-nivel') || ST.ing.nivel || ''
-    });
-    // Save current values
-    Object.assign(ST.R, {
-      ventas:   gv('f-ventas'),
-      costos:   gv('f-costos'),
-      personal: gv('f-personal'),
-      aportes:  getR('aportes')
-    });
-  } }
-function save4() { Object.assign(ST.R, { plan_crec:getR('plan_crec'), productos:gv('f-productos'), cliente:gv('f-cliente'), pv:gv('f-pv') }); }
-function save5() { Object.assign(ST.R, { satisfaccion:getR('satisfaccion'), elems_com:getC('elems_com') }); }
-function save6() { Object.assign(ST.R, { contabilidad:getR('contabilidad'), financiamiento:getC('financiamiento'), tramites:getC('tramites') }); }
-function save7() { Object.assign(ST.R, { innov_asp:getC('innov_asp') }); }
-function save8() { Object.assign(ST.R, { tecnologias:getC('tecnologias'), herram_nuevas:getC('herram_nuevas'), obs:gv('f-obs'), sostenibilidad:gv('f-sostenibilidad'), recomienda:getR('recomienda'), valoracion_proc:getR('valoracion_proc'), impacto_areas:getC('impacto_areas') }); }
-
-// ============================================================
-// VALIDATION
-// ============================================================
-function validate(n) {
-  var I = ST.info, R = ST.R;
-  if (n === 0) {
-    if (!ST.info.tipo_diag) { showErr('Por favor selecciona el tipo de diagnóstico.'); return false; }
-  }
-  if (n === 1) {
-    if (!I.razon)     { showErr('Ingresa la razon social o nombre del negocio.'); return false; }
-    if (!I.relación)  { showErr('Selecciona tu relación con el negocio.'); return false; }
-    if (!I.municipio) { showErr('Selecciona el municipio del negocio.'); return false; }
-    if (!I.sector)    { showErr('Selecciona el sector.'); return false; }
-    if (!I.tiene_rut) { showErr('Indica si el negocio tiene RUT.'); return false; }
-    if (!I.correo)    { showErr('Ingresa el correo electrónico del negocio.'); return false; }
-    if (!I.telefono)  { showErr('Ingresa el telefono del negocio.'); return false; }
-  }
-  if (n === 2) {
-    if (!I.nombre1)   { showErr('Ingresa tu primer nombre.'); return false; }
-    if (!I.apellido1) { showErr('Ingresa tu primer apellido.'); return false; }
-    if (!I.sexo)      { showErr('Selecciona el sexo.'); return false; }
-    if (!I.grupos_pob || I.grupos_pob.length === 0) { showErr('Selecciona al menos un grupo poblacional (o Ninguno).'); return false; }
-    if (!I.edu)       { showErr('Selecciona el nivel educativo.'); return false; }
-    if (!I.motivo)    { showErr('Selecciona el motivo principal para iniciar el negocio.'); return false; }
-  }
-  if (n === 3) {
-    if (MODO === 'ingreso') {
-      if (!R.anos_act)      { showErr('Indica hace cuántos años desarrollas esta actividad.'); return false; }
-      if (!R.vision)        { showErr('Selecciona cómo ves el futuro del negocio.'); return false; }
-      if (!R.personal)      { showErr('Indica el número de personas ocupadas.'); return false; }
-      if (!R.aportes)       { showErr('Indica si el negocio paga seguridad social.'); return false; }
-      if (!R.ventas)        { showErr('Ingresa los ingresos (ventas) mensuales.'); return false; }
-      if (!R.costos)        { showErr('Ingresa los costos y gastos mensuales.'); return false; }
-      if (!R.fuente_ventas) { showErr('Selecciona la fuente principal de ventas.'); return false; }
-      if (!R.comercio_int)  { showErr('Indica si realizas comercio internacional.'); return false; }
-    } else {
-      // seguimiento / salida — validate ingreso values + current values
-      if (!gv('f-ing-ventas') && !(ST.ing && ST.ing.ventas)) { showErr('Ingresa los ingresos del diagnóstico de ingreso (línea base).'); return false; }
-      if (!gv('f-ventas') && !R.ventas)     { showErr('Ingresa los ingresos (ventas) actuales.'); return false; }
-      if (!R.aportes && !getR('aportes'))   { showErr('Indica si el negocio paga seguridad social actualmente.'); return false; }
-    }
-  }
-  if (n === 4) {
-    if (!R.plan_crec)  { showErr('Selecciona como planificas el crecimiento del negocio.'); return false; }
-    if (!R.productos)  { showErr('Describe los productos o servicios del negocio.'); return false; }
-  }
-  if (n === 5) {
-    if (!R.satisfaccion) { showErr('Selecciona como mides la satisfaccion de los clientes.'); return false; }
-    if (!R.elems_com || R.elems_com.length === 0) { showErr('Selecciona al menos un elemento comercial.'); return false; }
-  }
-  if (n === 6) {
-    if (!R.contabilidad) { showErr('Selecciona como llevas las cuentas del negocio.'); return false; }
-    if (!R.financiamiento || R.financiamiento.length === 0) { showErr('Selecciona al menos una fuente de financiamiento.'); return false; }
-    if (!R.tramites || R.tramites.length === 0) { showErr('Selecciona los trámites realizados.'); return false; }
-  }
-  if (n === 7) {
-    if (!R.innov_asp || R.innov_asp.length === 0) { showErr('Selecciona al menos un aspecto de innovación (o Ninguno).'); return false; }
-  }
-  if (n === 8) {
-    if (!R.tecnologias || R.tecnologias.length === 0) { showErr('Selecciona al menos una tecnología (o Ninguna).'); return false; }
-  }
-  return true;
-}
-
-// ============================================================
-// NAVIGATION
-// ============================================================
-var RENDERS_ING = [step0, step1, step2, step3,    step4,    step5,    step6,    step7,    step8,    step9];
-var RENDERS_SAL = [step0, step1, step2, step3sal, step4sal, step5sal, step6sal, step7sal, step8sal, step9];
-var RENDERS     = RENDERS_ING;
-var SAVES   = [null, save1, save2, save3, save4, save5, save6, save7, save8, null]; // save functions shared
-
-function renderStep(n) {
-  var esSalida = ST.info.tipo_diag && ST.info.tipo_diag.indexOf('Salida') >= 0;
-  RENDERS = esSalida ? RENDERS_SAL : RENDERS_ING;
-  RENDERS[n]();
-  updateProg();
-  window.scrollTo(0, 0);
-}
-
-function goNext() {
-  if (ST.step === 0) { ST.info.tipo_diag = getR('tipo_diag'); }
-  if (SAVES[ST.step]) SAVES[ST.step]();
-  if (!validate(ST.step)) return;
-  if (ST.step < TOTAL - 1) { ST.step++; renderStep(ST.step); }
-}
-
-function goPrev() {
-  if (ST.step > 0) { ST.step--; renderStep(ST.step); }
-}
-
-// ============================================================
-// SCORING
-// ============================================================
-var DIMS_META = {
-  mercado:      { name: 'Mercado objetivo',              color: '#EEF0FE', bar: '#534AB7',
-    crit: 'Claridad en la definición de clientes, estrategias de segmentación y métricas de mercado. Se evalúa perfil de cliente definido, alcance geográfico de ventas, medición de satisfacción y herramientas de seguimiento comercial.' },
-  oferta:       { name: 'Oferta de valor',               color: '#FAECE7', bar: '#C97A0A',
-    crit: 'Pertinencia, diferenciación y coherencia del producto/servicio frente a las necesidades del mercado. Se evalúa si tiene documentada la propuesta de valor, el portafolio, la metodología de precios y la validación con clientes.' },
-  rentabilizacion:{ name: 'Modelo de rentabilización',  color: '#EAF3DE', bar: '#276749',
-    crit: 'Estructura de costos, gestión de proveedores, estrategias de precios y márgenes de rentabilidad. Se evalúa el nivel de gestión contable, diversidad de fuentes de financiamiento y conocimiento de costos e ingresos.' },
-  comercializacion:{ name: 'Modelo de comercialización', color: '#FEF9E7', bar: '#B7791F',
-    crit: 'Canales, relación con clientes, datos históricos de ventas y estrategias de escalabilidad. Se evalúa el nivel de planeación comercial, proceso de ventas documentado, alcance de mercado y gestión de relación con clientes.' },
-  madurez:      { name: 'Madurez administrativa y financiera', color: '#F0EBF9', bar: '#6B46C1',
-    crit: 'Nivel de bancarización, procesos internos, estructura organizacional y apropiación tecnológica. Se evalúa formalización (Cámara de Comercio, RUT, trámites), número de tecnologías adoptadas, empleo formal y nivel de planeación estratégica.' }
-};
-
-var DIMS_META = {
-  mercado:      { name:'Mercado objetivo',              color:'#EEF0FE', bar:'#534AB7',
-    crit:'Satisfacción de clientes (50%) — 5 niveles desde sin medición hasta sistema sistematizado. Alcance de ventas (30%) — familia/barrio/ciudad/nacional/internacional. Segmentación documentada (20%). Mayor alcance y mejor medición = puntaje más alto.' },
-  oferta:       { name:'Oferta de valor',               color:'#FAECE7', bar:'#C97A0A',
-    crit:'Descripción de productos/servicios (25 pts) + perfil del cliente documentado (20 pts) + propuesta de valor escrita (15 pts) + elementos comerciales como portafolio, metodología de precios y proceso de ventas (hasta 40 pts).' },
-  rentabilizacion:{ name:'Modelo de rentabilización',  color:'#EAF3DE', bar:'#276749',
-    crit:'Sistema contable (60%): sin registro=0, cuaderno=25, Excel básico=50, software especializado=75, ERP=100. Diversidad de financiamiento (40%): ninguna fuente=0, una=45, dos=70, tres o más=100.' },
-  comercializacion:{ name:'Modelo de comercialización', color:'#FEF9E7', bar:'#B7791F',
-    crit:'Nivel de planeación comercial (40%): sin ideas hasta plan estratégico con indicadores. Canales y escalabilidad (60%): proceso de ventas documentado, plan de crecimiento, equipo comercial con roles definidos y medición de satisfacción.' },
-  madurez:      { name:'Madurez administrativa y financiera', color:'#F0EBF9', bar:'#6B46C1',
-    crit:'Formalización (30%): trámites ante CC, RUT, INVIMA, etc. Tecnología adoptada (30%): cantidad y nivel de herramientas digitales usadas. Seguridad social (20%): pago de aportes a colaboradores. Planeación estratégica (20%): nivel de planificación documentada.' }
-};
-
-// ═══════════════════════════════════════════════
-// APPLICATION CORE (steps, routing, navigation)
-// ═══════════════════════════════════════════════
-// ═══════════════════════════════════════════════════════════════
-// DIAGNÓSTICO DE MADUREZ EMPRESARIAL
-// Ecopetrol Emprende · Universidad de los Llanos
-//
-// TRES MODOS DIFERENCIADOS:
-//   INGRESO     → fotografía del estado actual, línea base
-//   SEGUIMIENTO → monitoreo del avance, requiere valores de ingreso
-//   SALIDA      → evaluación final del impacto, requiere valores de ingreso
-// ═══════════════════════════════════════════════════════════════
-
-// ─── Estado global ────────────────────────────────────────────
-var MODO = null; // 'ingreso' | 'seguimiento' | 'salida'
-
-var ST = {
-  step:     0,
-  info:     {},   // identificación del beneficiario
-  ing:      {},   // valores línea base del diagnóstico de ingreso
-  R:        {},   // respuestas del cuestionario actual
-  logo_b64: null  // logo del emprendimiento (base64)
-};
-
-// ─── Helpers DOM ──────────────────────────────────────────────
-function gid(id)  { return document.getElementById(id); }
-function gv(id)   { var e=gid(id); return e ? e.value.trim() : ''; }
-function mk(tag)  { return document.createElement(tag); }
-function esc(s)   { return (s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-function fmtCOP(v){ return (v>0) ? '$'+Math.round(v).toLocaleString('es-CO') : 'Sin dato'; }
-function fmtPct(v){ return (v>=0?'+':'')+Math.round(v)+'%'; }
-
-function clr() { gid('steps').innerHTML = ''; }
 
 function appnd(html) {
-  var d = mk('div');
+  var d = document.createElement('div');
   d.innerHTML = html;
-  gid('steps').appendChild(d.firstChild);
+  var child = d.firstElementChild || d.firstChild;
+  if (child) document.getElementById('steps').appendChild(child);
+  else document.getElementById('steps').innerHTML = html;
+}
+
+function fmtCOP(v) {
+  var n = parseFloat(v) || 0;
+  return n > 0 ? '$' + Math.round(n).toLocaleString('es-CO') : 'Sin dato';
+}
+
+function gvMoney(id) {
+  var el = document.getElementById(id);
+  if (!el) return 0;
+  return parseFloat(String(el.value).replace(/\./g,'').replace(/[^0-9]/g,'')) || 0;
 }
 
 // ─── UI helpers ───────────────────────────────────────────────
 function radioGrp(name, opts, saved) {
-  var h = '<div class="opt-group" data-radio="'+name+'">';
-  opts.forEach(function(o) {
-    var s = (saved === o);
-    h += '<div class="opt-item'+(s?' sel':'')+'" data-val="'+esc(o)+'" onclick="selR(this)">'
-       + '<div class="opt-dot'+(s?' filled':'')+'"></div>'
-       + '<div class="opt-lbl">'+o+'</div></div>';
-  });
+  var h = '<div class="opt-group" data-radio="' + name + '">';
+  for (var i=0; i<opts.length; i++) {
+    var o = opts[i], sel = (saved === o);
+    h += '<div class="opt-item' + (sel?' sel':'') + '" data-val="' + esc(o) + '" onclick="selR(this)">'
+       + '<div class="opt-dot' + (sel?' filled':'') + '"></div>'
+       + '<div class="opt-lbl">' + o + '</div></div>';
+  }
   return h + '</div>';
 }
 
 function checkGrp(name, opts, saved) {
   var v = saved || [];
-  var h = '<div class="opt-group" data-check="'+name+'">';
-  opts.forEach(function(o) {
-    var s = (v.indexOf(o) >= 0);
-    h += '<div class="opt-item'+(s?' sel':'')+'" data-val="'+esc(o)+'" onclick="togC(this)">'
-       + '<div class="opt-check'+(s?' filled':'')+'">'+( s?'<span style="color:white;font-size:10px;font-weight:700">&#10003;</span>':'')+'</div>'
-       + '<div class="opt-lbl">'+o+'</div></div>';
-  });
+  var h = '<div class="opt-group" data-check="' + name + '">';
+  for (var i=0; i<opts.length; i++) {
+    var o = opts[i], sel = (v.indexOf(o) >= 0);
+    h += '<div class="opt-item' + (sel?' sel':'') + '" data-val="' + esc(o) + '" onclick="togC(this)">'
+       + '<div class="opt-check' + (sel?' filled':'') + '">' + (sel?'<span style="color:white;font-size:10px;font-weight:700">&#10003;</span>':'') + '</div>'
+       + '<div class="opt-lbl">' + o + '</div></div>';
+  }
   return h + '</div>';
 }
 
 function field(lbl, id, type, ph, val, req) {
-  return '<div class="field"><label>'+lbl+(req?'<span class="req">*</span>':'')+'</label>'
-       + '<input type="'+(type||'text')+'" id="'+id+'" placeholder="'+(ph||'')+'" value="'+(val||'')+'"></div>';
+  return '<div class="field"><label>' + lbl + (req?'<span class="req">*</span>':'') + '</label>'
+    + '<input type="' + (type||'text') + '" id="' + id + '" placeholder="' + esc(ph||'') + '" value="' + esc(val||'') + '"></div>';
 }
 
 function fieldSel(lbl, id, opts, saved, req) {
-  return '<div class="field"><label>'+lbl+(req?'<span class="req">*</span>':'')+'</label>'
-       + '<select id="'+id+'"><option value="">Selecciona...</option>'
-       + opts.map(function(o){ return '<option'+(saved===o?' selected':'')+'>'+o+'</option>'; }).join('')
-       + '</select></div>';
+  var h = '<div class="field"><label>' + lbl + (req?'<span class="req">*</span>':'') + '</label>'
+    + '<select id="' + id + '"><option value="">Selecciona...</option>';
+  for (var i=0; i<opts.length; i++) {
+    h += '<option' + (saved===opts[i]?' selected':'') + '>' + opts[i] + '</option>';
+  }
+  return h + '</select></div>';
 }
 
 function fieldTxt(lbl, id, ph, val, req) {
-  return '<div class="field"><label>'+lbl+(req?'<span class="req">*</span>':'')+'</label>'
-       + '<textarea id="'+id+'" placeholder="'+(ph||'')+'">'+( val||'')+'</textarea></div>';
+  return '<div class="field"><label>' + lbl + (req?'<span class="req">*</span>':'') + '</label>'
+    + '<textarea id="' + id + '" placeholder="' + esc(ph||'') + '">' + esc(val||'') + '</textarea></div>';
 }
 
-function fieldHint(txt) {
-  return '<div class="hint">'+txt+'</div>';
-}
+function hint(txt) { return '<div class="hint">' + txt + '</div>'; }
 
-function divider(t) {
-  return '<div class="divider"><span>'+t+'</span></div>';
-}
+function divider(t) { return '<div class="divider"><span>' + t + '</span></div>'; }
 
 function secHdr(letter, name) {
-  return '<div class="sec-hdr"><span class="sec-letter">'+letter+'</span><span class="sec-name">'+name+'</span></div>';
+  return '<div class="sec-hdr"><span class="sec-letter">' + letter + '</span><span class="sec-name">' + name + '</span></div>';
 }
 
 function navBtns(hasPrev, nextLbl) {
   return '<div class="nav">'
     + (hasPrev ? '<button class="btn" onclick="goPrev()">&#8592; Atrás</button>' : '<span></span>')
-    + '<button class="btn primary" onclick="goNext()">'+( nextLbl||'Siguiente &#8594;')+'</button>'
+    + '<button class="btn primary" onclick="goNext()">' + (nextLbl||'Siguiente &#8594;') + '</button>'
     + '</div>';
 }
 
 function modoBanner() {
   if (!MODO) return '';
-  var cfg = {
-    ingreso:     { bg:'#EEF0FE', color:'#534AB7', icon:'📋', text:'Diagnóstico de Ingreso — Registra el estado actual como línea base' },
-    seguimiento: { bg:'#FEF9E7', color:'#B7791F', icon:'📈', text:'Diagnóstico de Seguimiento — Mide el avance comparado con la línea base de ingreso' },
-    salida:      { bg:'#E6F1FB', color:'#2B6CB0', icon:'🏁', text:'Diagnóstico de Salida — Evaluación final del impacto del acompañamiento' }
-  }[MODO];
-  return '<div style="background:'+cfg.bg+';border-left:4px solid '+cfg.color+';padding:9px 14px;border-radius:0 var(--r-md) var(--r-md) 0;font-size:12.5px;color:'+cfg.color+';margin-bottom:1rem;font-weight:500">'+cfg.icon+' '+cfg.text+'</div>';
+  var cfgs = {
+    ingreso:     { bg:'#EEF0FE', bdr:'#534AB7', icon:'📋', lbl:'Diagnóstico de Ingreso — Línea base' },
+    seguimiento: { bg:'#FEF9E7', bdr:'#B7791F', icon:'📈', lbl:'Diagnóstico de Seguimiento — Monitoreo' },
+    salida:      { bg:'#E6F1FB', bdr:'#2B6CB0', icon:'🏁', lbl:'Diagnóstico de Salida — Evaluación final' }
+  };
+  var c = cfgs[MODO];
+  return '<div style="background:' + c.bg + ';border-left:4px solid ' + c.bdr + ';padding:9px 14px;border-radius:0 var(--r-md) var(--r-md) 0;font-size:12.5px;color:' + c.bdr + ';margin-bottom:1rem;font-weight:500">'
+    + c.icon + ' ' + c.lbl + '</div>';
 }
 
-// ─── Interactions ──────────────────────────────────────────────
+function ingResumen() {
+  // Shows baseline values as reference in salida/seguimiento steps
+  if (MODO === 'ingreso') return '';
+  var ING = ST.ing;
+  return '<div style="background:#F8FAFF;border:1.5px solid #C7D2FE;border-radius:var(--r-lg);padding:1rem;margin-bottom:1rem">'
+    + '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#3730A3;margin-bottom:.65rem">📋 Valores de referencia — Diagnóstico de Ingreso (línea base)</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px">'
+    + '<div><div style="color:var(--sub);font-size:10px;margin-bottom:2px">Ingresos al inicio</div>'
+    + '<div style="font-weight:700;color:var(--navy)">' + (ING.ventas>0 ? fmtCOP(ING.ventas)+'/mes' : 'Sin dato') + '</div></div>'
+    + '<div><div style="color:var(--sub);font-size:10px;margin-bottom:2px">Costos al inicio</div>'
+    + '<div style="font-weight:700;color:var(--navy)">' + (ING.costos>0 ? fmtCOP(ING.costos)+'/mes' : 'Sin dato') + '</div></div>'
+    + '<div><div style="color:var(--sub);font-size:10px;margin-bottom:2px">Personal al inicio</div>'
+    + '<div style="font-weight:700;color:var(--navy)">' + (ING.personal||'Sin dato') + ' persona(s)</div></div>'
+    + '</div>'
+    + (ING.puntaje>0 ? '<div style="margin-top:6px;font-size:11px;color:var(--sub)">Puntaje de madurez al inicio: <strong style="color:var(--navy)">' + ING.puntaje + '%</strong> — ' + (ING.nivel||'—') + '</div>' : '')
+    + '</div>';
+}
+
+// Interactions
 function selR(item) {
-  item.closest('[data-radio]').querySelectorAll('.opt-item').forEach(function(i) {
+  var grp = item.closest('[data-radio]');
+  grp.querySelectorAll('.opt-item').forEach(function(i) {
     i.classList.remove('sel');
     i.querySelector('.opt-dot').classList.remove('filled');
   });
@@ -1140,78 +525,69 @@ function togC(item) {
 }
 
 function getR(name) {
-  var g = document.querySelector('[data-radio="'+name+'"]');
+  var g = document.querySelector('[data-radio="' + name + '"]');
   if (!g) return null;
   var s = g.querySelector('.opt-item.sel');
   return s ? s.getAttribute('data-val') : null;
 }
 
 function getC(name) {
-  var g = document.querySelector('[data-check="'+name+'"]');
+  var g = document.querySelector('[data-check="' + name + '"]');
   if (!g) return [];
-  return Array.from(g.querySelectorAll('.opt-item.sel')).map(function(i) {
-    return i.getAttribute('data-val');
-  });
+  return Array.from(g.querySelectorAll('.opt-item.sel')).map(function(i) { return i.getAttribute('data-val'); });
 }
 
 function showErr(msg) {
   document.querySelectorAll('.err-box').forEach(function(e) { e.remove(); });
-  var e = mk('div');
-  e.className = 'err-box';
-  e.textContent = msg;
+  var e = mk('div'); e.className='err-box'; e.textContent=msg;
   var nav = document.querySelector('.nav');
-  if (nav) {
-    nav.parentNode.insertBefore(e, nav);
-    e.scrollIntoView({ behavior:'smooth', block:'nearest' });
-  }
-  setTimeout(function() { if (e.parentNode) e.remove(); }, 4500);
+  if (nav) { nav.parentNode.insertBefore(e, nav); e.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  setTimeout(function(){ if(e.parentNode) e.remove(); }, 4500);
 }
 
-// ─── Logo upload ───────────────────────────────────────────────
 function cargarLogo(input) {
-  var file = input.files[0];
-  if (!file) return;
+  var file = input.files[0]; if (!file) return;
   var reader = new FileReader();
-  reader.onload = function(e) {
-    ST.logo_b64 = e.target.result;
-    var prev = gid('logo-preview');
-    if (prev) prev.innerHTML = '<img src="'+ST.logo_b64+'" style="height:56px;border-radius:8px;border:1px solid var(--border);margin-top:4px">';
+  reader.onload = function(ev) {
+    ST.logo_b64 = ev.target.result;
+    var p = gid('logo-preview');
+    if (p) p.innerHTML = '<img src="' + ST.logo_b64 + '" style="height:56px;border-radius:8px;border:1px solid var(--border);margin-top:4px">';
   };
   reader.readAsDataURL(file);
 }
 
-// ─── Delta calculator (live preview in paso 3B) ────────────────
+// Delta preview for step 3 seguimiento/salida
 function calcDeltaPreview() {
-  var ingV = parseFloat(gid('f-ing-ventas')  && gid('f-ing-ventas').value)  || 0;
-  var curV = parseFloat(gid('f-ventas')      && gid('f-ventas').value)      || 0;
-  var ingC = parseFloat(gid('f-ing-costos')  && gid('f-ing-costos').value)  || 0;
-  var curC = parseFloat(gid('f-costos')      && gid('f-costos').value)      || 0;
-  var ingP = parseInt(gid('f-ing-personal')  && gid('f-ing-personal').value)|| 0;
-  var curP = parseInt(gid('f-personal')      && gid('f-personal').value)    || 0;
+  var ingV = gvMoney('f-ing-ventas'), curV = gvMoney('f-ventas');
+  var ingC = gvMoney('f-ing-costos'), curC = gvMoney('f-costos');
+  var ingP = parseInt(gv('f-ing-personal'))||0, curP = parseInt(gv('f-personal'))||0;
   var el = gid('delta-preview');
   if (!el || (!ingV && !ingC)) return;
-  var dV = ingV > 0 ? ((curV-ingV)/ingV*100) : null;
-  var dC = ingC > 0 ? ((curC-ingC)/ingC*100) : null;
-  var dP = ingP > 0 ? ((curP-ingP)/ingP*100) : null;
-  function st(d, meta, esMenos) {
-    if (d === null) return '<span style="color:var(--sub)">Sin dato</span>';
-    var ok = esMenos ? d <= meta : d >= meta;
-    var par= esMenos ? d < 0    : d >= meta/2;
+
+  function sta(d, meta, esMenos) {
+    if (d === null) return '<span style="color:var(--sub)">—</span>';
+    var ok = esMenos ? d<=meta : d>=meta;
+    var par= esMenos ? d<0    : d>=meta/2;
     var ic = ok?'✅':par?'⚠️':'❌';
     var col= ok?'var(--green)':par?'var(--amber)':'var(--red)';
-    return ic+' <strong style="color:'+col+'">'+(d>=0?'+':'')+Math.round(d)+'%</strong>';
+    return ic + ' <strong style="color:' + col + '">' + (d>=0?'+':'') + Math.round(d) + '%</strong>';
   }
+
+  var dV = ingV>0 ? (curV-ingV)/ingV*100 : null;
+  var dC = ingC>0 ? (curC-ingC)/ingC*100 : null;
+  var dP = ingP>0 ? (curP-ingP)/ingP*100 : null;
+
   el.innerHTML = '<div style="background:var(--light);border-radius:var(--r-md);padding:10px 12px;font-size:12px;margin-top:.5rem">'
-    + '<div style="font-weight:700;color:var(--navy);margin-bottom:6px">Vista previa de indicadores de avance:</div>'
+    + '<div style="font-weight:700;color:var(--navy);margin-bottom:6px">Vista previa de avance vs. línea base:</div>'
     + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center">'
-    + '<div><div style="font-size:10px;color:var(--sub);margin-bottom:2px">Ingresos<br>(Meta: +20%)</div>'+st(dV,20,false)+'</div>'
-    + '<div><div style="font-size:10px;color:var(--sub);margin-bottom:2px">Costos<br>(Meta: ≤-10%)</div>'+st(dC,-10,true)+'</div>'
-    + '<div><div style="font-size:10px;color:var(--sub);margin-bottom:2px">Empleo<br>(Meta: +10%)</div>'+st(dP,10,false)+'</div>'
+    + '<div><div style="font-size:10px;color:var(--sub);margin-bottom:2px">Ingresos<br>Meta: +20%</div>' + sta(dV,20,false) + '</div>'
+    + '<div><div style="font-size:10px;color:var(--sub);margin-bottom:2px">Costos<br>Meta: ≤-10%</div>' + sta(dC,-10,true) + '</div>'
+    + '<div><div style="font-size:10px;color:var(--sub);margin-bottom:2px">Empleo<br>Meta: +10%</div>' + sta(dP,10,false) + '</div>'
     + '</div></div>';
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PASO 0 — Selección del modo de diagnóstico
+// PASO 0 — Selección del modo
 // ═══════════════════════════════════════════════════════════════
 function step0() {
   clr();
@@ -1219,37 +595,21 @@ function step0() {
     + '<div class="welcome">'
     + '<div class="wc-tag">Ecopetrol Emprende · Universidad de los Llanos</div>'
     + '<h1>Diagnóstico de Madurez Empresarial</h1>'
-    + '<p>Instrumento validado con integración de IA generativa para el fortalecimiento de emprendimientos y MiPymes de la Orinoquía colombiana. El diagnóstico evalúa los 5 componentes fundamentales del modelo de negocio.</p>'
+    + '<p>Instrumento validado con IA generativa para el fortalecimiento de emprendimientos y MiPymes de la Orinoquía colombiana.</p>'
     + '</div>'
-
-    + '<div class="notice"><strong>Antes de comenzar:</strong> Selecciona el tipo de diagnóstico según el momento del proceso en que te encuentras.</div>'
-
-    + '<div class="s-title">¿Qué tipo de diagnóstico vas a realizar?</div>'
-
-    // MODO INGRESO
+    + '<div class="s-title">Selecciona el tipo de diagnóstico</div>'
     + '<div class="mode-card" id="mc-ingreso" onclick="selModo(\'ingreso\')">'
-    + '<div class="mc-icon" style="background:#EEF0FE;color:#534AB7">📋</div>'
-    + '<div class="mc-body">'
-    + '<div class="mc-title">Diagnóstico de Ingreso <span class="badge-mode ing">Línea base</span></div>'
-    + '<div class="mc-desc"><strong>Primera aplicación.</strong> Registra el estado actual del emprendimiento o MiPyme. Genera la <strong>línea base</strong> de ingresos, costos, empleo y madurez empresarial que servirá para medir el avance al finalizar el proceso.</div>'
-    + '</div></div>'
-
-    // MODO SEGUIMIENTO
+    +   '<div class="mc-icon" style="background:#EEF0FE;color:#534AB7">📋</div>'
+    +   '<div class="mc-body"><div class="mc-title">Diagnóstico de Ingreso <span class="badge-mode ing">Línea base</span></div>'
+    +   '<div class="mc-desc"><strong>Primera aplicación.</strong> Registra el estado actual del negocio y genera la línea base de ingresos, costos, empleo y madurez empresarial.</div></div></div>'
     + '<div class="mode-card" id="mc-seguimiento" onclick="selModo(\'seguimiento\')">'
-    + '<div class="mc-icon" style="background:#FEF9E7;color:#B7791F">📈</div>'
-    + '<div class="mc-body">'
-    + '<div class="mc-title">Diagnóstico de Seguimiento <span class="badge-mode seg">Monitoreo</span></div>'
-    + '<div class="mc-desc"><strong>Aplicación intermedia.</strong> Monitorea el avance durante el proceso de acompañamiento. <strong>Solicita los valores del diagnóstico de ingreso</strong> para calcular las variaciones reales en ingresos, costos y empleo.</div>'
-    + '</div></div>'
-
-    // MODO SALIDA
+    +   '<div class="mc-icon" style="background:#FEF9E7;color:#B7791F">📈</div>'
+    +   '<div class="mc-body"><div class="mc-title">Diagnóstico de Seguimiento <span class="badge-mode seg">Monitoreo</span></div>'
+    +   '<div class="mc-desc"><strong>Aplicación intermedia.</strong> Monitorea el avance. Solicita los valores del diagnóstico de ingreso para calcular variaciones reales de ingresos, costos y empleo.</div></div></div>'
     + '<div class="mode-card" id="mc-salida" onclick="selModo(\'salida\')">'
-    + '<div class="mc-icon" style="background:#E6F1FB;color:#2B6CB0">🏁</div>'
-    + '<div class="mc-body">'
-    + '<div class="mc-title">Diagnóstico de Salida <span class="badge-mode sal">Evaluación final</span></div>'
-    + '<div class="mc-desc"><strong>Aplicación final.</strong> Mide el impacto real del acompañamiento. <strong>Solicita los valores del diagnóstico de ingreso</strong> para calcular el cumplimiento de metas del convenio: ingresos +20%, costos -10%, ventas +30%, empleo +10%.</div>'
-    + '</div></div>'
-
+    +   '<div class="mc-icon" style="background:#E6F1FB;color:#2B6CB0">🏁</div>'
+    +   '<div class="mc-body"><div class="mc-title">Diagnóstico de Salida <span class="badge-mode sal">Evaluación final</span></div>'
+    +   '<div class="mc-desc"><strong>Aplicación final.</strong> Mide el impacto del acompañamiento. Solicita los valores del diagnóstico de ingreso para calcular cumplimiento de metas: ingresos +20%, costos -10%, ventas +30%, empleo +10%.</div></div></div>'
     + '<div id="modo-alert" style="display:none;margin-top:.75rem;padding:10px 14px;border-radius:var(--r-md);font-size:13px;font-weight:500"></div>'
     + navBtns(false, 'Comenzar &#8594;')
     + '</div>';
@@ -1260,22 +620,21 @@ function selModo(modo) {
   MODO = modo;
   ST.info.modo = modo;
   document.querySelectorAll('.mode-card').forEach(function(c) { c.classList.remove('sel'); });
-  var mc = gid('mc-'+modo);
+  var mc = gid('mc-' + modo);
   if (mc) mc.classList.add('sel');
-  var cfg = {
-    ingreso:     { bg:'#EEF0FE', color:'#534AB7', text:'📋 Seleccionado: Diagnóstico de Ingreso. Se registrará el estado actual como línea base.' },
-    seguimiento: { bg:'#FEF9E7', color:'#B7791F', text:'📈 Seleccionado: Diagnóstico de Seguimiento. Deberás ingresar los valores registrados al inicio del proceso.' },
-    salida:      { bg:'#E6F1FB', color:'#2B6CB0', text:'🏁 Seleccionado: Diagnóstico de Salida. Deberás ingresar los valores de ingreso (línea base) para calcular el impacto.' }
-  }[modo];
+  var cfgs = {
+    ingreso:     { bg:'#EEF0FE', color:'#534AB7', text:'📋 Diagnóstico de Ingreso seleccionado. Se registrará el estado actual como línea base.' },
+    seguimiento: { bg:'#FEF9E7', color:'#B7791F', text:'📈 Diagnóstico de Seguimiento seleccionado. Deberás ingresar los valores del diagnóstico de ingreso.' },
+    salida:      { bg:'#E6F1FB', color:'#2B6CB0', text:'🏁 Diagnóstico de Salida seleccionado. Deberás ingresar los valores de ingreso para calcular el impacto.' }
+  };
+  var cfg = cfgs[modo];
   var el = gid('modo-alert');
-  el.style.display = 'block';
-  el.style.background = cfg.bg;
-  el.style.color = cfg.color;
+  el.style.cssText = 'display:block;background:' + cfg.bg + ';color:' + cfg.color + ';margin-top:.75rem;padding:10px 14px;border-radius:var(--r-md);font-size:13px;font-weight:500';
   el.textContent = cfg.text;
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PASO 1 — Identificación del negocio (IGUAL EN LOS 3 MODOS)
+// PASO 1 — Identificación del negocio
 // ═══════════════════════════════════════════════════════════════
 function step1() {
   var I = ST.info;
@@ -1294,31 +653,30 @@ function step1() {
     + fieldSel('Sector económico', 'f-sector', SECTORES, I.sector, true)
     + '</div>'
     + '<div class="field-row">'
-    + field('Correo electrónico del negocio', 'f-correo', 'email', 'correo@ejemplo.com', I.correo, true)
+    + field('Correo electrónico', 'f-correo', 'email', 'correo@ejemplo.com', I.correo, true)
     + field('Teléfono / Celular', 'f-telefono', 'tel', '300 000 0000', I.telefono, true)
     + '</div>'
     + divider('Formalización')
     + '<div class="field-row">'
-    + fieldSel('¿Tiene Registro Único Tributario (RUT)?', 'f-rut', ['Sí', 'No'], I.tiene_rut, true)
-    + field('Meses registrado en Cámara de Comercio (0 = no registrado)', 'f-meses', 'number', '0', I.meses_reg || 0, true)
+    + fieldSel('¿Tiene Registro Único Tributario (RUT)?', 'f-rut', ['Sí','No'], I.tiene_rut, true)
+    + field('Meses registrado en Cámara de Comercio (0 = no registrado)', 'f-meses', 'number', '0', I.meses_reg||0, true)
     + '</div>'
-    + divider('Marca e identidad visual del emprendimiento')
-    + '<div class="field"><label>¿El emprendimiento cuenta con marca registrada?</label>'
-    + radioGrp('tiene_marca', ['Sí, tengo marca y/o logo propio', 'No tengo marca registrada todavía'], I.tiene_marca)
+    + divider('Marca e identidad visual')
+    + '<div class="field"><label>¿El emprendimiento cuenta con marca o logo propio?</label>'
+    + radioGrp('tiene_marca', ['Sí, tengo marca y/o logo registrado', 'No tengo marca registrada todavía'], I.tiene_marca)
     + '</div>'
     + '<div class="field"><label>Logo del emprendimiento (opcional)</label>'
-    + fieldHint('Si cuenta con logo propio, cárgalo aquí. Aparecerá en el informe PDF del diagnóstico.')
+    + hint('Si cuenta con logo, cárgalo aquí. Aparecerá en el informe PDF.')
     + '<input type="file" id="f-logo" accept="image/*" onchange="cargarLogo(this)" style="font-size:13px;padding:8px 0">'
-    + '<div id="logo-preview">'
-    + (ST.logo_b64 ? '<img src="'+ST.logo_b64+'" style="height:56px;border-radius:8px;border:1px solid var(--border);margin-top:4px">' : '')
-    + '</div></div>'
+    + '<div id="logo-preview">' + (ST.logo_b64 ? '<img src="' + ST.logo_b64 + '" style="height:56px;border-radius:8px;border:1px solid var(--border);margin-top:4px">' : '') + '</div>'
+    + '</div>'
     + navBtns(true)
     + '</div>';
   appnd(html);
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PASO 2 — Datos del informante (IGUAL EN LOS 3 MODOS)
+// PASO 2 — Datos del informante
 // ═══════════════════════════════════════════════════════════════
 function step2() {
   var I = ST.info;
@@ -1328,10 +686,10 @@ function step2() {
     + secHdr('Datos', 'del informante')
     + '<div class="field-row">'
     + fieldSel('Relación con el negocio', 'f-relacion', RELAC_NEG, I.relacion, true)
-    + fieldSel('Sexo (según documento)', 'f-sexo', ['F - Femenino', 'M - Masculino', 'NB - No binario', 'T - Trans'], I.sexo, true)
+    + fieldSel('Sexo (según documento)', 'f-sexo', ['F - Femenino','M - Masculino','NB - No binario','T - Trans'], I.sexo, true)
     + '</div>'
     + '<div class="field-row">'
-    + fieldSel('Nivel educativo máximo alcanzado', 'f-edu', NIVEL_EDU, I.edu, true)
+    + fieldSel('Nivel educativo máximo', 'f-edu', NIVEL_EDU, I.edu, true)
     + field('Fecha de nacimiento', 'f-nacimiento', 'date', '', I.nacimiento, false)
     + '</div>'
     + '<div class="field"><label>Principal motivo para iniciar este negocio<span class="req">*</span></label>'
@@ -1343,7 +701,7 @@ function step2() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PASO 3-A — SOLO INGRESO: Estado actual + indicadores base
+// PASO 3-A — INGRESO: Estado actual + línea base
 // ═══════════════════════════════════════════════════════════════
 function step3_ing() {
   var R = ST.R;
@@ -1360,13 +718,10 @@ function step3_ing() {
     + '<div class="field"><label>¿El negocio paga seguridad social (salud/pensión) a sus colaboradores?<span class="req">*</span></label>'
     + radioGrp('aportes', APORTES_SEG, R.aportes) + '</div>'
     + divider('Indicadores financieros — Línea base')
-    + fieldHint('📌 <strong>Ingresos (ventas):</strong> todo el dinero que entra al negocio por venta de productos o prestación de servicios. '
-      + '<strong>Costos y gastos:</strong> todo lo que el negocio gasta para funcionar (materia prima, arriendo, servicios, salarios, transporte, etc.).')
-    + '<div class="field-row">'
-    + field('Ingresos (ventas) mensuales promedio — COP', 'f-ventas', 'number', '0', R.ventas, true)
-    + field('Costos y gastos mensuales promedio — COP', 'f-costos', 'number', '0', R.costos, true)
-    + '</div>'
-    + '<div class="field"><label>¿Las ventas del negocio provienen principalmente de…?<span class="req">*</span></label>'
+    + hint('📌 <strong>Ingresos (ventas):</strong> dinero que entra al negocio por ventas o servicios. <strong>Costos y gastos:</strong> lo que gasta para operar (insumos, arriendo, salarios, servicios, etc.).')
+    + fieldMoney('Ingresos (ventas) mensuales promedio', 'f-ventas', R.ventas||0, true)
+    + fieldMoney('Costos y gastos mensuales promedio', 'f-costos', R.costos||0, true)
+    + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
     + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
     + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
     + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
@@ -1376,43 +731,39 @@ function step3_ing() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PASO 3-B — SEGUIMIENTO / SALIDA: Solicita valores de ingreso
+// PASO 3-B — SEGUIMIENTO / SALIDA: Valores de ingreso + actuales
 // ═══════════════════════════════════════════════════════════════
 function step3_seg_sal() {
   var ING = ST.ing;
   var R   = ST.R;
   var esSalida = (MODO === 'salida');
-  var tituloModo = esSalida ? 'Diagnóstico de Salida — Evaluación final' : 'Diagnóstico de Seguimiento — Monitoreo';
   clr();
   var html = '<div class="step active">'
     + modoBanner()
-    + '<div class="s-title">Paso 1 de 2: Valores del Diagnóstico de Ingreso (línea base)</div>'
+    + '<div class="s-title">Paso 1 de 2 — Valores del Diagnóstico de Ingreso (línea base)</div>'
     + '<div style="background:white;border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1rem">'
-    + '<p style="font-size:12.5px;color:var(--sub);margin-bottom:.85rem;line-height:1.65">Para calcular los indicadores de avance, ingresa los valores que fueron registrados en el <strong>Diagnóstico de Ingreso</strong>. Estos datos permiten calcular las variaciones reales de ingresos, costos y empleo.</p>'
-    + divider('Indicadores financieros al inicio del proceso')
-    + fieldHint('📌 <strong>Ingresos (ventas):</strong> dinero que entraba al negocio por ventas. <strong>Costos y gastos:</strong> lo que gastaba para operar.')
+    + '<p style="font-size:12.5px;color:var(--sub);margin-bottom:.85rem;line-height:1.65">Para calcular el avance real ingresa los valores registrados en el <strong>Diagnóstico de Ingreso</strong>. Estos datos permiten calcular la variación de ingresos, costos y empleo.</p>'
+    + hint('📌 <strong>Ingresos (ventas):</strong> dinero que entraba al negocio. <strong>Costos y gastos:</strong> lo que gastaba para operar.')
     + '<div class="field-row">'
-    + field('Ingresos (ventas) mensuales al INICIO — COP', 'f-ing-ventas', 'number', '0', ING.ventas || '', true)
-    + field('Costos y gastos mensuales al INICIO — COP', 'f-ing-costos', 'number', '0', ING.costos || '', true)
+    + fieldMoney('Ingresos (ventas) mensuales al INICIO', 'f-ing-ventas', ING.ventas||0, true)
+    + fieldMoney('Costos y gastos mensuales al INICIO', 'f-ing-costos', ING.costos||0, true)
     + '</div>'
-    + divider('Personal al inicio del proceso')
     + '<div class="field-row">'
-    + field('Personas ocupadas al INICIO del proceso', 'f-ing-personal', 'number', '1', ING.personal || '', true)
-    + field('Empleos con seguridad social al INICIO', 'f-ing-empformal', 'number', '0', ING.emp_formal || '', false)
+    + field('Personas ocupadas al INICIO', 'f-ing-personal', 'number', '1', ING.personal||'', true)
+    + field('Empleos con seguridad social al INICIO', 'f-ing-empformal', 'number', '0', ING.emp_formal||'', false)
     + '</div>'
-    + divider('Puntaje del diagnóstico de ingreso')
     + '<div class="field-row">'
-    + field('Puntaje global de madurez al INICIO (0–100)', 'f-ing-puntaje', 'number', '0', ING.puntaje || '', false)
-    + field('Nivel de madurez al INICIO', 'f-ing-nivel', 'text', 'Ej: Temprano', ING.nivel || '', false)
+    + field('Puntaje global de madurez al INICIO (0–100)', 'f-ing-puntaje', 'number', '0', ING.puntaje||'', false)
+    + field('Nivel de madurez al INICIO', 'f-ing-nivel', 'text', 'Ej: Temprano', ING.nivel||'', false)
     + '</div>'
     + '</div>'
-    + '<div class="s-title">Paso 2 de 2: Valores actuales ('+(esSalida?'al cierre':'al momento del seguimiento')+')</div>'
+    + '<div class="s-title">Paso 2 de 2 — Valores actuales (' + (esSalida?'al cierre':'al seguimiento') + ')</div>'
     + '<div style="background:white;border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1.25rem">'
     + '<div class="field-row">'
-    + field('Ingresos (ventas) mensuales ACTUALES — COP', 'f-ventas', 'number', '0', R.ventas || '', true)
-    + field('Costos y gastos mensuales ACTUALES — COP', 'f-costos', 'number', '0', R.costos || '', true)
+    + fieldMoney('Ingresos (ventas) mensuales ACTUALES', 'f-ventas', R.ventas||0, true)
+    + fieldMoney('Costos y gastos mensuales ACTUALES', 'f-costos', R.costos||0, true)
     + '</div>'
-    + field('Personas ocupadas ACTUALMENTE (incluyéndote a ti)', 'f-personal', 'number', '1', R.personal || '', true)
+    + field('Personas ocupadas ACTUALMENTE (incluyéndote a ti)', 'f-personal', 'number', '1', R.personal||'', true)
     + '<div class="field"><label>¿El negocio paga seguridad social actualmente?<span class="req">*</span></label>'
     + radioGrp('aportes', APORTES_SEG, R.aportes) + '</div>'
     + '<div id="delta-preview"></div>'
@@ -1420,11 +771,12 @@ function step3_seg_sal() {
     + navBtns(true)
     + '</div>';
   appnd(html);
-  // Attach live delta listeners
-  ['f-ventas','f-costos','f-personal','f-ing-ventas','f-ing-costos','f-ing-personal'].forEach(function(id) {
-    var el = gid(id);
+  // Wire up live delta preview
+  var ids = ['f-ventas','f-costos','f-personal','f-ing-ventas','f-ing-costos','f-ing-personal'];
+  for (var k=0; k<ids.length; k++) {
+    var el = gid(ids[k]);
     if (el) el.addEventListener('input', calcDeltaPreview);
-  });
+  }
   calcDeltaPreview();
 }
 
@@ -1433,8 +785,8 @@ function step3_seg_sal() {
 // ═══════════════════════════════════════════════════════════════
 function step4() {
   var R = ST.R;
-  var esModo = (MODO === 'salida' || MODO === 'seguimiento');
-  var planOpts = esModo ? [
+  var esSalSeg = (MODO === 'salida' || MODO === 'seguimiento');
+  var planOpts = esSalSeg ? [
     'Ahora cuento con plan estratégico a más de 3 años con indicadores propios',
     'Desarrollé un plan de crecimiento a 2-3 años con recursos asignados',
     'Establecí metas de ventas y plan de trabajo para los próximos 12 meses',
@@ -1443,30 +795,26 @@ function step4() {
   ] : PLAN_CREC;
 
   clr();
+  var titulo = esSalSeg ? 'Liderazgo y planeación — ' + (MODO==='salida'?'Impacto al cierre':'Evolución al seguimiento') : 'Liderazgo y planeación';
+  var planLbl = esSalSeg ? '¿Cómo evolucionó su capacidad de planificación durante el proceso?' : '¿Cuál describe mejor cómo planifica el crecimiento del negocio?';
+  var divLbl  = esSalSeg ? 'Descripción del negocio y logros al ' + (MODO==='salida'?'cierre':'seguimiento') : 'Descripción del negocio';
+  var prodLbl = esSalSeg ? '¿Qué logros o cambios alcanzó en productos/servicios durante el proceso?' : 'Describe los productos o servicios que ofreces';
+  var prodPh  = esSalSeg ? 'Ej: Lancé línea nueva, mejoré calidad, amplié portafolio...' : '¿Qué vende o produce tu negocio?';
+  var pvLbl   = esSalSeg ? '¿Cómo evolucionó su propuesta de valor y diferenciación?' : '¿Cuál es tu propuesta de valor? ¿Por qué te eligen a ti?';
+  var pvPh    = esSalSeg ? 'Cambios en diferenciación, precios, oferta...' : 'Lo que hace diferente y valioso tu negocio...';
+  var cliLbl  = esSalSeg ? '¿Cómo evolucionó el perfil de su cliente? ¿Amplió segmentos o mercados?' : '¿Quién es tu cliente principal? Describe su perfil';
+  var cliPh   = esSalSeg ? '¿Llegó a nuevas geografías, segmentos o tipos de cliente?' : 'Edad, ubicación, necesidades, comportamiento de compra...';
+
   var html = '<div class="step active">'
     + modoBanner()
-    + secHdr('C', esModo ? 'Liderazgo y planeación — Evolución' : 'Liderazgo y planeación')
-    + '<div class="field"><label>'
-    + (esModo ? '¿Cómo evolucionó su capacidad de planificación durante el proceso?'
-              : 'De las siguientes opciones, ¿cuál describe mejor cómo planifica el crecimiento del negocio?')
-    + '<span class="req">*</span></label>'
+    + ingResumen()
+    + secHdr('C', titulo)
+    + '<div class="field"><label>' + planLbl + '<span class="req">*</span></label>'
     + radioGrp('plan_crec', planOpts, R.plan_crec) + '</div>'
-    + divider(esModo ? 'Descripción del negocio y logros al '+(MODO==='salida'?'cierre':'seguimiento') : 'Descripción del negocio')
-    + field(
-        esModo ? '¿Qué logros o cambios alcanzó en productos/servicios durante el proceso?' : 'Describe los productos o servicios que ofreces',
-        'f-productos', 'text',
-        esModo ? 'Ej: Lancé línea nueva, mejoré calidad, amplié portafolio...' : '¿Qué vende o produce tu negocio?',
-        R.productos, true)
-    + fieldTxt(
-        esModo ? '¿Cómo evolucionó su propuesta de valor y diferenciación?' : '¿Cuál es tu propuesta de valor? ¿Por qué te eligen a ti?',
-        'f-pv',
-        esModo ? 'Describe cambios en diferenciación, precios, oferta...' : 'Lo que hace diferente y valioso tu negocio...',
-        R.pv, false)
-    + fieldTxt(
-        esModo ? '¿Cómo evolucionó el perfil de su cliente? ¿Amplió segmentos o mercados?' : '¿Quién es tu cliente principal? Describe su perfil',
-        'f-cliente',
-        esModo ? '¿Llegó a nuevas geografías, segmentos o tipos de cliente?' : 'Edad, ubicación, necesidades, comportamiento de compra...',
-        R.cliente, false)
+    + divider(divLbl)
+    + field(prodLbl, 'f-productos', 'text', prodPh, R.productos, true)
+    + fieldTxt(pvLbl, 'f-pv', pvPh, R.pv, false)
+    + fieldTxt(cliLbl, 'f-cliente', cliPh, R.cliente, false)
     + navBtns(true)
     + '</div>';
   appnd(html);
@@ -1477,28 +825,28 @@ function step4() {
 // ═══════════════════════════════════════════════════════════════
 function step5() {
   var R = ST.R;
-  var esModo = (MODO === 'salida' || MODO === 'seguimiento');
-  var satOpts = esModo ? [
-    'Implementé sistema de monitoreo sistematizado (encuestas periódicas, CRM)',
-    'Realizo ahora encuestas físicas o digitales a mis clientes',
-    'Registro comentarios de clientes de forma organizada',
-    'Recibo retroalimentación pero aún sin registro sistemático',
+  var esSalSeg = (MODO === 'salida' || MODO === 'seguimiento');
+  var satOpts = esSalSeg ? [
+    'Implementé sistema sistematizado (encuestas periódicas, CRM)',
+    'Realizo ahora encuestas físicas o digitales a clientes',
+    'Registro comentarios de forma organizada en WhatsApp o cuaderno',
+    'Recibo retroalimentación pero sin registro sistemático',
     'No hubo cambios en cómo mido la satisfacción de clientes'
   ] : SATISF_CLI;
+
   clr();
+  var titulo  = esSalSeg ? 'Mercadeo y ventas — ' + (MODO==='salida'?'Resultados al cierre':'Estado al seguimiento') : 'Mercadeo y ventas';
+  var satLbl  = esSalSeg ? '¿Cómo mide la satisfacción de sus clientes al ' + (MODO==='salida'?'cierre':'momento actual') + '?' : '¿Cuál describe mejor cómo gestiona la satisfacción de sus clientes?';
+  var elemLbl = esSalSeg ? '¿Qué elementos comerciales implementó o mejoró durante el acompañamiento?' : '¿Con cuáles elementos del área comercial cuenta el negocio?';
+
   var html = '<div class="step active">'
     + modoBanner()
-    + secHdr('D', esModo ? 'Mercadeo y ventas — '+( MODO==='salida'?'Resultados al cierre':'Estado al seguimiento') : 'Mercadeo y ventas')
-    + '<div class="field"><label>'
-    + (esModo ? '¿Cómo mide la satisfacción de sus clientes al '+(MODO==='salida'?'cierre':'momento actual')+'?'
-              : '¿Cuál describe mejor cómo gestiona la satisfacción de sus clientes?')
-    + '<span class="req">*</span></label>'
+    + ingResumen()
+    + secHdr('D', titulo)
+    + '<div class="field"><label>' + satLbl + '<span class="req">*</span></label>'
     + radioGrp('satisfaccion', satOpts, R.satisfaccion) + '</div>'
-    + divider(esModo ? 'Elementos comerciales '+(MODO==='salida'?'implementados o mejorados':'actuales') : 'Elementos del área comercial')
-    + '<div class="field"><label>'
-    + (esModo ? '¿Qué elementos comerciales implementó o mejoró durante el acompañamiento?'
-              : '¿Con cuáles de estos elementos del área comercial cuenta el negocio?')
-    + '<span class="req">*</span></label>'
+    + divider(esSalSeg ? 'Elementos comerciales ' + (MODO==='salida'?'implementados':'actuales') : 'Elementos del área comercial')
+    + '<div class="field"><label>' + elemLbl + '<span class="req">*</span></label>'
     + checkGrp('elems_com', ELEMS_COMERCIAL, R.elems_com) + '</div>'
     + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
     + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
@@ -1514,28 +862,31 @@ function step5() {
 // ═══════════════════════════════════════════════════════════════
 function step6() {
   var R = ST.R;
-  var esModo = (MODO === 'salida' || MODO === 'seguimiento');
-  var contOpts = esModo ? [
-    'Adopté software avanzado de gestión financiera (ERP o similar)',
+  var esSalSeg = (MODO === 'salida' || MODO === 'seguimiento');
+  var contOpts = esSalSeg ? [
+    'Adopté software avanzado de gestión financiera (ERP)',
     'Uso ahora software especializado de contabilidad',
-    'Migré a Excel sistematizado o programa básico gratuito',
-    'Mejoré mis registros manuales — cuadernos más organizados',
+    'Migré a Excel sistematizado o programa gratuito',
+    'Mejoré mis registros manuales en cuadernos organizados',
     'No hubo cambios en mi sistema contable'
   ] : CONTABILIDAD;
+
   clr();
+  var titulo  = esSalSeg ? 'Contabilidad y financiamiento — ' + (MODO==='salida'?'Evolución al cierre':'Estado al seguimiento') : 'Contabilidad y financiamiento';
+  var contLbl = esSalSeg ? '¿Cómo lleva las cuentas del negocio al ' + (MODO==='salida'?'cierre':'momento actual') + '?' : '¿Cuál describe mejor cómo lleva actualmente las cuentas?';
+  var tramLbl = '¿Qué trámites formales realizó o tiene vigentes al ' + (esSalSeg?(MODO==='salida'?'cierre':'seguimiento'):'momento actual') + '?';
+
   var html = '<div class="step active">'
     + modoBanner()
-    + secHdr('E', esModo ? 'Contabilidad y financiamiento — Evolución' : 'Contabilidad y financiamiento')
-    + '<div class="field"><label>'
-    + (esModo ? '¿Cómo lleva las cuentas del negocio al '+(MODO==='salida'?'cierre':'momento actual')+'?'
-              : '¿Cuál describe mejor cómo lleva actualmente las cuentas del negocio?')
-    + '<span class="req">*</span></label>'
+    + ingResumen()
+    + secHdr('E', titulo)
+    + '<div class="field"><label>' + contLbl + '<span class="req">*</span></label>'
     + radioGrp('contabilidad', contOpts, R.contabilidad) + '</div>'
     + divider('Fuentes de financiamiento')
-    + '<div class="field"><label>¿Con qué fuentes de recursos o financiamiento ha operado el negocio? (Selecciona todas las que apliquen)<span class="req">*</span></label>'
+    + '<div class="field"><label>¿Con qué fuentes de recursos ha operado el negocio? (Selecciona todas)<span class="req">*</span></label>'
     + checkGrp('financiamiento', FINANCIAMIENTO, R.financiamiento) + '</div>'
     + divider('Formalización y trámites')
-    + '<div class="field"><label>¿Qué trámites formales realizó o tiene vigentes al '+(esModo?(MODO==='salida'?'cierre':'seguimiento'):'momento actual')+'? (Selecciona todos los que apliquen)<span class="req">*</span></label>'
+    + '<div class="field"><label>' + tramLbl + ' (Selecciona todos)<span class="req">*</span></label>'
     + checkGrp('tramites', TRAMITES, R.tramites) + '</div>'
     + navBtns(true)
     + '</div>';
@@ -1547,32 +898,39 @@ function step6() {
 // ═══════════════════════════════════════════════════════════════
 function step7() {
   var R = ST.R;
-  var esModo = (MODO === 'salida' || MODO === 'seguimiento');
+  var esSalSeg = (MODO === 'salida' || MODO === 'seguimiento');
   clr();
+  var titulo  = esSalSeg ? 'Innovación — ' + (MODO==='salida'?'Cambios implementados durante el proceso':'Acumulado al seguimiento') : 'Innovación';
+  var notice  = esSalSeg
+    ? '💡 <strong>Registra solo innovaciones implementadas DURANTE el proceso de acompañamiento</strong>, no las previas al inicio.'
+    : '💡 La innovación es la <strong>implementación</strong> de nuevas ideas que generan valor real. No contabilices ideas no realizadas.';
+  var aspLbl  = esSalSeg ? '¿Con cuáles aspectos de innovación cuenta el negocio al ' + (MODO==='salida'?'cierre':'momento actual') + '?' : '¿Con cuáles aspectos de innovación cuenta el negocio hoy?';
+  var matLbl  = '¿Cuántas innovaciones implementó en cada área' + (esSalSeg?' DURANTE el proceso':' durante el último año') + '?';
+
   var html = '<div class="step active">'
     + modoBanner()
-    + secHdr('F', esModo ? 'Innovación — Cambios implementados durante el proceso' : 'Innovación')
-    + '<div class="notice">💡 <strong>Innovación</strong> es la implementación de nuevas ideas, productos, servicios o procesos que generan valor real.'
-    + (esModo ? ' <strong>Registra solo cambios implementados DURANTE el proceso de acompañamiento, no los previos al inicio.</strong>' : ' No contabilices actividades habituales o ideas no realizadas.')
-    + '</div>'
-    + '<div class="field"><label>¿Con cuáles aspectos de innovación cuenta el negocio '+(esModo?'al '+(MODO==='salida'?'cierre':'momento actual'):'hoy')+'?<span class="req">*</span></label>'
+    + ingResumen()
+    + secHdr('F', titulo)
+    + '<div class="notice">' + notice + '</div>'
+    + '<div class="field"><label>' + aspLbl + '<span class="req">*</span></label>'
     + checkGrp('innov_asp', INNOV_ASPECTOS, R.innov_asp) + '</div>'
-    + divider('Innovaciones '+(esModo?'implementadas DURANTE el proceso — por área':'implementadas en el último año — por área'))
-    + '<div class="field"><label>¿Cuántas innovaciones implementó en cada área'+(esModo?' durante el proceso de acompañamiento':' durante el último año')+'?<span class="req">*</span></label>'
-    + buildMatrix() + '</div>'
-    + (MODO === 'salida' ?
-        divider('Evaluación del proceso de acompañamiento')
-        + '<div class="field"><label>Valore la calidad del acompañamiento recibido (1=Muy malo — 5=Excelente)<span class="req">*</span></label>'
-        + radioGrp('valoracion', ['1 — Muy malo','2 — Malo','3 — Regular','4 — Bueno','5 — Excelente'], R.valoracion)
-        + '</div>'
-        + '<div class="field"><label>¿En qué áreas considera que el acompañamiento generó mayor impacto?</label>'
-        + checkGrp('impacto_areas', ['Mercado objetivo','Oferta de valor','Modelo de rentabilización','Modelo de comercialización','Madurez administrativa y financiera','Formalización','Innovación y tecnología'], R.impacto_areas)
-        + '</div>'
-        + fieldTxt('¿Qué obstáculos impidieron un mayor avance durante el proceso?','f-obstaculos','Tiempo, recursos, mercado, familia, etc.',R.obstaculos,false)
-        + fieldTxt('¿Qué herramientas o conocimientos planea sostener después del convenio?','f-sostenibilidad','Describe lo que implementaste y mantendrás...',R.sostenibilidad,false)
-      : '')
-    + navBtns(true)
-    + '</div>';
+    + divider(matLbl)
+    + '<div class="field"><label>' + matLbl + '<span class="req">*</span></label>'
+    + buildMatrix() + '</div>';
+
+  if (MODO === 'salida') {
+    html += divider('Evaluación del proceso de acompañamiento')
+      + '<div class="field"><label>Valore la calidad del acompañamiento (1=Muy malo — 5=Excelente)<span class="req">*</span></label>'
+      + radioGrp('valoracion', ['1 — Muy malo','2 — Malo','3 — Regular','4 — Bueno','5 — Excelente'], R.valoracion)
+      + '</div>'
+      + '<div class="field"><label>¿En qué áreas generó mayor impacto el acompañamiento?</label>'
+      + checkGrp('impacto_areas', ['Mercado objetivo','Oferta de valor','Modelo de rentabilización','Modelo de comercialización','Madurez administrativa','Formalización','Innovación y tecnología'], R.impacto_areas)
+      + '</div>'
+      + fieldTxt('¿Qué obstáculos impidieron un mayor avance?', 'f-obstaculos', 'Tiempo, recursos, mercado, familia...', R.obstaculos, false)
+      + fieldTxt('¿Qué herramientas o conocimientos planea sostener después del convenio?', 'f-sostenibilidad', 'Describe lo que implementaste y mantendrás...', R.sostenibilidad, false);
+  }
+
+  html += navBtns(true) + '</div>';
   appnd(html);
 }
 
@@ -1581,56 +939,57 @@ function step7() {
 // ═══════════════════════════════════════════════════════════════
 function step8() {
   var R = ST.R;
-  var esModo = (MODO === 'salida' || MODO === 'seguimiento');
+  var esSalSeg = (MODO === 'salida' || MODO === 'seguimiento');
   clr();
+  var titulo = esSalSeg ? 'Tecnología — ' + (MODO==='salida'?'Adopción al cierre':'Tecnología actual') : 'Tecnología';
+  var tecLbl = '¿Qué tecnologías usa el negocio ' + (esSalSeg?'al '+(MODO==='salida'?'cierre':'momento actual'):'actualmente') + '?';
+
   var html = '<div class="step active">'
     + modoBanner()
-    + secHdr('G', esModo ? 'Tecnología — Adopción durante el proceso' : 'Tecnología')
-    + '<div class="field"><label>¿Qué tecnologías usa el negocio '+(esModo?'al '+(MODO==='salida'?'cierre':'momento actual'):'actualmente')+'?<span class="req">*</span></label>'
-    + checkGrp('tecnologias', TECNOLOGIAS, R.tecnologias) + '</div>'
-    + (esModo ?
-        '<div class="field"><label>¿Qué herramientas digitales <strong>adoptó durante el proceso</strong> que no tenía al inicio?</label>'
-        + checkGrp('herram_nuevas', [
-            'Software de contabilidad o gestión financiera',
-            'CRM o herramienta de gestión de clientes',
-            'Plataforma de ventas en línea o tienda virtual',
-            'WhatsApp Business',
-            'Redes sociales con estrategia de contenido definida',
-            'Publicidad digital (Meta Ads, Google Ads, TikTok Ads)',
-            'Software de gestión de inventarios',
-            'Billeteras digitales o pasarelas de pago',
-            'Herramientas de videoconferencia para el negocio',
-            'Ninguna herramienta nueva adoptada'
-          ], R.herram_nuevas)
-        + '</div>'
-      : '')
-    + fieldTxt('Observaciones adicionales (opcional)','f-obs','Cualquier información adicional relevante para el diagnóstico...',R.obs,false)
+    + ingResumen()
+    + secHdr('G', titulo)
+    + '<div class="field"><label>' + tecLbl + '<span class="req">*</span></label>'
+    + checkGrp('tecnologias', TECNOLOGIAS, R.tecnologias) + '</div>';
+
+  if (esSalSeg) {
+    html += '<div class="field"><label>¿Qué herramientas digitales <strong>adoptó durante el proceso</strong> que no tenía antes?</label>'
+      + checkGrp('herram_nuevas', [
+          'Software de contabilidad o gestión financiera',
+          'CRM o herramienta de gestión de clientes',
+          'Plataforma de ventas en línea o tienda virtual',
+          'WhatsApp Business',
+          'Redes sociales con estrategia de contenido definida',
+          'Publicidad digital (Meta Ads, Google Ads, TikTok)',
+          'Software de gestión de inventarios',
+          'Billeteras digitales o pasarelas de pago',
+          'Herramientas de videoconferencia para el negocio',
+          'Ninguna herramienta nueva adoptada'
+        ], R.herram_nuevas) + '</div>';
+  }
+
+  html += fieldTxt('Observaciones adicionales (opcional)', 'f-obs', 'Cualquier información adicional relevante...', R.obs, false)
     + navBtns(true)
     + '</div>';
   appnd(html);
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PASO 9 — Confirmación y cierre
+// PASO 9 — Confirmación
 // ═══════════════════════════════════════════════════════════════
 function step9() {
   clr();
-  var icons  = { ingreso:'📋', seguimiento:'📈', salida:'🏁' };
-  var titles = {
-    ingreso:     'Diagnóstico de Ingreso completado',
-    seguimiento: 'Diagnóstico de Seguimiento completado',
-    salida:      'Diagnóstico de Salida completado'
-  };
-  var descs = {
-    ingreso:     'Haz clic en <strong>Ver resultados</strong> para obtener el análisis completo con la línea base, el plan de fortalecimiento y las metas proyectadas del proceso de acompañamiento.',
-    seguimiento: 'Haz clic en <strong>Ver resultados</strong> para ver el análisis de avance, el comparativo de indicadores frente a la línea base y las recomendaciones de ajuste.',
+  var icons  = {ingreso:'📋', seguimiento:'📈', salida:'🏁'};
+  var titles = {ingreso:'Diagnóstico de Ingreso completado', seguimiento:'Diagnóstico de Seguimiento completado', salida:'Diagnóstico de Salida completado'};
+  var descs  = {
+    ingreso:     'Haz clic en <strong>Ver resultados</strong> para obtener el análisis completo con la línea base, el plan de fortalecimiento y las metas proyectadas.',
+    seguimiento: 'Haz clic en <strong>Ver resultados</strong> para ver el análisis de avance, el comparativo de indicadores frente a la línea base y las recomendaciones.',
     salida:      'Haz clic en <strong>Ver resultados</strong> para obtener el informe final de impacto, el comparativo antes/después y el cumplimiento de metas del convenio.'
   };
   var html = '<div class="step active">'
     + '<div class="done-card">'
-    + '<div class="done-icon">'+(icons[MODO]||'✅')+'</div>'
-    + '<h2>'+(titles[MODO]||'Diagnóstico completado')+'</h2>'
-    + '<p>'+(descs[MODO]||'')+'</p>'
+    + '<div class="done-icon">' + (icons[MODO]||'✅') + '</div>'
+    + '<h2>' + (titles[MODO]||'Diagnóstico completado') + '</h2>'
+    + '<p>' + (descs[MODO]||'') + '</p>'
     + '<button class="btn primary" onclick="showResults()" style="display:block;margin:0 auto">Ver resultados &#8594;</button>'
     + '</div>'
     + '<div class="nav"><button class="btn" onclick="goPrev()">&#8592; Revisar respuestas</button><span></span></div>'
@@ -1639,16 +998,17 @@ function step9() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// ROUTING — un único array por modo, seleccionado al navegar
+// ROUTING — un array por modo, seleccionado dinámicamente
 // ═══════════════════════════════════════════════════════════════
-var STEPS_ING = [step0, step1, step2, step3_ing,     step4, step5, step6, step7, step8, step9];
-var STEPS_SEG = [step0, step1, step2, step3_seg_sal, step4, step5, step6, step7, step8, step9];
-var STEPS_SAL = [step0, step1, step2, step3_seg_sal, step4, step5, step6, step7, step8, step9];
+var STEPS_ING = [step0,step1,step2,step3_ing,    step4,step5,step6,step7,step8,step9];
+var STEPS_SEG = [step0,step1,step2,step3_seg_sal,step4,step5,step6,step7,step8,step9];
+var STEPS_SAL = [step0,step1,step2,step3_seg_sal,step4,step5,step6,step7,step8,step9];
 var TOTAL = 10;
 
 function getStepFn(n) {
-  var arr = MODO === 'salida' ? STEPS_SAL : MODO === 'seguimiento' ? STEPS_SEG : STEPS_ING;
-  return arr[n];
+  if (MODO === 'salida')      return STEPS_SAL[n];
+  if (MODO === 'seguimiento') return STEPS_SEG[n];
+  return STEPS_ING[n];
 }
 
 function renderStep(n) {
@@ -1658,186 +1018,150 @@ function renderStep(n) {
 }
 
 // ─── Progress bar ──────────────────────────────────────────────
-var LBLS_ING = ['Tipo de diagnóstico','A. Identificación','Datos del informante','B. Producto / Indicadores base','C. Liderazgo y planeación','D. Mercadeo y ventas','E. Contabilidad y finanzas','F. Innovación','G. Tecnología','Resumen'];
-var LBLS_SEG = ['Tipo de diagnóstico','A. Identificación','Datos del informante','Valores de ingreso (línea base)','C. Planeación — evolución','D. Mercadeo — seguimiento','E. Contabilidad — seguimiento','F. Innovación acumulada','G. Tecnología adoptada','Resumen'];
-var LBLS_SAL = ['Tipo de diagnóstico','A. Identificación','Datos del informante','Valores de ingreso + cierre','C. Planeación — impacto','D. Mercadeo — cierre','E. Contabilidad — cierre','F. Innovación — resultados','G. Tecnología — cierre','Evaluación final'];
+var LBLS_ING = ['Tipo de diagnóstico','A. Identificación','Datos del informante','B. Producto / Base',    'C. Liderazgo','D. Mercadeo','E. Contabilidad','F. Innovación','G. Tecnología','Resumen'];
+var LBLS_SEG = ['Tipo de diagnóstico','A. Identificación','Datos del informante','Valores de ingreso',    'C. Planeación','D. Mercadeo','E. Contabilidad','F. Innovación','G. Tecnología','Resumen'];
+var LBLS_SAL = ['Tipo de diagnóstico','A. Identificación','Datos del informante','Valores ingreso+cierre','C. Planeación','D. Mercadeo','E. Contabilidad','F. Innovación','G. Tecnología','Evaluación final'];
 
 function updateProg() {
   var p = Math.round((ST.step / (TOTAL-1)) * 100);
   gid('prog-fill').style.width = p + '%';
   gid('prog-pct').textContent  = p + '%';
-  var lbls = MODO === 'salida' ? LBLS_SAL : MODO === 'seguimiento' ? LBLS_SEG : LBLS_ING;
+  var lbls = MODO==='salida' ? LBLS_SAL : MODO==='seguimiento' ? LBLS_SEG : LBLS_ING;
   gid('prog-lbl').textContent  = lbls[ST.step] || '';
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SAVE — captura respuestas de cada paso
+// SAVE functions — one clean version each
 // ═══════════════════════════════════════════════════════════════
 function save1() {
   Object.assign(ST.info, {
-    razon:      gv('f-razon'),
-    nombre1:    gv('f-nombre1'),
-    apellido1:  gv('f-apellido1'),
-    doc:        gv('f-doc'),
-    municipio:  gv('f-municipio'),
-    sector:     gv('f-sector'),
-    correo:     gv('f-correo'),
-    telefono:   gv('f-telefono'),
-    tiene_rut:  gv('f-rut'),
-    meses_reg:  parseInt(gv('f-meses')) || 0,
-    tiene_marca: getR('tiene_marca')
+    razon:ST.info.razon, nombre1:gv('f-nombre1'), apellido1:gv('f-apellido1'),
+    razon:gv('f-razon'), doc:gv('f-doc'), municipio:gv('f-municipio'), sector:gv('f-sector'),
+    correo:gv('f-correo'), telefono:gv('f-telefono'), tiene_rut:gv('f-rut'),
+    meses_reg:parseInt(gv('f-meses'))||0, tiene_marca:getR('tiene_marca')
   });
 }
-
 function save2() {
   Object.assign(ST.info, {
-    relacion:   gv('f-relacion'),
-    sexo:       gv('f-sexo'),
-    edu:        gv('f-edu'),
-    nacimiento: gv('f-nacimiento'),
-    motivo:     getR('motivo')
+    relacion:gv('f-relacion'), sexo:gv('f-sexo'), edu:gv('f-edu'),
+    nacimiento:gv('f-nacimiento'), motivo:getR('motivo')
   });
 }
-
 function save3() {
   if (MODO === 'ingreso') {
     Object.assign(ST.R, {
-      anos_act:     getR('anos_act'),
-      vision:       getR('vision'),
-      personal:     gv('f-personal'),
-      aportes:      getR('aportes'),
-      ventas:       gv('f-ventas'),
-      costos:       gv('f-costos'),
-      fuente_ventas: getR('fuente_ventas'),
-      comercio_int: getR('comercio_int')
+      anos_act:getR('anos_act'), vision:getR('vision'),
+      personal:gv('f-personal'), aportes:getR('aportes'),
+      ventas:gvMoney('f-ventas'), costos:gvMoney('f-costos'),
+      fuente_ventas:getR('fuente_ventas'), comercio_int:getR('comercio_int')
     });
   } else {
-    // Save ingreso (baseline) values
-    Object.assign(ST.ing, {
-      ventas:     parseFloat(gv('f-ing-ventas'))   || 0,
-      costos:     parseFloat(gv('f-ing-costos'))   || 0,
-      personal:   parseInt(gv('f-ing-personal'))   || 0,
-      emp_formal: parseInt(gv('f-ing-empformal'))  || 0,
-      puntaje:    parseInt(gv('f-ing-puntaje'))    || 0,
-      nivel:      gv('f-ing-nivel')
-    });
-    // Save current values
-    Object.assign(ST.R, {
-      ventas:   gv('f-ventas'),
-      costos:   gv('f-costos'),
-      personal: gv('f-personal'),
-      aportes:  getR('aportes')
-    });
+    ST.ing = {
+      ventas:    gvMoney('f-ing-ventas')            || ST.ing.ventas    || 0,
+      costos:    gvMoney('f-ing-costos')            || ST.ing.costos    || 0,
+      personal:  parseInt(gv('f-ing-personal'))     || ST.ing.personal  || 0,
+      emp_formal:parseInt(gv('f-ing-empformal'))    || ST.ing.emp_formal|| 0,
+      puntaje:   parseInt(gv('f-ing-puntaje'))      || ST.ing.puntaje   || 0,
+      nivel:     gv('f-ing-nivel')                  || ST.ing.nivel     || ''
+    };
+    ST.R.ventas   = gvMoney('f-ventas');
+    ST.R.costos   = gvMoney('f-costos');
+    ST.R.personal = gv('f-personal');
+    ST.R.aportes  = getR('aportes');
   }
 }
-
 function save4() {
-  Object.assign(ST.R, {
-    plan_crec: getR('plan_crec'),
-    productos: gv('f-productos'),
-    pv:        gv('f-pv'),
-    cliente:   gv('f-cliente')
-  });
+  ST.R.plan_crec = getR('plan_crec');
+  ST.R.productos = gv('f-productos');
+  ST.R.pv        = gv('f-pv');
+  ST.R.cliente   = gv('f-cliente');
 }
-
 function save5() {
-  Object.assign(ST.R, {
-    satisfaccion:  getR('satisfaccion'),
-    elems_com:     getC('elems_com'),
-    fuente_ventas: getR('fuente_ventas'),
-    comercio_int:  getR('comercio_int')
-  });
+  ST.R.satisfaccion  = getR('satisfaccion');
+  ST.R.elems_com     = getC('elems_com');
+  ST.R.fuente_ventas = getR('fuente_ventas');
+  ST.R.comercio_int  = getR('comercio_int');
 }
-
 function save6() {
-  Object.assign(ST.R, {
-    contabilidad:   getR('contabilidad'),
-    financiamiento: getC('financiamiento'),
-    tramites:       getC('tramites')
-  });
+  ST.R.contabilidad   = getR('contabilidad');
+  ST.R.financiamiento = getC('financiamiento');
+  ST.R.tramites       = getC('tramites');
 }
-
 function save7() {
-  Object.assign(ST.R, {
-    innov_asp:     getC('innov_asp'),
-    valoracion:    getR('valoracion'),
-    impacto_areas: getC('impacto_areas'),
-    obstaculos:    gv('f-obstaculos'),
-    sostenibilidad: gv('f-sostenibilidad')
-  });
-  // matrix cells saved inline via selMat
+  ST.R.innov_asp      = getC('innov_asp');
+  ST.R.valoracion     = getR('valoracion');
+  ST.R.impacto_areas  = getC('impacto_areas');
+  ST.R.obstaculos     = gv('f-obstaculos');
+  ST.R.sostenibilidad = gv('f-sostenibilidad');
 }
-
 function save8() {
-  Object.assign(ST.R, {
-    tecnologias:   getC('tecnologias'),
-    herram_nuevas: getC('herram_nuevas'),
-    obs:           gv('f-obs')
-  });
+  ST.R.tecnologias   = getC('tecnologias');
+  ST.R.herram_nuevas = getC('herram_nuevas');
+  ST.R.obs           = gv('f-obs');
 }
 
-var SAVES = [null, save1, save2, save3, save4, save5, save6, save7, save8, null];
+var SAVES = [null,save1,save2,save3,save4,save5,save6,save7,save8,null];
 
 // ═══════════════════════════════════════════════════════════════
-// VALIDATION
+// VALIDATION — single clean version
 // ═══════════════════════════════════════════════════════════════
 function validate(n) {
-  var I = ST.info, R = ST.R, ING = ST.ing;
-  if (n === 0) {
+  var I=ST.info, R=ST.R, ING=ST.ing;
+  if (n===0) {
     if (!MODO) { showErr('Por favor selecciona el tipo de diagnóstico.'); return false; }
   }
-  if (n === 1) {
+  if (n===1) {
     if (!I.razon)    { showErr('Ingresa el nombre del negocio.'); return false; }
     if (!I.nombre1)  { showErr('Ingresa tu primer nombre.'); return false; }
     if (!I.apellido1){ showErr('Ingresa tu primer apellido.'); return false; }
-    if (!I.doc)      { showErr('Ingresa tu número de documento.'); return false; }
+    if (!I.doc)      { showErr('Ingresa tu documento de identidad.'); return false; }
     if (!I.municipio){ showErr('Selecciona el municipio.'); return false; }
     if (!I.sector)   { showErr('Selecciona el sector económico.'); return false; }
     if (!I.correo)   { showErr('Ingresa el correo electrónico.'); return false; }
-    if (!I.tiene_rut){ showErr('Indica si el negocio tiene RUT.'); return false; }
+    if (!I.tiene_rut){ showErr('Indica si el negocio tiene RUT activo.'); return false; }
   }
-  if (n === 2) {
+  if (n===2) {
     if (!I.relacion){ showErr('Selecciona tu relación con el negocio.'); return false; }
     if (!I.sexo)    { showErr('Selecciona el sexo.'); return false; }
     if (!I.edu)     { showErr('Selecciona el nivel educativo.'); return false; }
     if (!I.motivo)  { showErr('Selecciona el motivo principal de inicio.'); return false; }
   }
-  if (n === 3) {
+  if (n===3) {
     if (MODO === 'ingreso') {
-      if (!R.anos_act)      { showErr('Indica hace cuántos años desarrollas esta actividad.'); return false; }
-      if (!R.vision)        { showErr('Selecciona cómo ves el futuro del negocio.'); return false; }
-      if (!R.personal)      { showErr('Indica el número de personas ocupadas.'); return false; }
-      if (!R.aportes)       { showErr('Indica si el negocio paga seguridad social.'); return false; }
-      if (!R.ventas || parseFloat(R.ventas) < 0) { showErr('Ingresa los ingresos (ventas) mensuales.'); return false; }
-      if (!R.costos || parseFloat(R.costos) < 0) { showErr('Ingresa los costos y gastos mensuales.'); return false; }
-      if (!R.fuente_ventas) { showErr('Selecciona la fuente principal de ventas.'); return false; }
-      if (!R.comercio_int)  { showErr('Indica si realizas comercio internacional.'); return false; }
+      if (!R.anos_act)     { showErr('Indica hace cuántos años desarrollas esta actividad.'); return false; }
+      if (!R.vision)       { showErr('Selecciona cómo ves el futuro del negocio.'); return false; }
+      if (!R.personal)     { showErr('Indica el número de personas ocupadas.'); return false; }
+      if (!R.aportes)      { showErr('Indica si el negocio paga seguridad social.'); return false; }
+      if (!gvMoney('f-ventas')) { showErr('Ingresa los ingresos (ventas) mensuales.'); return false; }
+      if (!R.fuente_ventas){ showErr('Selecciona la fuente principal de ventas.'); return false; }
+      if (!R.comercio_int) { showErr('Indica si realizas comercio internacional.'); return false; }
     } else {
-      if (!gv('f-ing-ventas') && !ING.ventas) { showErr('Ingresa los ingresos del diagnóstico de ingreso (línea base).'); return false; }
-      if (!gv('f-ventas') && !R.ventas)       { showErr('Ingresa los ingresos actuales.'); return false; }
-      if (!R.aportes && !getR('aportes'))     { showErr('Indica si el negocio paga seguridad social actualmente.'); return false; }
+      if (!gvMoney('f-ing-ventas')) { showErr('Ingresa los ingresos del diagnóstico de ingreso (línea base).'); return false; }
+      if (!gvMoney('f-ventas'))     { showErr('Ingresa los ingresos (ventas) actuales.'); return false; }
+      if (!gv('f-personal'))        { showErr('Indica el número de personas ocupadas actualmente.'); return false; }
+      if (!getR('aportes'))         { showErr('Indica si el negocio paga seguridad social actualmente.'); return false; }
     }
   }
-  if (n === 4) {
+  if (n===4) {
     if (!R.plan_crec){ showErr('Selecciona el nivel de planeación.'); return false; }
-    if (!R.productos){ showErr('Completa el campo de productos/servicios o logros.'); return false; }
+    if (!R.productos){ showErr('Completa la descripción de productos/servicios o logros.'); return false; }
   }
-  if (n === 5) {
-    if (!R.satisfaccion)              { showErr('Selecciona cómo mides la satisfacción de clientes.'); return false; }
-    if (!R.elems_com || !R.elems_com.length) { showErr('Selecciona al menos un elemento comercial.'); return false; }
-    if (!R.fuente_ventas)             { showErr('Selecciona la fuente principal de ventas.'); return false; }
+  if (n===5) {
+    if (!R.satisfaccion)                      { showErr('Selecciona cómo mides la satisfacción de clientes.'); return false; }
+    if (!R.elems_com || !R.elems_com.length)  { showErr('Selecciona al menos un elemento comercial.'); return false; }
+    if (!R.fuente_ventas)                     { showErr('Selecciona la fuente principal de ventas.'); return false; }
   }
-  if (n === 6) {
-    if (!R.contabilidad)                       { showErr('Selecciona el sistema contable.'); return false; }
-    if (!R.financiamiento || !R.financiamiento.length) { showErr('Selecciona al menos una fuente de financiamiento.'); return false; }
-    if (!R.tramites || !R.tramites.length)     { showErr('Selecciona los trámites realizados.'); return false; }
+  if (n===6) {
+    if (!R.contabilidad)                             { showErr('Selecciona el sistema contable.'); return false; }
+    if (!R.financiamiento || !R.financiamiento.length){ showErr('Selecciona al menos una fuente de financiamiento.'); return false; }
+    if (!R.tramites || !R.tramites.length)           { showErr('Selecciona los trámites realizados.'); return false; }
   }
-  if (n === 7) {
-    if (!R.innov_asp || !R.innov_asp.length) { showErr('Selecciona al menos un aspecto de innovación.'); return false; }
-    if (MODO === 'salida' && !R.valoracion)  { showErr('Valora la calidad del acompañamiento.'); return false; }
+  if (n===7) {
+    if (!R.innov_asp || !R.innov_asp.length){ showErr('Selecciona al menos un aspecto de innovación.'); return false; }
+    if (MODO==='salida' && !R.valoracion)  { showErr('Valora la calidad del acompañamiento recibido.'); return false; }
   }
-  if (n === 8) {
-    if (!R.tecnologias || !R.tecnologias.length) { showErr('Selecciona las tecnologías que usa el negocio.'); return false; }
+  if (n===8) {
+    if (!R.tecnologias || !R.tecnologias.length){ showErr('Selecciona las tecnologías que usa el negocio.'); return false; }
   }
   return true;
 }
@@ -1848,21 +1172,13 @@ function validate(n) {
 function goNext() {
   if (SAVES[ST.step]) SAVES[ST.step]();
   if (!validate(ST.step)) return;
-  if (ST.step < TOTAL - 1) {
-    ST.step++;
-    renderStep(ST.step);
-  }
+  if (ST.step < TOTAL-1) { ST.step++; renderStep(ST.step); }
 }
-
 function goPrev() {
-  if (ST.step > 0) {
-    ST.step--;
-    renderStep(ST.step);
-  }
+  if (ST.step > 0) { ST.step--; renderStep(ST.step); }
 }
-
 function restart() {
-  ST   = { step:0, info:{}, ing:{}, R:{}, logo_b64:null };
+  ST = {step:0, info:{}, ing:{}, R:{}, logo_b64:null};
   MODO = null;
   gid('results').classList.remove('show');
   gid('results').innerHTML = '';
@@ -2237,6 +1553,8 @@ function showResults(){
     + '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">'
     + '<button class="btn primary" onclick="abrirAI()" style="background:var(--purple);border-color:var(--purple)">🤖 Análisis con IA</button>'
     + '<button class="btn" style="background:var(--green);border-color:var(--green);color:white" onclick="exportPDF()">⬇ Descargar PDF</button>'
+    + '<button class="btn" style="background:#276749;border-color:#276749;color:white" onclick="guardarDiagnostico()">💾 Guardar</button>'
+    + '<button class="btn" onclick="abrirHistorial()">📂 Historial</button>'
     + '<button class="btn" onclick="restart()">⟵ Nuevo diagnóstico</button>'
     + '</div>'
     + '<div style="font-size:11px;color:var(--sub);text-align:center;margin-top:4px">La IA genera análisis completo, comparativo antes/después y recomendaciones estratégicas</div>'
@@ -2497,7 +1815,7 @@ function exportPDF() {
     var metaHdr=[D.I.municipio,D.I.sector,D.I.antiguedad].filter(Boolean).map(cl).join('  ·  ');
     if(metaHdr) doc.text(metaHdr, centerX, 57, {align:'center'});
     doc.setFontSize(6.5); doc.setTextColor(180,200,240);
-    var tipoDiagText = D.MODO==='salida'?'Diagnostico de Salida - Evaluacion Final':D.MODO==='seguimiento'?'Diagnostico de Seguimiento - Monitoreo':'Diagnostico de Ingreso - Linea Base';
+    var tipoDiagText = D.MODO==='salida'?'Diagnostico de Salida - Evaluacion Final':D.MODO==='seguimiento'?'Diagnostico de Seguimiento':'Diagnostico de Ingreso - Linea Base';
     doc.text(tipoDiagText+' · '+new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'long',year:'numeric'}), centerX, 63, {align:'center'});
     doc.setTextColor(30,30,28);
     y = 76;
@@ -2790,111 +2108,241 @@ function exportPDF() {
   } catch(e){ console.error('PDF error:', e); alert('Error al generar PDF: '+e.message); }
 }
 
+// ═══════════════════════════════════════════════
+// STORAGE — guardar / cargar diagnósticos
+// ═══════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════
+// ALMACENAMIENTO LOCAL — guarda y recupera diagnósticos
+// ═══════════════════════════════════════════════════════════════
+var DB_KEY = 'dme_diagnosticos_v1';
+
+function dbLoad() {
+  try { return JSON.parse(localStorage.getItem(DB_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function dbSave(arr) {
+  try { localStorage.setItem(DB_KEY, JSON.stringify(arr)); return true; }
+  catch(e) { return false; }
+}
+
+function guardarDiagnostico() {
+  var D = window._DIME;
+  if (!D) { showToast('Primero completa el diagnóstico.', 'error'); return; }
+  var db = dbLoad();
+  var record = {
+    id:        Date.now(),
+    fecha:     new Date().toISOString(),
+    modo:      D.MODO || 'ingreso',
+    negocio:   D.I.razon || 'Sin nombre',
+    doc:       D.I.doc   || '',
+    sector:    D.I.sector || '',
+    municipio: D.I.municipio || '',
+    clasif:    D.clasif ? D.clasif.tipo : 'Emprendimiento',
+    puntaje:   D.ovr,
+    nivel:     D.lvl ? D.lvl[0] : '',
+    scores:    D.scores,
+    info:      D.I,
+    ing:       D.ING || {},
+    R:         D.R,
+    logo_b64:  window.ST ? window.ST.logo_b64 : null
+  };
+  // Replace existing record for same doc + modo
+  var idx = db.findIndex(function(r){ return r.doc===record.doc && r.modo===record.modo; });
+  if (idx >= 0) db[idx] = record;
+  else db.unshift(record);
+  if (dbSave(db)) showToast('✓ Diagnóstico guardado correctamente');
+  else showToast('Error al guardar. Espacio de almacenamiento lleno.', 'error');
+}
+
+function showToast(msg, type) {
+  var t = document.getElementById('app-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'app-toast'; t.className = 'toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background = (type==='error') ? '#C0392B' : '#1B3A6B';
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3200);
+}
+
+function abrirHistorial() {
+  var db = dbLoad();
+  var modal = document.getElementById('hist-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'hist-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto';
+    modal.innerHTML = '<div style="background:white;border-radius:14px;width:100%;max-width:700px;margin-top:2rem;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)">'
+      + '<div style="background:var(--navy);padding:1.25rem 1.5rem;color:white;display:flex;align-items:center;justify-content:space-between">'
+      + '<div><div style="font-size:16px;font-weight:600">Historial de diagnósticos</div>'
+      + '<div style="font-size:11px;opacity:.7;margin-top:2px">Guardados en este dispositivo</div></div>'
+      + '<button onclick="cerrarHistorial()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer">&times;</button>'
+      + '</div>'
+      + '<div id="hist-body" style="padding:1.25rem;max-height:70vh;overflow-y:auto"></div>'
+      + '</div>';
+    document.body.appendChild(modal);
+  }
+  var body = document.getElementById('hist-body');
+  if (!db.length) {
+    body.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--sub)"><div style="font-size:36px;margin-bottom:1rem">📋</div><p>No hay diagnósticos guardados aún.</p></div>';
+  } else {
+    var modeColors = {ingreso:'#534AB7',seguimiento:'#B7791F',salida:'#2B6CB0'};
+    var modeIcons  = {ingreso:'📋',seguimiento:'📈',salida:'🏁'};
+    body.innerHTML = db.map(function(r, i) {
+      var col = modeColors[r.modo]||'#534AB7';
+      var icon = modeIcons[r.modo]||'📋';
+      var fecha = new Date(r.fecha).toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});
+      return '<div style="border:1.5px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center">'
+        + (r.logo_b64 ? '<img src="'+r.logo_b64+'" style="width:44px;height:44px;border-radius:8px;object-fit:contain;border:1px solid var(--border);flex-shrink:0">' : '<div style="width:44px;height:44px;border-radius:8px;background:'+col+'22;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">'+icon+'</div>')
+        + '<div style="flex:1;min-width:0">'
+        + '<div style="font-weight:700;font-size:14px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.negocio+'</div>'
+        + '<div style="font-size:11px;color:var(--sub)">'+r.sector+' · '+r.municipio+' · '+fecha+'</div>'
+        + '<div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap">'
+        + '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:'+col+'22;color:'+col+'">'+icon+' '+r.modo+'</span>'
+        + '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--light);color:var(--sub)">'+r.clasif+'</span>'
+        + '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#DCFCE7;color:#14532D">'+r.puntaje+'% — '+r.nivel+'</span>'
+        + '</div></div>'
+        + '<div style="display:flex;gap:6px;flex-shrink:0">'
+        + '<button onclick="cargarDiagnostico('+i+')" class="btn sm primary" style="font-size:11px;padding:6px 12px">Cargar</button>'
+        + '<button onclick="eliminarDiagnostico('+i+')" class="btn sm danger" style="font-size:11px;padding:6px 12px">✕</button>'
+        + '</div></div>';
+    }).join('');
+  }
+  modal.style.display = 'flex';
+}
+
+function cerrarHistorial() {
+  var m = document.getElementById('hist-modal');
+  if (m) m.style.display = 'none';
+}
+
+function cargarDiagnostico(idx) {
+  var db = dbLoad();
+  var r = db[idx];
+  if (!r) return;
+  // Restore state
+  window.MODO = r.modo;
+  window.ST   = { step:0, info:r.info||{}, ing:r.ing||{}, R:r.R||{}, logo_b64:r.logo_b64||null };
+  window._DIME = {
+    MODO:r.modo, scores:r.scores, ovr:r.puntaje, lvl:[r.nivel,''],
+    I:r.info||{}, ING:r.ing||{}, R:r.R||{},
+    clasif:{tipo:r.clasif, color:'#C97A0A', bg:'#FAEEDA', desc:''},
+    ventas:parseFloat((r.R||{}).ventas)||0, costos:parseFloat((r.R||{}).costos)||0,
+    personal:parseInt((r.R||{}).personal)||0, empFormal:0,
+    innCount:0, tieneCam:false, tieneRut:false,
+    dVentas:null, dCostos:null, dPersonal:null, dPuntaje:null
+  };
+  cerrarHistorial();
+  // Go directly to results
+  document.getElementById('steps').style.display = 'none';
+  document.querySelector('.prog').style.display   = 'none';
+  showResults();
+  showToast('✓ Diagnóstico de ' + r.negocio + ' cargado');
+}
+
+function eliminarDiagnostico(idx) {
+  if (!confirm('¿Eliminar este diagnóstico guardado? No se puede deshacer.')) return;
+  var db = dbLoad();
+  db.splice(idx, 1);
+  dbSave(db);
+  abrirHistorial(); // refresh
+}
+
 </script>
 
 <script>
 // ═══════════════════════════════════════════════
-// AI INTEGRATION — Claude API
+// AI INTEGRATION
 // ═══════════════════════════════════════════════
 var AI_CURRENT_TEXT = '';
 
 function abrirAI() {
   var D = window._DIME;
   if (!D) { alert('Primero completa el diagnóstico.'); return; }
-  var esModoAvanzado = D.MODO === 'salida' || D.MODO === 'seguimiento';
-  gid('btn-comparativo').style.display    = esModoAvanzado ? 'flex' : 'none';
-  gid('btn-informe_salida').style.display = D.MODO === 'salida' ? 'flex' : 'none';
+  var adv = D.MODO==='salida'||D.MODO==='seguimiento';
+  gid('btn-comparativo').style.display    = adv ? 'flex':'none';
+  gid('btn-informe_salida').style.display = D.MODO==='salida' ? 'flex':'none';
   gid('ai-menu').style.display   = 'block';
   gid('ai-result').style.display = 'none';
   gid('ai-copy-btn').style.display = 'none';
   gid('ai-overlay').style.display  = 'flex';
   gid('ai-modal-badge').textContent = D.clasif ? D.clasif.tipo : 'IA';
 }
-function cerrarAI()  { gid('ai-overlay').style.display = 'none'; }
-function volverMenu() {
-  gid('ai-menu').style.display   = 'block';
-  gid('ai-result').style.display = 'none';
-  gid('ai-copy-btn').style.display = 'none';
-}
+function cerrarAI()  { gid('ai-overlay').style.display='none'; }
+function volverMenu(){ gid('ai-menu').style.display='block'; gid('ai-result').style.display='none'; gid('ai-copy-btn').style.display='none'; }
 
-function construirContexto() {
-  var D = window._DIME; if (!D) return '';
-  var I=D.I, R=D.R, ING=D.ING||{};
-  var dimLines = Object.keys(D.scores).map(function(k) {
-    return DIMS_META[k].name+': '+(D.scores[k]||0)+'% ('+(D.scores[k]>=65?'Avanzado':D.scores[k]>=40?'En desarrollo':'Temprano')+')';
-  }).join('\n');
-  var lines = [
+function buildCtx() {
+  var D=window._DIME; if(!D) return '';
+  var I=D.I,R=D.R,ING=D.ING||{};
+  var lines=[
     '=== MODO: '+(D.MODO||'ingreso').toUpperCase()+' ===',
     'Clasificación: '+(D.clasif?D.clasif.tipo:'—'),
     'Negocio: '+(I.razon||'—')+' | Sector: '+(I.sector||'—')+' | Municipio: '+(I.municipio||'—'),
-    'Antigüedad CC: '+(I.meses_reg||0)+' meses | RUT: '+(I.tiene_rut||'—'),
+    'CC: '+(I.meses_reg||0)+' meses | RUT: '+(I.tiene_rut||'—'),
     '',
-    '=== PUNTAJES POR COMPONENTE ===',
-    dimLines,
-    'GLOBAL: '+D.ovr+'% — '+D.lvl[0],
-    '',
-    '=== INDICADORES ACTUALES ===',
-    'Ingresos (ventas)/mes: '+(D.ventas>0?'$'+Math.round(D.ventas).toLocaleString('es-CO'):'Sin dato'),
-    'Costos y gastos/mes: '+(D.costos>0?'$'+Math.round(D.costos).toLocaleString('es-CO'):'Sin dato'),
-    'Personal: '+D.personal+' persona(s)',
-    'Productos/servicios: '+(R.productos||'—'),
-    'Propuesta de valor: '+(R.pv||'—'),
+    '=== PUNTAJES ===',
   ];
-  if (D.MODO !== 'ingreso') {
-    lines.push('', '=== LÍNEA BASE DE INGRESO ===');
+  Object.keys(D.scores).forEach(function(k){ lines.push(DIMS_META[k].name+': '+(D.scores[k]||0)+'% ('+(D.scores[k]>=65?'Avanzado':D.scores[k]>=40?'En desarrollo':'Temprano')+')'); });
+  lines.push('GLOBAL: '+D.ovr+'% — '+(D.lvl?D.lvl[0]:'—'));
+  lines.push('','=== INDICADORES ACTUALES ===');
+  lines.push('Ingresos/mes: '+(D.ventas>0?'$'+Math.round(D.ventas).toLocaleString('es-CO'):'Sin dato'));
+  lines.push('Costos/mes: '+(D.costos>0?'$'+Math.round(D.costos).toLocaleString('es-CO'):'Sin dato'));
+  lines.push('Personal: '+(D.personal||'—')+' persona(s)');
+  if(D.MODO!=='ingreso'){
+    lines.push('','=== LÍNEA BASE (INGRESO) ===');
     lines.push('Ingresos al inicio: '+(ING.ventas>0?'$'+Math.round(ING.ventas).toLocaleString('es-CO'):'Sin dato'));
     lines.push('Costos al inicio: '+(ING.costos>0?'$'+Math.round(ING.costos).toLocaleString('es-CO'):'Sin dato'));
     lines.push('Personal al inicio: '+(ING.personal||'—'));
-    if (D.dVentas !== null) lines.push('Variación ingresos: '+(D.dVentas>=0?'+':'')+Math.round(D.dVentas)+'% (Meta +20%) — '+(D.mV?D.mV.label:'—'));
-    if (D.dCostos !== null) lines.push('Variación costos: '+(D.dCostos>=0?'+':'')+Math.round(D.dCostos)+'% (Meta ≤-10%) — '+(D.mC?D.mC.label:'—'));
-    if (D.dPersonal !== null) lines.push('Variación empleo: '+(D.dPersonal>=0?'+':'')+Math.round(D.dPersonal)+'% (Meta +10%) — '+(D.mP?D.mP.label:'—'));
+    if(D.dVentas!==null) lines.push('Variación ingresos: '+(D.dVentas>=0?'+':'')+Math.round(D.dVentas)+'% | Meta +20% | '+(D.mV?D.mV.label:'—'));
+    if(D.dCostos!==null) lines.push('Variación costos: '+(D.dCostos>=0?'+':'')+Math.round(D.dCostos)+'% | Meta ≤-10% | '+(D.mC?D.mC.label:'—'));
+    if(D.dPersonal!==null) lines.push('Variación empleo: '+(D.dPersonal>=0?'+':'')+Math.round(D.dPersonal)+'% | Meta +10% | '+(D.mP?D.mP.label:'—'));
   }
+  lines.push('','Productos/servicios: '+(R.productos||'—'));
+  lines.push('Propuesta de valor: '+(R.pv||'—'));
   return lines.join('\n');
 }
 
-function construirPrompt(tipo) {
-  var ctx = construirContexto();
-  var D = window._DIME;
-  var base = 'Eres experto en fortalecimiento empresarial del convenio Ecopetrol Emprende - Universidad de los Llanos, Orinoquía colombiana. Responde en español formal con markdown (###, **, listas).\n\n';
-  var prompts = {
-    informe_ingreso: base+'Genera un INFORME DE DIAGNÓSTICO DE INGRESO (LÍNEA BASE) con: ### Resumen ejecutivo ### Perfil del emprendimiento / MiPyme ### Análisis por componente (fortalezas y brechas) ### Indicadores de línea base ### Áreas prioritarias de intervención.\n\nDATA:\n'+ctx,
-    recomendaciones: base+'Genera RECOMENDACIONES ESTRATÉGICAS para cada componente con puntaje < 65%, incluyendo: acción específica, herramienta recomendada, resultado esperado y prioridad. Cierra con las 3 acciones más urgentes para esta semana.\n\nDATA:\n'+ctx,
-    plan_fortalecimiento: base+'Diseña PLAN DE FORTALECIMIENTO de 6 meses con: ### Objetivo general ### Objetivos por componente ### Cronograma mensual ### Indicadores de seguimiento ### Compromisos del beneficiario.\n\nDATA:\n'+ctx,
-    comparativo: base+'Genera INFORME COMPARATIVO ANTES/DESPUÉS con: ### Tabla comparativa de puntajes ### Variación de indicadores financieros y de empleo ### Cumplimiento de metas (✅/⚠️/❌ para cada meta) ### Análisis de impacto ### Conclusiones.\n\nDATA:\n'+ctx,
-    informe_salida: base+'Genera INFORME FINAL DE DIAGNÓSTICO DE SALIDA con: ### Resumen de cierre ### Logros del proceso ### Cumplimiento de metas del convenio ### Análisis de sostenibilidad ### Recomendaciones post-convenio ### Conclusiones.\n\nDATA:\n'+ctx
+function buildPrompt(tipo) {
+  var ctx=buildCtx(), D=window._DIME;
+  var base='Eres experto en fortalecimiento empresarial del convenio Ecopetrol Emprende - Universidad de los Llanos. Responde en espanol formal con markdown (###, **, listas).\n\n';
+  var prompts={
+    informe_ingreso: base+'Genera INFORME DE DIAGNÓSTICO DE INGRESO (LÍNEA BASE) con:\n### Resumen ejecutivo\n### Perfil del emprendimiento / MiPyme\n### Análisis por componente (fortalezas y brechas)\n### Indicadores de línea base\n### Áreas prioritarias de intervención\n\nDATA:\n'+ctx,
+    recomendaciones: base+'Genera RECOMENDACIONES ESTRATÉGICAS para componentes con puntaje < 65%, cada una con: acción específica, herramienta, resultado esperado y prioridad. Cierra con las 3 acciones más urgentes.\n\nDATA:\n'+ctx,
+    plan_fortalecimiento: base+'Diseña PLAN DE FORTALECIMIENTO de 6 meses con:\n### Objetivo general\n### Objetivos por componente\n### Cronograma mensual\n### Indicadores de seguimiento\n### Compromisos del beneficiario\n\nDATA:\n'+ctx,
+    comparativo: base+'Genera INFORME COMPARATIVO ANTES/DESPUÉS con:\n### Tabla comparativa de puntajes\n### Variación de indicadores financieros y de empleo\n### Cumplimiento de metas del convenio (✅/⚠️/❌)\n### Análisis de impacto\n### Conclusiones\n\nDATA:\n'+ctx,
+    informe_salida: base+'Genera INFORME FINAL DE SALIDA con:\n### Resumen de cierre\n### Logros del proceso\n### Cumplimiento de metas\n### Análisis de sostenibilidad\n### Recomendaciones post-convenio\n### Conclusiones\n\nDATA:\n'+ctx
   };
-  return prompts[tipo] || '';
+  return prompts[tipo]||'';
 }
 
 async function generarIA(tipo) {
-  var titulos = {informe_ingreso:'Informe de Ingreso — Línea Base', recomendaciones:'Recomendaciones Estratégicas', plan_fortalecimiento:'Plan de Fortalecimiento', comparativo:'Comparativo Antes/Después', informe_salida:'Informe de Salida'};
-  gid('ai-modal-title').textContent = titulos[tipo] || 'Análisis IA';
-  gid('ai-menu').style.display = 'none';
-  gid('ai-result').style.display = 'block';
-  gid('ai-copy-btn').style.display = 'none';
-  var out = gid('ai-output');
-  out.innerHTML = '<div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span>Analizando datos y generando informe...</span></div>';
+  var titulos={informe_ingreso:'Informe de Ingreso',recomendaciones:'Recomendaciones Estratégicas',plan_fortalecimiento:'Plan de Fortalecimiento',comparativo:'Comparativo Antes/Después',informe_salida:'Informe de Salida'};
+  gid('ai-modal-title').textContent = titulos[tipo]||'Análisis IA';
+  gid('ai-menu').style.display='none'; gid('ai-result').style.display='block'; gid('ai-copy-btn').style.display='none';
+  var out=gid('ai-output');
+  out.innerHTML='<div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span>Analizando datos y generando informe...</span></div>';
   try {
-    var resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1000,
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
         system:'Eres consultor empresarial experto en MiPymes y emprendimientos de la Orinoquía colombiana. Genera análisis profesionales, concretos y orientados a la acción.',
-        messages:[{role:'user', content:construirPrompt(tipo)}]})
-    });
-    if (!resp.ok) throw new Error('Error API '+resp.status);
-    var data = await resp.json();
-    var text = data.content && data.content[0] ? data.content[0].text : '';
-    if (!text) throw new Error('Sin contenido');
-    AI_CURRENT_TEXT = text;
-    out.innerHTML = '<div class="ai-content">'+fmtMd(text)+'</div>';
-    gid('ai-copy-btn').style.display = 'block';
-    gid('ai-footer-note').textContent = 'Generado: '+new Date().toLocaleString('es-CO');
+        messages:[{role:'user',content:buildPrompt(tipo)}]})});
+    if(!resp.ok) throw new Error('API error '+resp.status);
+    var data=await resp.json();
+    var text=data.content&&data.content[0]?data.content[0].text:'';
+    if(!text) throw new Error('Sin contenido');
+    AI_CURRENT_TEXT=text;
+    out.innerHTML='<div class="ai-content">'+fmtMd(text)+'</div>';
+    gid('ai-copy-btn').style.display='block';
+    gid('ai-footer-note').textContent='Generado: '+new Date().toLocaleString('es-CO');
   } catch(e) {
-    out.innerHTML = '<div class="alert error"><strong>Error:</strong> '+e.message+'<br><br>La integración con IA funciona cuando la app está publicada en la web (GitHub Pages, Netlify). Ejecutar el archivo localmente bloquea las llamadas a la API por política CORS del navegador.</div>';
+    out.innerHTML='<div class="alert error"><strong>Error:</strong> '+e.message+'<br><br>La IA funciona cuando la app está publicada en la web (GitHub Pages, Netlify). Localmente el navegador bloquea las llamadas API por CORS.</div>';
   }
 }
 
-function fmtMd(t) {
+function fmtMd(t){
   return t.replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h3>$1</h3>').replace(/^# (.+)$/gm,'<h3>$1</h3>')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>')
     .replace(/^- (.+)$/gm,'<li>$1</li>').replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
@@ -2902,12 +2350,11 @@ function fmtMd(t) {
     .replace(/✅/g,'<span class="good">✅</span>').replace(/⚠️/g,'<span class="warn">⚠️</span>').replace(/❌/g,'<span class="bad">❌</span>')
     .replace(/\n\n/g,'</p><p>').replace(/^(?!<[hup])(.+)$/gm,function(m){return m.startsWith('<')?m:'<p>'+m+'</p>';}).replace(/<p><\/p>/g,'');
 }
-
-function copiarAnalisis() {
-  if (!AI_CURRENT_TEXT) return;
-  navigator.clipboard.writeText(AI_CURRENT_TEXT).then(function() {
-    var b = gid('ai-copy-btn'); b.textContent='✓ Copiado';
-    setTimeout(function(){b.textContent='📋 Copiar texto';}, 2000);
+function copiarAnalisis(){
+  if(!AI_CURRENT_TEXT) return;
+  navigator.clipboard.writeText(AI_CURRENT_TEXT).then(function(){
+    var b=gid('ai-copy-btn'); b.textContent='✓ Copiado';
+    setTimeout(function(){b.textContent='📋 Copiar texto';},2000);
   });
 }
 </script>
