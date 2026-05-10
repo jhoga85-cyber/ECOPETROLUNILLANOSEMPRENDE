@@ -663,7 +663,11 @@ function step1() {
     + field('Primer nombre', 'f-nombre1', 'text', '', I.nombre1, true)
     + field('Primer apellido', 'f-apellido1', 'text', '', I.apellido1, true)
     + '</div>'
-    + field('Número de documento de identidad', 'f-doc', 'text', '', I.doc, true)
+    + '<div class="field"><label>Número de documento de identidad<span class="req">*</span></label>'
+    + '<input type="text" id="f-doc" placeholder="" value="' + esc(I.doc||'') + '" oninput="buscarIngresoXCedula(this.value)">'
+    + '<div id="cedula-hint" style="font-size:11.5px;margin-top:4px;color:var(--sub)">'
+    + (MODO!=='ingreso' ? '🔍 Si ya realizaste el diagnóstico de ingreso, ingresa tu cédula para cargar los datos automáticamente.' : '')
+    + '</div></div>'
     + '<div class="field-row">'
     + fieldSel('Municipio', 'f-municipio', MUNICIPIOS, I.municipio, true)
     + fieldSel('Sector económico', 'f-sector', SECTORES, I.sector, true)
@@ -721,7 +725,6 @@ function step2() {
 // ═══════════════════════════════════════════════════════════════
 function step3_ing() {
   var R = ST.R;
-  var esSalSeg = false; // always ingreso mode
   clr();
   var html = '<div class="step active">'
     + modoBanner()
@@ -738,10 +741,10 @@ function step3_ing() {
     + hint('📌 <strong>Ingresos (ventas):</strong> dinero que entra al negocio por ventas o servicios. <strong>Costos y gastos:</strong> lo que gasta para operar (insumos, arriendo, salarios, servicios, etc.).')
     + fieldMoney('Ingresos (ventas) mensuales promedio', 'f-ventas', R.ventas||0, true)
     + fieldMoney('Costos y gastos mensuales promedio', 'f-costos', R.costos||0, true)
-    + (esSalSeg ? '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
+    + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
     + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
     + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
-    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>' : '')
+    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
     + navBtns(true)
     + '</div>';
   appnd(html);
@@ -865,10 +868,10 @@ function step5() {
     + divider(esSalSeg ? 'Elementos comerciales ' + (MODO==='salida'?'implementados':'actuales') : 'Elementos del área comercial')
     + '<div class="field"><label>' + elemLbl + '<span class="req">*</span></label>'
     + checkGrp('elems_com', ELEMS_COM, R.elems_com) + '</div>'
-    + (esSalSeg ? '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
+    + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
     + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
     + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
-    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>' : '')
+    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
     + navBtns(true)
     + '</div>';
   appnd(html);
@@ -1045,6 +1048,11 @@ var LBLS_SAL = ['Tipo de diagnóstico','A. Identificación','Datos del informant
 // SAVE functions — one clean version each
 // ═══════════════════════════════════════════════════════════════
 function save1() {
+  // Trigger cedula lookup when saving step1
+  var docVal = gv('f-doc');
+  if (docVal && (MODO === 'seguimiento' || MODO === 'salida')) {
+    buscarIngresoXCedula(docVal);
+  }
   Object.assign(ST.info, {
     razon:ST.info.razon, nombre1:gv('f-nombre1'), apellido1:gv('f-apellido1'),
     razon:gv('f-razon'), doc:gv('f-doc'), municipio:gv('f-municipio'), sector:gv('f-sector'),
@@ -1180,6 +1188,49 @@ function validate(n) {
 // ═══════════════════════════════════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════════════════════════════════
+function buscarIngresoXCedula(doc) {
+  // Only in seguimiento/salida mode
+  if (MODO === 'ingreso' || !doc || doc.length < 5) return;
+  var hint = gid('cedula-hint');
+  
+  // Search localStorage for a saved ingreso diagnostic with this doc
+  try {
+    var db = JSON.parse(localStorage.getItem('dme_diagnosticos_v1') || '[]');
+    var found = db.find(function(r) { return r.doc === doc && r.modo === 'ingreso'; });
+    if (found) {
+      // Pre-fill ingreso values
+      ST.ing = {
+        ventas:     parseFloat((found.R || {}).ventas)    || 0,
+        costos:     parseFloat((found.R || {}).costos)    || 0,
+        personal:   parseInt((found.R || {}).personal)    || 0,
+        emp_formal: 0,
+        puntaje:    found.puntaje || 0,
+        nivel:      found.nivel   || ''
+      };
+      // Pre-fill info
+      if (!ST.info.razon && found.info) {
+        ST.info.razon    = found.info.razon    || ST.info.razon;
+        ST.info.sector   = found.info.sector   || ST.info.sector;
+        ST.info.municipio= found.info.municipio|| ST.info.municipio;
+      }
+      if (hint) {
+        hint.innerHTML = '<span style="color:var(--green);font-weight:600">✅ Diagnóstico de ingreso encontrado: <strong>'
+          + (found.negocio || found.info && found.info.razon || 'negocio')
+          + '</strong> — Ingresos: $' + Math.round(ST.ing.ventas).toLocaleString('es-CO')
+          + '/mes · Costos: $' + Math.round(ST.ing.costos).toLocaleString('es-CO')
+          + '/mes · Personal: ' + ST.ing.personal + ' persona(s)'
+          + ' · Puntaje: ' + ST.ing.puntaje + '%</span>';
+      }
+    } else {
+      if (hint && doc.length >= 5) {
+        hint.innerHTML = '<span style="color:var(--amber)">⚠ No se encontró diagnóstico de ingreso para esta cédula en este dispositivo. Podrás ingresar los valores manualmente.</span>';
+      }
+    }
+  } catch(e) {
+    // localStorage not available
+  }
+}
+
 function goNext() {
   if (SAVES[ST.step]) SAVES[ST.step]();
   if (!validate(ST.step)) return;
