@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#1B3A6B">
+<title>Dashboard Caracterización — Ecopetrol Emprende · Unillanos</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1B3A6B;--navy2:#0F2447;--green:#00863E;--amber:#E8A020;--red:#C0392B;--purple:#534AB7;--light:#F4F6FA;--white:#FFF;--border:#D8DEE9;--text:#1A202C;--sub:#64748B;--r:10px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sora',sans-serif;background:var(--light);color:var(--text);min-height:100vh}
+.hdr{background:linear-gradient(135deg,var(--navy),#2D5FA5);display:flex;align-items:center;gap:12px;padding:0 1.25rem;min-height:58px}
+.hlogo{height:38px;border-radius:6px;object-fit:contain;background:white;padding:3px 6px}
+.hlogo.eco{background:transparent;padding:0}
+.hdr-title{font-size:11px;color:rgba(255,255,255,.75);line-height:1.5}
+.hdr-title strong{display:block;font-size:13px;color:white;font-weight:600}
+.hdr-actions{margin-left:auto;display:flex;gap:8px}
+.tabs{background:var(--navy2);display:flex;padding:0 1.25rem;overflow-x:auto;gap:2px}
+.tab{padding:10px 16px;font-size:12px;font-weight:600;color:rgba(255,255,255,.5);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:'Sora',sans-serif;transition:all .2s}
+.tab:hover{color:rgba(255,255,255,.8)}
+.tab.active{color:white;border-color:var(--green)}
+.main{max-width:1100px;margin:0 auto;padding:1.25rem 1rem 3rem}
+.panel{display:none}.panel.active{display:block}
+/* Cards */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:.85rem;display:flex;align-items:center;gap:8px}
+/* Stats grid */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.25rem}
+.stat{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.stat-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--sub);margin-bottom:3px}
+.stat-val{font-size:24px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--navy);line-height:1}
+.stat-sub{font-size:11px;color:var(--sub);margin-top:3px}
+/* Charts */
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+@media(max-width:640px){.charts{grid-template-columns:1fr}}
+.chart-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1rem}
+.chart-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--sub);margin-bottom:.75rem}
+/* Bar chart */
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.bar-lbl{width:130px;flex-shrink:0;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:14px;background:#E8ECF2;border-radius:7px;overflow:hidden}
+.bar-fill{height:100%;border-radius:7px;transition:width .6s}
+.bar-cnt{width:30px;text-align:right;font-weight:700;color:var(--navy);font-family:'IBM Plex Mono',monospace;font-size:11px}
+/* Table */
+.tbl-wrap{overflow-x:auto}
+table.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{background:var(--navy);color:white;padding:8px 10px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:hover td{background:#FAFBFD}
+/* Badge */
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em}
+.b-emp{background:#FAEEDA;color:#92400E}.b-mip{background:#EAF3DE;color:#276749}
+.b-ing{background:#EEF0FE;color:#534AB7}.b-seg{background:#FEF9E7;color:#B7791F}.b-sal{background:#E6F1FB;color:#2B6CB0}
+/* Form */
+.field{margin-bottom:.85rem}
+.field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--sub);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;font-size:13.5px;font-family:'Sora',sans-serif;border:1.5px solid var(--border);border-radius:8px;background:var(--white);outline:none}
+.field input:focus,.field select:focus{border-color:var(--navy)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* Buttons */
+.btn{padding:8px 18px;font-size:13px;font-weight:600;border-radius:8px;cursor:pointer;font-family:'Sora',sans-serif;border:1.5px solid var(--border);background:var(--white);color:var(--text);transition:all .15s}
+.btn:hover{border-color:var(--navy)}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:white}
+.btn.primary:hover{background:var(--navy2)}
+.btn.success{background:var(--green);border-color:var(--green);color:white}
+.btn.sm{padding:5px 12px;font-size:11px}
+.btn.danger{background:var(--red);border-color:var(--red);color:white}
+/* Alert */
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:1rem;border:1px solid}
+.alert.info{background:#EEF0FE;border-color:#C7D2FE;color:#3730A3}
+.alert.success{background:#DCFCE7;border-color:#86EFAC;color:#14532D}
+.alert.warn{background:#FAEEDA;border-color:#FCD34D;color:#92400E}
+.alert.error{background:#FEF2F2;border-color:#FCA5A5;color:#7B1F1F}
+/* Empty */
+.empty{text-align:center;padding:3rem 1rem;color:var(--sub)}
+.empty .ico{font-size:40px;margin-bottom:.75rem}
+/* Sync section */
+.sync-box{background:linear-gradient(135deg,#EEF0FE,#E6F1FB);border:1.5px solid #C7D2FE;border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
+.sync-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:.5rem;display:flex;align-items:center;gap:8px}
+.sync-desc{font-size:12.5px;color:var(--sub);margin-bottom:.85rem;line-height:1.65}
+.sync-status{font-size:12px;margin-top:.75rem;padding:8px 12px;border-radius:6px}
+/* Donut */
+.donut-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.donut-legend{flex:1}
+.donut-item{display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:12px}
+.donut-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+/* Progress bar for puntaje */
+.prog-bar{height:6px;background:#E8ECF2;border-radius:3px;overflow:hidden;margin-top:3px}
+.prog-fill{height:100%;border-radius:3px}
+/* Toast */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#1B3A6B;color:white;padding:11px 18px;border-radius:8px;font-size:13px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <img class="hlogo eco" src="logo_ecopetrol.png" alt="Ecopetrol" onerror="this.style.display='none'">
+  <img class="hlogo" src="logo_unillanos.png" alt="Unillanos" onerror="this.style.display='none'">
+  <div class="hdr-title"><strong>Dashboard de Caracterización</strong>Ecopetrol Emprende · Unillanos</div>
+  <div class="hdr-actions">
+    <button class="btn sm primary" onclick="actualizarTodo()">↻ Actualizar</button>
+    <a href="index.html" class="btn sm">← Diagnóstico</a>
+  </div>
+</div>
+<div class="tabs">
+  <div class="tab active" onclick="showTab('tab-resumen')">📊 Resumen general</div>
+  <div class="tab" onclick="showTab('tab-socio')">👥 Caracterización sociodemográfica</div>
+  <div class="tab" onclick="showTab('tab-empresarial')">🏢 Perfil empresarial</div>
+  <div class="tab" onclick="showTab('tab-diagnosticos')">📋 Diagnósticos</div>
+  <div class="tab" onclick="showTab('tab-nube')">☁ Nube / Google Sheets</div>
+</div>
+
+<div class="main">
+<div id="tab-resumen" class="panel active">
+  <div class="stats" id="stats-resumen"></div>
+  <div class="charts" id="charts-resumen"></div>
+  <div class="card">
+    <div class="card-title">🎯 Distribución por municipio</div>
+    <div id="chart-municipio"></div>
+  </div>
+</div>
+
+<div id="tab-socio" class="panel">
+  <div class="alert info">📊 Caracterización sociodemográfica de los beneficiarios del proyecto. Basada en los diagnósticos guardados en este dispositivo.</div>
+  <div class="charts" id="charts-socio"></div>
+  <div class="card">
+    <div class="card-title">📍 Distribución geográfica — Municipios</div>
+    <div id="chart-municipio2"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎓 Nivel educativo</div>
+    <div id="chart-edu"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">💡 Motivo principal para iniciar el negocio</div>
+    <div id="chart-motivo"></div>
+  </div>
+</div>
+
+<div id="tab-empresarial" class="panel">
+  <div class="charts" id="charts-empresarial"></div>
+  <div class="card">
+    <div class="card-title">🏭 Distribución por sector económico</div>
+    <div id="chart-sector"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📈 Puntaje de madurez empresarial por beneficiario</div>
+    <div id="chart-puntaje"></div>
+  </div>
+</div>
+
+<div id="tab-diagnosticos" class="panel">
+  <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap">
+    <input id="search-diag" type="text" placeholder="🔍 Buscar por nombre, cédula o negocio..." oninput="renderDiags()" style="flex:1;min-width:200px;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;outline:none">
+    <select id="filter-modo" onchange="renderDiags()" style="padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Sora',sans-serif;font-size:13px">
+      <option value="">Todos los modos</option>
+      <option value="ingreso">Ingreso</option>
+      <option value="seguimiento">Seguimiento</option>
+      <option value="salida">Salida</option>
+    </select>
+    <select id="filter-clasif" onchange="renderDiags()" style="padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Sora',sans-serif;font-size:13px">
+      <option value="">Toda clasificación</option>
+      <option value="Emprendimiento">Emprendimiento</option>
+      <option value="MiPyme">MiPyme</option>
+    </select>
+    <button class="btn success" onclick="exportarCSV()">⬇ Exportar CSV</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr>
+          <th>Beneficiario</th><th>Cédula</th><th>Municipio</th><th>Negocio / Sector</th>
+          <th>Clasificación</th><th>Modo</th><th>Puntaje</th><th>Nivel</th><th>Fecha</th>
+        </tr></thead>
+        <tbody id="tbl-diags"></tbody>
+      </table>
+    </div>
+    <div id="tbl-empty" class="empty" style="display:none">
+      <div class="ico">📋</div>
+      <p>No hay diagnósticos guardados.<br>Completa un diagnóstico y usa el botón <strong>💾 Guardar</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<div id="tab-nube" class="panel">
+  <div class="sync-box">
+    <div class="sync-title">☁ Sincronización con Google Sheets</div>
+    <div class="sync-desc">
+      Los diagnósticos se pueden enviar automáticamente a una hoja de Google Sheets compartida,
+      permitiendo que el equipo del convenio visualice en tiempo real quién se inscribió, cuándo, y sus indicadores.
+      Requiere configurar un Apps Script como receptor de datos.
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>URL del Web App de Google Apps Script</label>
+        <input id="sheets-url" type="url" placeholder="https://script.google.com/macros/s/.../exec" value="">
+      </div>
+      <div class="field">
+        <label>Nombre del convenio / proyecto</label>
+        <input id="sheets-proyecto" type="text" placeholder="Ecopetrol Emprende 2025" value="Ecopetrol Emprende">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn primary" onclick="guardarConfigNube()">💾 Guardar configuración</button>
+      <button class="btn success" onclick="sincronizarTodo()">☁ Sincronizar todos los diagnósticos</button>
+      <button class="btn" onclick="probarConexion()">🔌 Probar conexión</button>
+    </div>
+    <div id="sync-status" class="sync-status" style="display:none"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Cómo configurar Google Sheets</div>
+    <div style="font-size:13px;line-height:1.85;color:var(--text)">
+      <p style="margin-bottom:.75rem"><strong>Paso 1.</strong> Abre <a href="https://sheets.google.com" target="_blank" style="color:var(--navy)">Google Sheets</a> y crea una hoja nueva llamada <code style="background:var(--light);padding:2px 6px;border-radius:4px">Diagnósticos_DME</code>.</p>
+      <p style="margin-bottom:.75rem"><strong>Paso 2.</strong> En el menú, ve a <strong>Extensiones → Apps Script</strong> y pega el siguiente código:</p>
+      <div id="apps-script-code" style="background:#1A202C;color:#A8D8A8;padding:1rem;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;overflow-x:auto;white-space:pre;margin-bottom:.75rem"></div>
+      <p style="margin-bottom:.75rem"><strong>Paso 3.</strong> Haz clic en <strong>Implementar → Nueva implementación</strong>. Tipo: <em>Aplicación web</em>. Acceso: <em>Cualquier persona</em>. Copia la URL que aparece.</p>
+      <p><strong>Paso 4.</strong> Pega esa URL en el campo de arriba y haz clic en <strong>Guardar configuración</strong>. Luego usa <strong>Sincronizar</strong> para enviar los diagnósticos guardados.</p>
+    </div>
+  </div>
+</div>
+</div><!-- /main -->
+
+<div id="app-toast" class="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA SOURCE — localStorage
+// ═══════════════════════════════════════════════
+var DB_KEY  = 'dme_diagnosticos_v1';
+var CFG_KEY = 'dme_nube_config';
+
+function dbLoad() {
+  try { return JSON.parse(localStorage.getItem(DB_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+
+function cfgLoad() {
+  try { return JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); }
+  catch(e){ return {}; }
+}
+
+function cfgSave(cfg) {
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+}
+
+// ═══════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════
+function showTab(id) {
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(function(t){
+    if (t.getAttribute('onclick') && t.getAttribute('onclick').indexOf(id) >= 0) t.classList.add('active');
+  });
+}
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function toast(msg, type) {
+  var t = document.getElementById('app-toast');
+  t.textContent = msg;
+  t.style.background = type === 'error' ? '#C0392B' : type === 'success' ? '#276749' : '#1B3A6B';
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3200);
+}
+
+function barChart(containerId, data, color) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  var max = Math.max.apply(null, data.map(function(d){ return d.v; })) || 1;
+  var colors = ['#534AB7','#276749','#B7791F','#2B6CB0','#C0392B','#00863E','#1B3A6B','#E8A020','#6B46C1'];
+  el.innerHTML = data.map(function(d, i) {
+    var w = Math.round((d.v / max) * 100);
+    var c = color || colors[i % colors.length];
+    return '<div class="bar-row">'
+      + '<div class="bar-lbl" title="' + d.k + '">' + d.k + '</div>'
+      + '<div class="bar-track"><div class="bar-fill" style="width:' + w + '%;background:' + c + '"></div></div>'
+      + '<div class="bar-cnt">' + d.v + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function countBy(db, fn) {
+  var counts = {};
+  db.forEach(function(r){ var k = fn(r); if(k){ counts[k] = (counts[k]||0) + 1; } });
+  return Object.keys(counts).sort(function(a,b){ return counts[b]-counts[a]; })
+    .map(function(k){ return {k:k, v:counts[k]}; });
+}
+
+function getField(r, path) {
+  var parts = path.split('.');
+  var obj = r;
+  for (var i=0; i<parts.length; i++) { if (!obj) return null; obj = obj[parts[i]]; }
+  return obj;
+}
+
+function calcEdad(nacimiento) {
+  if (!nacimiento) return null;
+  var d = new Date(nacimiento);
+  var hoy = new Date();
+  var age = hoy.getFullYear() - d.getFullYear();
+  if (hoy < new Date(hoy.getFullYear(), d.getMonth(), d.getDate())) age--;
+  return age > 0 && age < 120 ? age : null;
+}
+
+function rangoEdad(age) {
+  if (!age) return 'Sin dato';
+  if (age < 26) return '18-25 años';
+  if (age < 36) return '26-35 años';
+  if (age < 46) return '36-45 años';
+  if (age < 56) return '46-55 años';
+  return '56+ años';
+}
+
+// ═══════════════════════════════════════════════
+// TAB 1: RESUMEN GENERAL
+// ═══════════════════════════════════════════════
+function renderResumen() {
+  var db = dbLoad();
+  if (!db.length) {
+    document.getElementById('stats-resumen').innerHTML = '<div class="empty"><div class="ico">📊</div><p>No hay diagnósticos guardados aún.</p></div>';
+    return;
+  }
+
+  var ingreso = db.filter(function(r){ return r.modo==='ingreso'; });
+  var salida  = db.filter(function(r){ return r.modo==='salida'; });
+  var mipyme  = db.filter(function(r){ return r.clasif==='MiPyme'; });
+  var punts   = ingreso.filter(function(r){ return r.puntaje>0; }).map(function(r){ return r.puntaje; });
+  var avgPunt = punts.length ? Math.round(punts.reduce(function(a,b){ return a+b; },0)/punts.length) : 0;
+  var ventas  = ingreso.filter(function(r){ return parseFloat((r.R||{}).ventas)>0; });
+  var avgVentas = ventas.length ? Math.round(ventas.reduce(function(a,b){ return a+parseFloat(b.R.ventas); },0)/ventas.length) : 0;
+  var muns = countBy(db, function(r){ return r.municipio; });
+
+  document.getElementById('stats-resumen').innerHTML =
+    stat('Total diagnósticos', db.length, '')
+    + stat('Diagnósticos ingreso', ingreso.length, 'líneas base')
+    + stat('Diagnósticos salida', salida.length, 'evaluaciones finales')
+    + stat('MiPymes', mipyme.length, 'de ' + db.length + ' registros')
+    + stat('Emprendimientos', db.length - mipyme.length, '')
+    + stat('Puntaje promedio ingreso', avgPunt + '%', 'madurez empresarial')
+    + stat('Ingresos promedio', avgVentas > 0 ? '$' + Math.round(avgVentas).toLocaleString('es-CO') : 'Sin dato', 'mensuales COP')
+    + stat('Municipios', muns.length, 'con beneficiarios registrados');
+
+  // Charts
+  var clasifData = countBy(db, function(r){ return r.clasif||'Sin clasificar'; });
+  var modoData   = countBy(db, function(r){ return r.modo; });
+  document.getElementById('charts-resumen').innerHTML =
+    chartCard('Clasificación', 'chart-clasif-r')
+    + chartCard('Tipo de diagnóstico', 'chart-modo-r');
+  barChart('chart-clasif-r', clasifData);
+  barChart('chart-modo-r', modoData);
+
+  barChart('chart-municipio', muns.slice(0,12), '#1B3A6B');
+}
+
+function stat(lbl, val, sub) {
+  return '<div class="stat"><div class="stat-lbl">' + lbl + '</div>'
+    + '<div class="stat-val">' + val + '</div>'
+    + (sub ? '<div class="stat-sub">' + sub + '</div>' : '') + '</div>';
+}
+function chartCard(title, innerId) {
+  return '<div class="chart-card"><div class="chart-title">' + title + '</div><div id="' + innerId + '"></div></div>';
+}
+
+// ═══════════════════════════════════════════════
+// TAB 2: CARACTERIZACIÓN SOCIODEMOGRÁFICA
+// ═══════════════════════════════════════════════
+function renderSocio() {
+  var db = dbLoad();
+  if (!db.length) return;
+
+  // Sex
+  var sexData = countBy(db, function(r){ return (r.info||{}).sexo || 'Sin dato'; });
+  // Age ranges
+  var ageData = countBy(db, function(r){ return rangoEdad(calcEdad((r.info||{}).nacimiento)); });
+  // Edu
+  var eduData = countBy(db, function(r){ return (r.info||{}).edu || 'Sin dato'; });
+  // Relacion
+  var relData = countBy(db, function(r){ return ((r.info||{}).relacion||'Sin dato').split('/')[0].trim(); });
+  // Motivo
+  var motData = countBy(db, function(r){
+    var m = (r.info||{}).motivo || 'Sin dato';
+    return m.length > 40 ? m.slice(0,40)+'...' : m;
+  });
+  // Municipio
+  var munData = countBy(db, function(r){ return r.municipio||'Sin dato'; });
+
+  // Stats row
+  var hasNac = db.filter(function(r){ return (r.info||{}).nacimiento; });
+  var ages = hasNac.map(function(r){ return calcEdad(r.info.nacimiento); }).filter(Boolean);
+  var avgAge = ages.length ? Math.round(ages.reduce(function(a,b){ return a+b; },0)/ages.length) : 0;
+  var mujeres = db.filter(function(r){ return ((r.info||{}).sexo||'').indexOf('F')===0; }).length;
+  var hombres = db.filter(function(r){ return ((r.info||{}).sexo||'').indexOf('M')===0; }).length;
+
+  document.getElementById('charts-socio').innerHTML =
+    '<div class="stat" style="grid-column:span 2"><div class="stat-lbl">Edad promedio</div><div class="stat-val">' + (avgAge||'—') + '</div><div class="stat-sub">años</div></div>'
+    + '<div class="stat"><div class="stat-lbl">Mujeres</div><div class="stat-val">' + mujeres + '</div><div class="stat-sub">' + (db.length>0?Math.round(mujeres/db.length*100)+'%':'') + '</div></div>'
+    + '<div class="stat"><div class="stat-lbl">Hombres</div><div class="stat-val">' + hombres + '</div><div class="stat-sub">' + (db.length>0?Math.round(hombres/db.length*100)+'%':'') + '</div></div>'
+    + chartCard('Distribución por sexo', 'chart-sex')
+    + chartCard('Rangos de edad', 'chart-age')
+    + chartCard('Relación con el negocio', 'chart-rel');
+
+  setTimeout(function(){
+    barChart('chart-sex', sexData, '#534AB7');
+    barChart('chart-age', ageData, '#276749');
+    barChart('chart-rel', relData, '#B7791F');
+    barChart('chart-municipio2', munData, '#1B3A6B');
+    barChart('chart-edu', eduData, '#2B6CB0');
+    barChart('chart-motivo', motData, '#C0392B');
+  }, 50);
+}
+
+// ═══════════════════════════════════════════════
+// TAB 3: PERFIL EMPRESARIAL
+// ═══════════════════════════════════════════════
+function renderEmpresarial() {
+  var db = dbLoad();
+  if (!db.length) return;
+
+  var ingreso = db.filter(function(r){ return r.modo==='ingreso' && r.puntaje>0; });
+  var secData = countBy(db, function(r){ return r.sector||'Sin dato'; });
+  var clasData= countBy(db, function(r){ return r.clasif||'Sin dato'; });
+  var meses   = countBy(db, function(r){
+    var m = parseInt(((r.info||{}).meses_reg)||0);
+    if (m===0) return 'Sin registro CC';
+    if (m<4)   return 'Menos de 4 meses';
+    if (m<12)  return '4-12 meses';
+    if (m<36)  return '1-3 años';
+    return 'Más de 3 años';
+  });
+  var rut = countBy(db, function(r){ return ((r.info||{}).tiene_rut||'Sin dato'); });
+
+  var ventas = db.filter(function(r){ return parseFloat((r.R||{}).ventas)>0; });
+  var vPromedio = ventas.length ? Math.round(ventas.reduce(function(a,b){ return a+parseFloat(b.R.ventas); },0)/ventas.length) : 0;
+  var personal = db.filter(function(r){ return parseInt((r.R||{}).personal)>0; });
+  var pPromedio = personal.length ? (personal.reduce(function(a,b){ return a+parseInt(b.R.personal); },0)/personal.length).toFixed(1) : 0;
+
+  document.getElementById('charts-empresarial').innerHTML =
+    '<div class="stat"><div class="stat-lbl">Ingresos promedio</div><div class="stat-val" style="font-size:16px">' + (vPromedio>0?'$'+Math.round(vPromedio).toLocaleString('es-CO'):'—') + '</div><div class="stat-sub">mensual COP</div></div>'
+    + '<div class="stat"><div class="stat-lbl">Personal promedio</div><div class="stat-val">' + pPromedio + '</div><div class="stat-sub">personas por negocio</div></div>'
+    + chartCard('Clasificación', 'chart-clasif-e')
+    + chartCard('Antigüedad CC', 'chart-meses')
+    + chartCard('Tiene RUT', 'chart-rut');
+
+  setTimeout(function(){
+    barChart('chart-clasif-e', clasData);
+    barChart('chart-meses', meses, '#276749');
+    barChart('chart-rut', rut, '#534AB7');
+    barChart('chart-sector', secData, '#1B3A6B');
+
+    // Puntaje bars
+    var pEl = document.getElementById('chart-puntaje');
+    if (!pEl) return;
+    var sorted = ingreso.slice().sort(function(a,b){ return b.puntaje-a.puntaje; });
+    pEl.innerHTML = sorted.slice(0,20).map(function(r){
+      var col = r.puntaje>=65?'#276749':r.puntaje>=40?'#E8A020':'#C0392B';
+      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px">'
+        + '<div style="width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (r.info&&r.info.nombre1?r.info.nombre1+' '+r.info.apellido1:r.negocio||r.doc) + '</div>'
+        + '<div style="flex:1"><div class="prog-bar"><div class="prog-fill" style="width:'+r.puntaje+'%;background:'+col+'"></div></div></div>'
+        + '<div style="width:40px;text-align:right;font-weight:700;font-family:monospace;color:'+col+'">'+r.puntaje+'%</div>'
+        + '</div>';
+    }).join('') || '<p style="color:var(--sub);font-size:13px">Sin puntajes registrados.</p>';
+  }, 50);
+}
+
+// ═══════════════════════════════════════════════
+// TAB 4: TABLA DE DIAGNÓSTICOS
+// ═══════════════════════════════════════════════
+function renderDiags() {
+  var db = dbLoad();
+  var q  = (document.getElementById('search-diag').value||'').toLowerCase();
+  var fm = document.getElementById('filter-modo').value;
+  var fc = document.getElementById('filter-clasif').value;
+
+  var filtered = db.filter(function(r){
+    var matchQ  = !q || ((r.info&&r.info.nombre1?r.info.nombre1+' '+r.info.apellido1:'') + r.negocio + r.doc + r.municipio).toLowerCase().indexOf(q) >= 0;
+    var matchM  = !fm || r.modo === fm;
+    var matchC  = !fc || r.clasif === fc;
+    return matchQ && matchM && matchC;
+  });
+
+  var tbody = document.getElementById('tbl-diags');
+  var empty = document.getElementById('tbl-empty');
+
+  if (!filtered.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  var modeColors = {ingreso:'b-ing', seguimiento:'b-seg', salida:'b-sal'};
+  tbody.innerHTML = filtered.map(function(r){
+    var nombre = r.info && r.info.nombre1 ? r.info.nombre1 + ' ' + r.info.apellido1 : '—';
+    var fecha  = new Date(r.fecha).toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});
+    var col    = r.puntaje>=65?'#276749':r.puntaje>=40?'#E8A020':'#C0392B';
+    return '<tr>'
+      + '<td><strong>' + nombre + '</strong><br><span style="font-size:11px;color:var(--sub)">' + (r.info&&r.info.correo||'') + '</span></td>'
+      + '<td style="font-family:monospace;font-size:12px">' + (r.doc||'—') + '</td>'
+      + '<td>' + (r.municipio||'—') + '</td>'
+      + '<td><strong>' + (r.negocio||'—') + '</strong><br><span style="font-size:11px;color:var(--sub)">' + (r.sector||'') + '</span></td>'
+      + '<td><span class="badge ' + (r.clasif==='MiPyme'?'b-mip':'b-emp') + '">' + (r.clasif||'—') + '</span></td>'
+      + '<td><span class="badge ' + (modeColors[r.modo]||'b-ing') + '">' + (r.modo||'—') + '</span></td>'
+      + '<td style="font-weight:700;color:' + col + ';font-family:monospace">' + (r.puntaje||'—') + '%</td>'
+      + '<td>' + (r.nivel||'—') + '</td>'
+      + '<td style="font-size:11px;color:var(--sub)">' + fecha + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// EXPORT CSV
+// ═══════════════════════════════════════════════
+function exportarCSV() {
+  var db = dbLoad();
+  if (!db.length) { toast('No hay datos para exportar.', 'error'); return; }
+
+  var headers = ['Nombre','Apellido','Cédula','Correo','Teléfono','Sexo','Fecha_Nacimiento','Nivel_Educativo',
+    'Municipio','Sector','Negocio','Clasificación','Tiene_RUT','Meses_CC','Modo_Diagnóstico',
+    'Puntaje_Global','Nivel_Madurez','Mercado_Objetivo','Oferta_Valor','Rentabilización','Comercialización','Madurez_Admin',
+    'Ingresos_Ventas_Mes','Costos_Gastos_Mes','Personal_Ocupado','Fecha_Diagnóstico'];
+
+  var rows = db.map(function(r) {
+    var I = r.info || {}, R = r.R || {}, SC = r.scores || {};
+    return [
+      I.nombre1||'', I.apellido1||'', r.doc||'', I.correo||'', I.telefono||'',
+      I.sexo||'', I.nacimiento||'', I.edu||'',
+      r.municipio||'', r.sector||'', r.negocio||'', r.clasif||'',
+      I.tiene_rut||'', I.meses_reg||0, r.modo||'',
+      r.puntaje||0, r.nivel||'',
+      SC.mercado||0, SC.oferta||0, SC.rentabilizacion||0, SC.comercializacion||0, SC.madurez||0,
+      parseFloat(R.ventas)||0, parseFloat(R.costos)||0, parseInt(R.personal)||0,
+      new Date(r.fecha).toLocaleDateString('es-CO')
+    ].map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(',');
+  });
+
+  var csv = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url; a.download = 'Caracterizacion_DME_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+  toast('✓ CSV exportado correctamente');
+}
+
+// ═══════════════════════════════════════════════
+// TAB 5: NUBE / GOOGLE SHEETS
+// ═══════════════════════════════════════════════
+var APPS_SCRIPT_CODE = `// ═══════════════════════════════════════════
+// Google Apps Script — Receptor de diagnósticos DME
+// Ecopetrol Emprende · Unillanos
+// Pega este código en Extensions → Apps Script
+// ═══════════════════════════════════════════
+
+var SHEET_NAME = 'Diagnósticos_DME';
+
+function doPost(e) {
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+  
+  // Add headers if empty
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['Fecha','Cédula','Nombre','Negocio','Municipio','Sector',
+      'Clasificación','Modo','Puntaje','Nivel','Ingresos_Mes','Costos_Mes','Personal',
+      'Mercado','Oferta','Rentabilización','Comercialización','Madurez',
+      'Correo','Teléfono','RUT','Meses_CC','Proyecto']);
+  }
+  
+  var data = JSON.parse(e.postData.contents);
+  var I = data.info || {}, R = data.R || {}, SC = data.scores || {};
+  
+  sheet.appendRow([
+    new Date().toLocaleDateString('es-CO'),
+    data.doc || '', (I.nombre1||'') + ' ' + (I.apellido1||''),
+    data.negocio || '', data.municipio || '', data.sector || '',
+    data.clasif || '', data.modo || '', data.puntaje || 0, data.nivel || '',
+    parseFloat(R.ventas) || 0, parseFloat(R.costos) || 0, parseInt(R.personal) || 0,
+    SC.mercado || 0, SC.oferta || 0, SC.rentabilizacion || 0,
+    SC.comercializacion || 0, SC.madurez || 0,
+    I.correo || '', I.telefono || '', I.tiene_rut || '', I.meses_reg || 0,
+    data.proyecto || 'DME'
+  ]);
+  
+  return ContentService.createTextOutput(
+    JSON.stringify({status:'ok', msg:'Registro guardado'})
+  ).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  return ContentService.createTextOutput(
+    JSON.stringify({status:'ok', msg:'DME receptor activo'})
+  ).setMimeType(ContentService.MimeType.JSON);
+}`;
+
+function initNube() {
+  var code = document.getElementById('apps-script-code');
+  if (code) code.textContent = APPS_SCRIPT_CODE;
+  var cfg = cfgLoad();
+  if (cfg.url)      document.getElementById('sheets-url').value = cfg.url;
+  if (cfg.proyecto) document.getElementById('sheets-proyecto').value = cfg.proyecto;
+}
+
+function guardarConfigNube() {
+  var url = document.getElementById('sheets-url').value.trim();
+  var proy= document.getElementById('sheets-proyecto').value.trim();
+  if (!url) { toast('Ingresa la URL del Web App de Google Apps Script.', 'error'); return; }
+  cfgSave({ url:url, proyecto:proy });
+  toast('✓ Configuración guardada');
+}
+
+async function probarConexion() {
+  var cfg = cfgLoad();
+  if (!cfg.url) { toast('Primero guarda la URL del Web App.', 'error'); return; }
+  showSyncStatus('🔌 Probando conexión...', 'info');
+  try {
+    var r = await fetch(cfg.url, { method:'GET' });
+    var d = await r.json();
+    showSyncStatus('✅ Conexión exitosa: ' + (d.msg||'receptor activo'), 'success');
+  } catch(e) {
+    showSyncStatus('❌ Error: ' + e.message + '. Verifica que el Apps Script esté implementado y con acceso público.', 'error');
+  }
+}
+
+async function sincronizarTodo() {
+  var cfg = cfgLoad();
+  if (!cfg.url) { toast('Primero configura la URL del Web App de Google Apps Script.', 'error'); return; }
+  var db = dbLoad();
+  if (!db.length) { toast('No hay diagnósticos para sincronizar.', 'error'); return; }
+
+  showSyncStatus('⏳ Sincronizando ' + db.length + ' diagnósticos...', 'info');
+  var ok = 0, fail = 0;
+
+  for (var i=0; i<db.length; i++) {
+    var r = db[i];
+    try {
+      var payload = {
+        doc:r.doc, negocio:r.negocio, municipio:r.municipio, sector:r.sector,
+        clasif:r.clasif, modo:r.modo, puntaje:r.puntaje, nivel:r.nivel,
+        scores:r.scores||{}, info:r.info||{}, R:r.R||{},
+        proyecto: cfg.proyecto || 'DME'
+      };
+      var res = await fetch(cfg.url, {
+        method:'POST',
+        body: JSON.stringify(payload),
+        headers:{'Content-Type':'application/json'}
+      });
+      if (res.ok) ok++;
+      else fail++;
+    } catch(e) { fail++; }
+  }
+  showSyncStatus(
+    (fail===0 ? '✅' : '⚠') + ' Sincronización completada: ' + ok + ' enviados correctamente' + (fail>0?' · '+fail+' fallaron':''),
+    fail===0 ? 'success' : 'warn'
+  );
+}
+
+function showSyncStatus(msg, type) {
+  var el = document.getElementById('sync-status');
+  var colors = {info:'#EEF0FE',success:'#DCFCE7',warn:'#FAEEDA',error:'#FEF2F2'};
+  var borders= {info:'#C7D2FE',success:'#86EFAC',warn:'#FCD34D',error:'#FCA5A5'};
+  el.style.display = 'block';
+  el.style.background = colors[type]||colors.info;
+  el.style.border = '1px solid ' + (borders[type]||borders.info);
+  el.innerHTML = msg;
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+function actualizarTodo() {
+  renderResumen();
+  renderSocio();
+  renderEmpresarial();
+  renderDiags();
+  toast('✓ Datos actualizados');
+}
+
+// Init all on load
+renderResumen();
+renderSocio();
+renderEmpresarial();
+renderDiags();
+initNube();
+</script>
+</body>
+</html>

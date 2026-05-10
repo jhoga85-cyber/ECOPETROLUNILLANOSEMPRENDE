@@ -236,6 +236,7 @@ body{font-family:'Sora',sans-serif;background:var(--light);color:var(--text);min
     Ecopetrol Emprende · Unillanos
   </div>
   <button onclick="abrirHistorial()" style="margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;border-radius:8px;padding:6px 12px;font-size:12px;font-family:'Sora',sans-serif;cursor:pointer;font-weight:600">📂 Mis diagnósticos</button>
+  <a href="dashboard.html" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;border-radius:8px;padding:6px 12px;font-size:12px;font-family:'Sora',sans-serif;font-weight:600;text-decoration:none">📊 Dashboard</a>
 </div>
 
 <div class="prog">
@@ -741,10 +742,10 @@ function step3_ing() {
     + hint('📌 <strong>Ingresos (ventas):</strong> dinero que entra al negocio por ventas o servicios. <strong>Costos y gastos:</strong> lo que gasta para operar (insumos, arriendo, salarios, servicios, etc.).')
     + fieldMoney('Ingresos (ventas) mensuales promedio', 'f-ventas', R.ventas||0, true)
     + fieldMoney('Costos y gastos mensuales promedio', 'f-costos', R.costos||0, true)
-    + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
+    + (esSalSeg ? '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
     + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
     + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
-    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
+    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>' : '')
     + navBtns(true)
     + '</div>';
   appnd(html);
@@ -868,10 +869,10 @@ function step5() {
     + divider(esSalSeg ? 'Elementos comerciales ' + (MODO==='salida'?'implementados':'actuales') : 'Elementos del área comercial')
     + '<div class="field"><label>' + elemLbl + '<span class="req">*</span></label>'
     + checkGrp('elems_com', ELEMS_COM, R.elems_com) + '</div>'
-    + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
+    + (esSalSeg ? '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
     + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
     + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
-    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
+    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>' : '')
     + navBtns(true)
     + '</div>';
   appnd(html);
@@ -2400,7 +2401,7 @@ async function generarIA(tipo) {
   var out=gid('ai-output');
   out.innerHTML='<div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span>Analizando datos y generando informe...</span></div>';
   try {
-    var resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true','anthropic-version':'2023-06-01'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
         system:'Eres consultor empresarial experto en MiPymes y emprendimientos de la Orinoquía colombiana. Genera análisis profesionales, concretos y orientados a la acción.',
         messages:[{role:'user',content:buildPrompt(tipo)}]})});
