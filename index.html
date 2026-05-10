@@ -10,7 +10,6 @@
 <link rel="manifest" href="manifest.json">
 <title>Diagnóstico de Madurez Empresarial — Ecopetrol Emprende · Unillanos</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 
 
@@ -1680,7 +1679,20 @@ function drawSpider(scores) {
 // ═══════════════════════════════════════════════
 // PDF EXPORT
 // ═══════════════════════════════════════════════
+function loadJsPDF(callback) {
+  if (window.jspdf) { callback(); return; }
+  var s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  s.onload = function() { callback(); };
+  s.onerror = function() { alert('No se pudo cargar la librería PDF. Verifica tu conexión a internet.'); };
+  document.head.appendChild(s);
+}
+
 function exportPDF() {
+  if (!window.jspdf) {
+    loadJsPDF(function() { exportPDF(); });
+    return;
+  }
   if (!window.jspdf) { alert('La libreria PDF aun esta cargando. Intenta en un momento.'); return; }
   var D = window._DIME;
   if (!D) { alert('Primero completa el diagnostico y visualiza los resultados.'); return; }
