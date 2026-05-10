@@ -236,6 +236,23 @@ function dbLoad() {
   catch(e){ return []; }
 }
 
+// Returns one record per person (unique by cédula)
+// Priority: ingreso record > most recent record
+function dbPersonas() {
+  var db = dbLoad();
+  var byDoc = {};
+  db.forEach(function(r) {
+    var doc = r.doc || '__sin_doc__' + r.id;
+    if (!byDoc[doc]) {
+      byDoc[doc] = r;
+    } else {
+      // Prefer ingreso record for sociodemographic data
+      if (r.modo === 'ingreso') byDoc[doc] = r;
+    }
+  });
+  return Object.values ? Object.values(byDoc) : Object.keys(byDoc).map(function(k){ return byDoc[k]; });
+}
+
 function cfgLoad() {
   try { return JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); }
   catch(e){ return {}; }
@@ -320,39 +337,50 @@ function rangoEdad(age) {
 // TAB 1: RESUMEN GENERAL
 // ═══════════════════════════════════════════════
 function renderResumen() {
-  var db = dbLoad();
+  var db       = dbLoad();
+  var personas = dbPersonas(); // unique beneficiaries by cedula
   if (!db.length) {
     document.getElementById('stats-resumen').innerHTML = '<div class="empty"><div class="ico">📊</div><p>No hay diagnósticos guardados aún.</p></div>';
     return;
   }
 
+  // Unique docs with each diagnostic type
+  var docsConIngreso  = {};
+  var docsConSalida   = {};
+  db.forEach(function(r){
+    if (r.modo==='ingreso')    docsConIngreso[r.doc||r.id] = true;
+    if (r.modo==='salida')     docsConSalida[r.doc||r.id]  = true;
+  });
   var ingreso = db.filter(function(r){ return r.modo==='ingreso'; });
   var salida  = db.filter(function(r){ return r.modo==='salida'; });
-  var mipyme  = db.filter(function(r){ return r.clasif==='MiPyme'; });
+  // Use personas (deduplicated) for demographic counts
+  var mipyme  = personas.filter(function(r){ return r.clasif==='MiPyme'; });
   var punts   = ingreso.filter(function(r){ return r.puntaje>0; }).map(function(r){ return r.puntaje; });
   var avgPunt = punts.length ? Math.round(punts.reduce(function(a,b){ return a+b; },0)/punts.length) : 0;
   var ventas  = ingreso.filter(function(r){ return parseFloat((r.R||{}).ventas)>0; });
   var avgVentas = ventas.length ? Math.round(ventas.reduce(function(a,b){ return a+parseFloat(b.R.ventas); },0)/ventas.length) : 0;
-  var muns = countBy(db, function(r){ return r.municipio; });
+  var muns = countBy(personas, function(r){ return r.municipio; });
 
   document.getElementById('stats-resumen').innerHTML =
-    stat('Total diagnósticos', db.length, '')
-    + stat('Diagnósticos ingreso', ingreso.length, 'líneas base')
-    + stat('Diagnósticos salida', salida.length, 'evaluaciones finales')
-    + stat('MiPymes', mipyme.length, 'de ' + db.length + ' registros')
-    + stat('Emprendimientos', db.length - mipyme.length, '')
-    + stat('Puntaje promedio ingreso', avgPunt + '%', 'madurez empresarial')
-    + stat('Ingresos promedio', avgVentas > 0 ? '$' + Math.round(avgVentas).toLocaleString('es-CO') : 'Sin dato', 'mensuales COP')
-    + stat('Municipios', muns.length, 'con beneficiarios registrados');
+    stat('Beneficiarios únicos', personas.length, 'personas inscritas')
+    + stat('Con diagnóstico ingreso', Object.keys(docsConIngreso).length, 'líneas base')
+    + stat('Con diagnóstico salida', Object.keys(docsConSalida).length, 'evaluaciones finales')
+    + stat('MiPymes', mipyme.length, 'de ' + personas.length + ' beneficiarios')
+    + stat('Emprendimientos', personas.length - mipyme.length, '')
+    + stat('Puntaje promedio', avgPunt + '%', 'diagnóstico de ingreso')
+    + stat('Ingresos promedio', avgVentas > 0 ? '$' + Math.round(avgVentas).toLocaleString('es-CO') : 'Sin dato', 'mensuales línea base')
+    + stat('Municipios', muns.length, 'con beneficiarios');
 
   // Charts
-  var clasifData = countBy(db, function(r){ return r.clasif||'Sin clasificar'; });
-  var modoData   = countBy(db, function(r){ return r.modo; });
+  var clasifData = countBy(personas, function(r){ return r.clasif||'Sin clasificar'; });
+  var modoData   = [{k:'Con ingreso', v:Object.keys(docsConIngreso).length},
+                    {k:'Con salida',  v:Object.keys(docsConSalida).length},
+                    {k:'Solo seguim.',v:db.filter(function(r){return r.modo==='seguimiento';}).length}];
   document.getElementById('charts-resumen').innerHTML =
-    chartCard('Clasificación', 'chart-clasif-r')
-    + chartCard('Tipo de diagnóstico', 'chart-modo-r');
+    chartCard('Clasificación (personas únicas)', 'chart-clasif-r')
+    + chartCard('Avance en el proceso', 'chart-modo-r');
   barChart('chart-clasif-r', clasifData);
-  barChart('chart-modo-r', modoData);
+  barChart('chart-modo-r', modoData.filter(function(d){return d.v>0;}));
 
   barChart('chart-municipio', muns.slice(0,12), '#1B3A6B');
 }
@@ -370,7 +398,7 @@ function chartCard(title, innerId) {
 // TAB 2: CARACTERIZACIÓN SOCIODEMOGRÁFICA
 // ═══════════════════════════════════════════════
 function renderSocio() {
-  var db = dbLoad();
+  var db = dbPersonas(); // unique beneficiaries
   if (!db.length) return;
 
   // Sex
@@ -418,13 +446,14 @@ function renderSocio() {
 // TAB 3: PERFIL EMPRESARIAL
 // ═══════════════════════════════════════════════
 function renderEmpresarial() {
-  var db = dbLoad();
+  var db = dbLoad(); // all records for diagnostic history
+  var personas = dbPersonas(); // unique people
   if (!db.length) return;
 
   var ingreso = db.filter(function(r){ return r.modo==='ingreso' && r.puntaje>0; });
   var secData = countBy(db, function(r){ return r.sector||'Sin dato'; });
-  var clasData= countBy(db, function(r){ return r.clasif||'Sin dato'; });
-  var meses   = countBy(db, function(r){
+  var clasData= countBy(personas, function(r){ return r.clasif||'Sin dato'; });
+  var meses   = countBy(personas, function(r){
     var m = parseInt(((r.info||{}).meses_reg)||0);
     if (m===0) return 'Sin registro CC';
     if (m<4)   return 'Menos de 4 meses';
@@ -432,7 +461,7 @@ function renderEmpresarial() {
     if (m<36)  return '1-3 años';
     return 'Más de 3 años';
   });
-  var rut = countBy(db, function(r){ return ((r.info||{}).tiene_rut||'Sin dato'); });
+  var rut = countBy(personas, function(r){ return ((r.info||{}).tiene_rut||'Sin dato'); });
 
   var ventas = db.filter(function(r){ return parseFloat((r.R||{}).ventas)>0; });
   var vPromedio = ventas.length ? Math.round(ventas.reduce(function(a,b){ return a+parseFloat(b.R.ventas); },0)/ventas.length) : 0;
