@@ -360,7 +360,7 @@ function updateProg() {
 // ============================================================
 // HTML BUILDER HELPERS
 // ============================================================
-function esc(s) { return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;'); }
+function esc(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;'); }
 
 function secHdr(letter, name) {
   return '<div class="sec-hdr"><span class="sec-letter">' + letter + '</span><span class="sec-name">' + name + '</span></div>';
@@ -846,7 +846,7 @@ function step5() {
     + radioGrp('satisfaccion', satOpts, R.satisfaccion) + '</div>'
     + divider(esSalSeg ? 'Elementos comerciales ' + (MODO==='salida'?'implementados':'actuales') : 'Elementos del área comercial')
     + '<div class="field"><label>' + elemLbl + '<span class="req">*</span></label>'
-    + checkGrp('elems_com', ELEMS_COMERCIAL, R.elems_com) + '</div>'
+    + checkGrp('elems_com', ELEMS_COM, R.elems_com) + '</div>'
     + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
     + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
     + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
@@ -912,7 +912,7 @@ function step7() {
     + secHdr('F', titulo)
     + '<div class="notice">' + notice + '</div>'
     + '<div class="field"><label>' + aspLbl + '<span class="req">*</span></label>'
-    + checkGrp('innov_asp', INNOV_ASPECTOS, R.innov_asp) + '</div>'
+    + checkGrp('innov_asp', INNOV_ASP, R.innov_asp) + '</div>'
     + divider(matLbl)
     + '<div class="field"><label>' + matLbl + '<span class="req">*</span></label>'
     + buildMatrix() + '</div>';
