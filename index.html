@@ -334,10 +334,9 @@ var SEXO       = ["F - Femenino","M - Masculino","NB - No binario","T - Trans"];
 var ANOS_ACT   = ["Menos de 1 año","De 1 año a menos de 3 años","De 3 a menos de 5 años","De 5 a menos de 10 años","De 10 o más años"];
 var COM_INT    = ["No realiza ninguna","Solo importa","Solo exporta","Importa y exporta"];
 
-// ============================================================
-// STATE
-// ============================================================
-var ST = { step: 0, info: {}, R: {} };
+// ── Estado global ──────────────────────────────────────────────
+var MODO = null; // 'ingreso' | 'seguimiento' | 'salida'
+var ST   = { step:0, info:{}, ing:{}, R:{}, logo_b64:null };
 var TOTAL = 10;
 
 // ============================================================
@@ -349,12 +348,13 @@ function mk(tag) { return document.createElement(tag); }
 function gv(id)  { var e = gid(id); return e ? e.value.trim() : ''; }
 
 function updateProg() {
-  var p = Math.round((ST.step / (TOTAL - 1)) * 100);
+  var p = Math.round((ST.step / (TOTAL-1)) * 100);
   gid('prog-fill').style.width = p + '%';
   gid('prog-pct').textContent  = p + '%';
-  var esSalidaLbl = ST.info.tipo_diag && ST.info.tipo_diag.indexOf('Salida') >= 0;
-  var lbls = esSalidaLbl ? ['Tipo de diagnóstico','A. Identificación del negocio','Datos del informante','B. Resultados al cierre','C. Planeación — impacto','D. Mercadeo — resultados','E. Contabilidad — evolución','F. Innovación — cambios','G. Tecnología — adopción','Resumen final']
-  : ['Tipo de diagnóstico','A. Identificación del negocio','Datos del informante','B. Desarrollo del producto','C. Liderazgo y planeación','D. Mercadeo y ventas','E. Contabilidad y financiamiento','F. Innovación','G. Tecnología','Resumen'];
+  var LBLS_I = ['Tipo de diagnóstico','A. Identificación','Datos del informante','B. Producto / Base','C. Liderazgo','D. Mercadeo','E. Contabilidad','F. Innovación','G. Tecnología','Resumen'];
+  var LBLS_S = ['Tipo de diagnóstico','A. Identificación','Datos del informante','Valores de ingreso','C. Planeación','D. Mercadeo','E. Contabilidad','F. Innovación','G. Tecnología','Resumen'];
+  var LBLS_F = ['Tipo de diagnóstico','A. Identificación','Datos del informante','Valores ingreso+cierre','C. Planeación — impacto','D. Mercadeo — cierre','E. Contabilidad','F. Innovación','G. Tecnología','Evaluación final'];
+  var lbls = MODO==='salida' ? LBLS_F : MODO==='seguimiento' ? LBLS_S : LBLS_I;
   gid('prog-lbl').textContent = lbls[ST.step] || '';
 }
 
@@ -1022,13 +1022,7 @@ var LBLS_ING = ['Tipo de diagnóstico','A. Identificación','Datos del informant
 var LBLS_SEG = ['Tipo de diagnóstico','A. Identificación','Datos del informante','Valores de ingreso',    'C. Planeación','D. Mercadeo','E. Contabilidad','F. Innovación','G. Tecnología','Resumen'];
 var LBLS_SAL = ['Tipo de diagnóstico','A. Identificación','Datos del informante','Valores ingreso+cierre','C. Planeación','D. Mercadeo','E. Contabilidad','F. Innovación','G. Tecnología','Evaluación final'];
 
-function updateProg() {
-  var p = Math.round((ST.step / (TOTAL-1)) * 100);
-  gid('prog-fill').style.width = p + '%';
-  gid('prog-pct').textContent  = p + '%';
-  var lbls = MODO==='salida' ? LBLS_SAL : MODO==='seguimiento' ? LBLS_SEG : LBLS_ING;
-  gid('prog-lbl').textContent  = lbls[ST.step] || '';
-}
+
 
 // ═══════════════════════════════════════════════════════════════
 // SAVE functions — one clean version each
