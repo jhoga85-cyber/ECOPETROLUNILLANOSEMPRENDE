@@ -302,6 +302,7 @@ body{font-family:'Sora',sans-serif;background:var(--light);color:var(--text);min
     <div class="ai-modal-footer">
       <button class="btn primary" id="ai-copy-btn" style="display:none" onclick="copiarAnalisis()">📋 Copiar texto</button>
       <button class="btn" onclick="cerrarAI()">Cerrar</button>
+      <button class="btn sm" onclick="cambiarApiKey()" title="Cambiar API Key">🔑 API Key</button>
       <div id="ai-footer-note" style="flex:1;font-size:11px;color:var(--sub);text-align:right;line-height:1.4"></div>
     </div>
   </div>
@@ -742,13 +743,7 @@ function step3_ing() {
     + hint('📌 <strong>Ingresos (ventas):</strong> dinero que entra al negocio por ventas o servicios. <strong>Costos y gastos:</strong> lo que gasta para operar (insumos, arriendo, salarios, servicios, etc.).')
     + fieldMoney('Ingresos (ventas) mensuales promedio', 'f-ventas', R.ventas||0, true)
     + fieldMoney('Costos y gastos mensuales promedio', 'f-costos', R.costos||0, true)
-    + (esSalSeg
-      ? '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
-        + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
-        + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
-        + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
-      : '')
-    + navBtns(true)
+        + navBtns(true)
     + '</div>';
   appnd(html);
 }
@@ -871,12 +866,10 @@ function step5() {
     + divider(esSalSeg ? 'Elementos comerciales ' + (MODO==='salida'?'implementados':'actuales') : 'Elementos del área comercial')
     + '<div class="field"><label>' + elemLbl + '<span class="req">*</span></label>'
     + checkGrp('elems_com', ELEMS_COM, R.elems_com) + '</div>'
-    + (esSalSeg
-      ? '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
-        + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
-        + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
-        + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
-      : '')
+    + '<div class="field"><label>¿Las ventas del negocio provienen principalmente de…?<span class="req">*</span></label>'
+    + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
+    + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
+    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
     + navBtns(true)
     + '</div>';
   appnd(html);
@@ -1077,7 +1070,7 @@ function save3() {
       anos_act:getR('anos_act'), vision:getR('vision'),
       personal:gv('f-personal'), aportes:getR('aportes'),
       ventas:gvMoney('f-ventas'), costos:gvMoney('f-costos'),
-      fuente_ventas:getR('fuente_ventas'), comercio_int:getR('comercio_int')
+      // fuente_ventas and comercio_int are saved in step5 (save5)
     });
   } else {
     ST.ing = {
@@ -1157,8 +1150,6 @@ function validate(n) {
       if (!R.personal)     { showErr('Indica el número de personas ocupadas.'); return false; }
       if (!R.aportes)      { showErr('Indica si el negocio paga seguridad social.'); return false; }
       if (!gvMoney('f-ventas')) { showErr('Ingresa los ingresos (ventas) mensuales.'); return false; }
-      if (!R.fuente_ventas){ showErr('Selecciona la fuente principal de ventas.'); return false; }
-      if (!R.comercio_int) { showErr('Indica si realizas comercio internacional.'); return false; }
     } else {
       if (!gvMoney('f-ing-ventas')) { showErr('Ingresa los ingresos del diagnóstico de ingreso (línea base).'); return false; }
       if (!gvMoney('f-ventas'))     { showErr('Ingresa los ingresos (ventas) actuales.'); return false; }
@@ -1173,7 +1164,7 @@ function validate(n) {
   if (n===5) {
     if (!R.satisfaccion)                      { showErr('Selecciona cómo mides la satisfacción de clientes.'); return false; }
     if (!R.elems_com || !R.elems_com.length)  { showErr('Selecciona al menos un elemento comercial.'); return false; }
-    if ((MODO==='salida'||MODO==='seguimiento') && !R.fuente_ventas) { showErr('Selecciona la fuente principal de ventas.'); return false; }
+    if (!R.fuente_ventas) { showErr('Selecciona la fuente principal de ventas.'); return false; }
   }
   if (n===6) {
     if (!R.contabilidad)                             { showErr('Selecciona el sistema contable.'); return false; }
@@ -2360,6 +2351,13 @@ function abrirAI() {
   gid('ai-modal-badge').textContent = D.clasif ? D.clasif.tipo : 'IA';
 }
 function cerrarAI()  { gid('ai-overlay').style.display='none'; }
+function cambiarApiKey() {
+  var current = localStorage.getItem('dme_api_key') ? '(guardada)' : '(no configurada)';
+  var k = prompt('API Key de Anthropic ' + current + '\nObtén la tuya en console.anthropic.com\nDeja vacío para borrar la actual:');
+  if (k === null) return; // cancelled
+  if (k.trim()) { localStorage.setItem('dme_api_key', k.trim()); alert('✓ API Key guardada en este dispositivo'); }
+  else { localStorage.removeItem('dme_api_key'); alert('API Key borrada'); }
+}
 function volverMenu(){ gid('ai-menu').style.display='block'; gid('ai-result').style.display='none'; gid('ai-copy-btn').style.display='none'; }
 
 function buildCtx() {
@@ -2413,11 +2411,22 @@ async function generarIA(tipo) {
   var out=gid('ai-output');
   out.innerHTML='<div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span>Analizando datos y generando informe...</span></div>';
   try {
-    var resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true','anthropic-version':'2023-06-01'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+    var apiKey = localStorage.getItem('dme_api_key') || '';
+    if (!apiKey) {
+      apiKey = prompt('Para usar la IA ingresa tu API Key de Anthropic (se guarda solo en este dispositivo):');
+      if (!apiKey) { out.innerHTML='<div class="alert error">Se requiere API Key para usar la IA. Puedes obtenerla en console.anthropic.com</div>'; return; }
+      localStorage.setItem('dme_api_key', apiKey.trim());
+    }
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey.trim(),
+               'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,
         system:'Eres consultor empresarial experto en MiPymes y emprendimientos de la Orinoquía colombiana. Genera análisis profesionales, concretos y orientados a la acción.',
         messages:[{role:'user',content:buildPrompt(tipo)}]})});
-    if(!resp.ok) throw new Error('API error '+resp.status);
+    if(!resp.ok) {
+      if(resp.status===401) { localStorage.removeItem('dme_api_key'); throw new Error('API Key inválida (401). Se ha borrado. Intenta de nuevo con la clave correcta.'); }
+      throw new Error('API error '+resp.status);
+    }
     var data=await resp.json();
     var text=data.content&&data.content[0]?data.content[0].text:'';
     if(!text) throw new Error('Sin contenido');
@@ -2426,7 +2435,7 @@ async function generarIA(tipo) {
     gid('ai-copy-btn').style.display='block';
     gid('ai-footer-note').textContent='Generado: '+new Date().toLocaleString('es-CO');
   } catch(e) {
-    out.innerHTML='<div class="alert error"><strong>Error:</strong> '+e.message+'<br><br>La IA funciona cuando la app está publicada en la web (GitHub Pages, Netlify). Localmente el navegador bloquea las llamadas API por CORS.</div>';
+    out.innerHTML='<div class="alert error"><strong>Error:</strong> '+e.message+'<br><br><strong>Para usar la IA necesitas:</strong><br>'+'1. Una API Key de Anthropic (obtén la tuya gratis en <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>)<br>'+'2. Hacer clic en el botón <strong>🔑 API Key</strong> (abajo) y pegar tu clave<br>'+'3. Intentar de nuevo</div>';
   }
 }
 
