@@ -742,10 +742,10 @@ function step3_ing() {
     + hint('📌 <strong>Ingresos (ventas):</strong> dinero que entra al negocio por ventas o servicios. <strong>Costos y gastos:</strong> lo que gasta para operar (insumos, arriendo, salarios, servicios, etc.).')
     + fieldMoney('Ingresos (ventas) mensuales promedio', 'f-ventas', R.ventas||0, true)
     + fieldMoney('Costos y gastos mensuales promedio', 'f-costos', R.costos||0, true)
-    + (esSalSeg ? '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
+    + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
     + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
     + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
-    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>' : '')
+    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
     + navBtns(true)
     + '</div>';
   appnd(html);
@@ -869,10 +869,10 @@ function step5() {
     + divider(esSalSeg ? 'Elementos comerciales ' + (MODO==='salida'?'implementados':'actuales') : 'Elementos del área comercial')
     + '<div class="field"><label>' + elemLbl + '<span class="req">*</span></label>'
     + checkGrp('elems_com', ELEMS_COM, R.elems_com) + '</div>'
-    + (esSalSeg ? '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
+    + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
     + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
     + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
-    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>' : '')
+    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
     + navBtns(true)
     + '</div>';
   appnd(html);
