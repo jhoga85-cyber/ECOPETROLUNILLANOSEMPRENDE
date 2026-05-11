@@ -742,10 +742,12 @@ function step3_ing() {
     + hint('📌 <strong>Ingresos (ventas):</strong> dinero que entra al negocio por ventas o servicios. <strong>Costos y gastos:</strong> lo que gasta para operar (insumos, arriendo, salarios, servicios, etc.).')
     + fieldMoney('Ingresos (ventas) mensuales promedio', 'f-ventas', R.ventas||0, true)
     + fieldMoney('Costos y gastos mensuales promedio', 'f-costos', R.costos||0, true)
-    + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
-    + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
-    + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
-    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
+    + (esSalSeg
+      ? '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
+        + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
+        + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
+        + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
+      : '')
     + navBtns(true)
     + '</div>';
   appnd(html);
@@ -869,10 +871,12 @@ function step5() {
     + divider(esSalSeg ? 'Elementos comerciales ' + (MODO==='salida'?'implementados':'actuales') : 'Elementos del área comercial')
     + '<div class="field"><label>' + elemLbl + '<span class="req">*</span></label>'
     + checkGrp('elems_com', ELEMS_COM, R.elems_com) + '</div>'
-    + '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
-    + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
-    + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
-    + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
+    + (esSalSeg
+      ? '<div class="field"><label>¿Las ventas provienen principalmente de…?<span class="req">*</span></label>'
+        + radioGrp('fuente_ventas', FUENTES_VTA, R.fuente_ventas) + '</div>'
+        + '<div class="field"><label>¿El negocio realiza actividades de comercio internacional?<span class="req">*</span></label>'
+        + radioGrp('comercio_int', COM_INT, R.comercio_int) + '</div>'
+      : '')
     + navBtns(true)
     + '</div>';
   appnd(html);
@@ -1424,7 +1428,10 @@ function showResults(){
   var costos   = parseFloat(R.costos)||0;
   var personal = parseInt(R.personal)||0;
   var aportes  = R.aportes||'';
-  var empFormal= aportes.indexOf('salud y')>=0?personal:aportes.indexOf('solo')>=0?Math.ceil(personal*0.5):0;
+  // empFormal: number of employees with social security coverage
+  var empFormal = aportes.indexOf('salud y') >= 0 ? personal  // salud + pension = all
+                : aportes.indexOf('solo')    >= 0 ? personal  // solo salud OR solo pension = all
+                : 0;                                           // no coverage
   var innCount = 0;
   for(var ai=0;ai<6;ai++){ if((R['innov_mat_'+ai]||'Ninguna')!=='Ninguna') innCount++; }
   var tieneCam = (R.tramites||[]).some(function(t){ return t.indexOf('mara')>=0; });
@@ -1550,7 +1557,12 @@ function showResults(){
     html += ic('📈','Ingresos anuales estimados', ventas>0?fmtCOP(ventas*12):'Sin dato','Proyección × 12');
     html += ic('💹','Margen bruto estimado', (ventas>0&&costos>0)?fmtCOP(ventas-costos)+'/mes':'Sin dato','Ingresos − Costos');
     html += ic('👥','Personas ocupadas', personal>0?personal+' persona(s)':'Sin dato','Base para meta +10%');
-    html += ic('🛡️','Con seguridad social', empFormal+' de '+personal,'Salud y/o pensión');
+    var aporteTipo = aportes.indexOf('salud y')>=0 ? 'Salud y pensión (completo)'
+                   : aportes.indexOf('solo salud')>=0 ? 'Solo salud'
+                   : aportes.indexOf('solo pension')>=0 ? 'Solo pensión'
+                   : 'Sin aportes de seguridad social';
+    var aporteCob  = empFormal > 0 ? empFormal+' de '+personal+' empleado(s)' : 'Ningún empleado';
+    html += ic('🛡️','Seguridad social', aporteCob, aporteTipo);
     html += ic('🏢','Cámara de Comercio', tieneCam?'✓ Registrado':'✗ Sin registro','');
     html += ic('📋','RUT activo', tieneRut?'✓ Tiene RUT':'✗ Sin RUT','');
     html += ic('💡','Innovaciones (último año)', innCount+' área(s)','Durante el proceso');
@@ -1937,7 +1949,7 @@ function exportPDF() {
     var ventasAnual = ventas*12;
     var personal    = parseInt(D.R.personal)  || 0;
     var ap          = D.R.aportes || '';
-    var empFormal   = ap.indexOf('salud y')>=0?personal:ap.indexOf('solo')>=0?Math.ceil(personal*0.5):0;
+    var empFormal   = ap.indexOf('salud y')>=0||ap.indexOf('solo')>=0 ? personal : 0;
     var tieneCam    = (D.R.tramites||[]).some(function(t){return t.indexOf('mara')>=0;});
     var tieneRut    = D.I.tiene_rut==='Si'||D.I.tiene_rut==='Si';
     var tienePresup = D.R.contabilidad && CONTABILIDAD.indexOf(D.R.contabilidad)>=2;
@@ -1952,7 +1964,7 @@ function exportPDF() {
     var metaCos     = costos>0?'$'+Math.round(costos*0.90).toLocaleString()+'/mes':'Requiere dato';
     var metaVta     = ventas>0?'$'+Math.round(ventas*1.30).toLocaleString()+'/mes':'Requiere dato';
     var metaEmp     = personal>0?Math.ceil(personal*1.10)+' persona(s)':'Requiere dato';
-    var apDesc      = ap.indexOf('salud y')>=0?'Salud y pension':ap.indexOf('solo salud')>=0?'Solo salud':ap.indexOf('solo pension')>=0?'Solo pension':'Sin aportes declarados';
+    var apDesc = ap.indexOf('salud y')>=0?'Salud y pension completo':ap.indexOf('solo salud')>=0?'Solo salud':ap.indexOf('solo pension')>=0?'Solo pension':ap.indexOf('No se pagan')>=0?'Sin seguridad social':'Sin dato';
 
     // Encabezado tabla
     np(10);
