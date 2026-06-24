@@ -204,9 +204,11 @@ table.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn primary" onclick="guardarConfigNube()">💾 Guardar configuración</button>
       <button class="btn success" onclick="sincronizarTodo()">☁ Sincronizar todos los diagnósticos</button>
+      <button class="btn success" onclick="importarDesdeSheets()">📥 Importar desde Sheets</button>
       <button class="btn" onclick="probarConexion()">🔌 Probar conexión</button>
     </div>
     <div id="sync-status" class="sync-status" style="display:none"></div>
+    <div id="import-status" class="sync-status" style="display:none"></div>
   </div>
 
   <div class="card">
@@ -217,6 +219,10 @@ table.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
       <div id="apps-script-code" style="background:#1A202C;color:#A8D8A8;padding:1rem;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;overflow-x:auto;white-space:pre;margin-bottom:.75rem"></div>
       <p style="margin-bottom:.75rem"><strong>Paso 3.</strong> Haz clic en <strong>Implementar → Nueva implementación</strong>. Tipo: <em>Aplicación web</em>. Acceso: <em>Cualquier persona</em>. Copia la URL que aparece.</p>
       <p><strong>Paso 4.</strong> Pega esa URL en el campo de arriba y haz clic en <strong>Guardar configuración</strong>. Luego usa <strong>Sincronizar</strong> para enviar los diagnósticos guardados.</p>
+    <p><strong>Paso 5 (Importar).</strong> Para importar datos <em>desde Sheets hacia el dashboard</em>,
+    asegúrate de reimplementar el Apps Script con el nuevo código (versión 2) como nueva implementación.
+    Luego usa el botón <strong>📥 Importar desde Sheets</strong>. Los registros nuevos se agregan y los existentes
+    (misma cédula) se actualizan si el Sheet tiene una versión más reciente. Los datos locales nunca se borran.</p>
     </div>
   </div>
 </div>
@@ -709,6 +715,64 @@ function actualizarTodo() {
 }
 
 // Init all on load
+
+// ═══════════════════════════════════════════════
+// IMPORTAR DESDE GOOGLE SHEETS → Dashboard
+// ═══════════════════════════════════════════════
+async function importarDesdeSheets() {
+  const cfg = cfgLoad();
+  const url = cfg.url || '';
+  if (!url) { alert('Configura primero la URL del Apps Script.'); return; }
+  const sd = document.getElementById('import-status');
+  sd.style.cssText = 'display:block;background:#fff3cd;color:#856404;border:1px solid #ffc107;border-radius:8px;padding:10px 16px;margin-top:10px;';
+  sd.innerHTML = '⏳ Importando datos desde Google Sheets...';
+  try {
+    const r = await fetch(url + '?action=importar', {method:'GET',redirect:'follow'});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const res = await r.json();
+    if (res.status !== 'ok' || !Array.isArray(res.registros)) throw new Error(res.msg || 'Respuesta inesperada');
+    const sheetsData = res.registros;
+    if (!sheetsData.length) {
+      sd.style.cssText = 'display:block;background:#cce5ff;color:#004085;border:1px solid #b8daff;border-radius:8px;padding:10px 16px;margin-top:10px;';
+      sd.innerHTML = 'El Google Sheets no tiene registros para importar.';
+      return;
+    }
+    const local = dbLoad();
+    let nv = 0, act = 0;
+    sheetsData.forEach(function(row) {
+      var ced = String(row.cedula || row.c_dula || '').trim();
+      if (!ced) return;
+      var d = {
+        id: row.id || Date.now() + Math.random(),
+        fecha: row.fecha || new Date().toISOString(),
+        modo: row.modo || 'ingreso', negocio: row.negocio || '',
+        doc: ced, sector: row.sector || '', municipio: row.municipio || '',
+        clasif: row.clasificacion || '', puntaje: parseFloat(row.puntaje||0),
+        nivel: row.nivel || '',
+        scores: { mercado: parseFloat(row.mercado||0), oferta: parseFloat(row.oferta||0),
+          rentabilizacion: parseFloat(row.rentabilizacion||0),
+          comercializacion: parseFloat(row.comercializacion||0), madurez: parseFloat(row.madurez||0) },
+        info: { nombre1: row.nombre||'', correo: row.correo||'', telefono: row.telefono||'',
+          tiene_rut: row.rut||'', meses_reg: parseInt(row.meses_cc||0) },
+        R: { ventas: parseFloat(row.ingresos_mes||0), costos: parseFloat(row.costos_mes||0),
+          personal: parseInt(row.personal||0) },
+        proyecto: row.proyecto || cfg.proyecto || '', _fromSheets: true
+      };
+      var ex = local.findIndex(function(x){ return String(x.doc) === ced; });
+      if (ex >= 0) {
+        if (new Date(d.fecha) > new Date(local[ex].fecha||0)) { local[ex] = Object.assign({},local[ex],d); act++; }
+      } else { local.push(d); nv++; }
+    });
+    localStorage.setItem('dme_diagnosticos_v1', JSON.stringify(local));
+    if (typeof actualizarTodo === 'function') actualizarTodo();
+    sd.style.cssText = 'display:block;background:#d4edda;color:#155724;border:1px solid #c3e6cb;border-radius:8px;padding:10px 16px;margin-top:10px;';
+    sd.innerHTML = '✅ Importación: ' + nv + ' nuevos, ' + act + ' actualizados. Total: ' + local.length + ' registros.';
+  } catch(err) {
+    sd.style.cssText = 'display:block;background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;border-radius:8px;padding:10px 16px;margin-top:10px;';
+    sd.innerHTML = 'Error al importar: ' + err.message + '. Verifica el Apps Script (v2 con doGet).';
+  }
+}
+
 renderResumen();
 renderSocio();
 renderEmpresarial();
