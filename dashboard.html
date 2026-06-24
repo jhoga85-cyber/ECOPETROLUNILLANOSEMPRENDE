@@ -675,7 +675,7 @@ async function sincronizarTodo() {
       var res = await fetch(cfg.url, {
         method:'POST',
         body: JSON.stringify(payload),
-        headers:{'Content-Type':'application/json'}
+        headers:{'Content-Type':'text/plain'}
       });
       if (res.ok) ok++;
       else fail++;
