@@ -720,56 +720,48 @@ function actualizarTodo() {
 // IMPORTAR DESDE GOOGLE SHEETS → Dashboard
 // ═══════════════════════════════════════════════
 async function importarDesdeSheets() {
-  const cfg = cfgLoad();
-  const url = cfg.url || '';
-  if (!url) { alert('Configura primero la URL del Apps Script.'); return; }
-  const sd = document.getElementById('import-status');
-  sd.style.cssText = 'display:block;background:#fff3cd;color:#856404;border:1px solid #ffc107;border-radius:8px;padding:10px 16px;margin-top:10px;';
-  sd.innerHTML = '⏳ Importando datos desde Google Sheets...';
+  var cfg = cfgLoad();
+  var url = cfg.url;
+  if (!url) { alert('Configura primero la URL del Apps Script'); return; }
+  var loadingEl = null;
+  document.querySelectorAll('div').forEach(function(el) {
+    var t = el.textContent || '';
+    if (t.includes('importar') || t.includes('Importando') || t.includes('registros para importar') || t.includes('Sincronización completada') || t.includes('Conexión exitosa')) { loadingEl = el; }
+  });
+  if (loadingEl) { loadingEl.style.cssText = 'display:block;background:#fff3cd;color:#856404;border:1px solid #ffc107;border-radius:6px;padding:10px;margin-top:8px'; loadingEl.innerHTML = '⏳ Importando datos desde Google Sheets...'; }
   try {
-    const r = await fetch(url + '?action=importar', {method:'GET',redirect:'follow'});
+    var r = await fetch(url + '?action=importar', {method:'GET', redirect:'follow'});
     if (!r.ok) throw new Error('HTTP ' + r.status);
-    const res = await r.json();
-    if (res.status !== 'ok' || !Array.isArray(res.registros)) throw new Error(res.msg || 'Respuesta inesperada');
-    const sheetsData = res.registros;
+    var res = await r.json();
+    if (!Array.isArray(res.registros)) throw new Error('Respuesta inesperada: ' + (res.msg || ''));
+    var sheetsData = res.registros;
     if (!sheetsData.length) {
-      sd.style.cssText = 'display:block;background:#cce5ff;color:#004085;border:1px solid #b8daff;border-radius:8px;padding:10px 16px;margin-top:10px;';
-      sd.innerHTML = 'El Google Sheets no tiene registros para importar.';
+      if (loadingEl) { loadingEl.style.cssText = 'display:block;background:#cce5ff;color:#004085;border:1px solid #b8daff;border-radius:6px;padding:10px;margin-top:8px'; loadingEl.innerHTML = 'El Google Sheets no tiene registros para importar.'; }
       return;
     }
-    const local = dbLoad();
-    let nv = 0, act = 0;
+    var local = dbLoad(); var nv = [], act = [];
     sheetsData.forEach(function(row) {
-      var ced = String(row.cedula || row.c_dula || '').trim();
+      var ced = String(row.cedula || row.doc || '').trim();
       if (!ced) return;
       var d = {
-        id: row.id || Date.now() + Math.random(),
-        fecha: row.fecha || new Date().toISOString(),
-        modo: row.modo || 'ingreso', negocio: row.negocio || '',
-        doc: ced, sector: row.sector || '', municipio: row.municipio || '',
-        clasif: row.clasificacion || '', puntaje: parseFloat(row.puntaje||0),
-        nivel: row.nivel || '',
-        scores: { mercado: parseFloat(row.mercado||0), oferta: parseFloat(row.oferta||0),
-          rentabilizacion: parseFloat(row.rentabilizacion||0),
-          comercializacion: parseFloat(row.comercializacion||0), madurez: parseFloat(row.madurez||0) },
-        info: { nombre1: row.nombre||'', correo: row.correo||'', telefono: row.telefono||'',
-          tiene_rut: row.rut||'', meses_reg: parseInt(row.meses_cc||0) },
-        R: { ventas: parseFloat(row.ingresos_mes||0), costos: parseFloat(row.costos_mes||0),
-          personal: parseInt(row.personal||0) },
-        proyecto: row.proyecto || cfg.proyecto || '', _fromSheets: true
+        id: row.id || (Date.now() + Math.random()), fecha: row.fecha || new Date().toISOString(),
+        modo: row.modo || 'ingreso', negocio: row.negocio || '', doc: ced,
+        sector: row.sector || '', municipio: row.municipio || '',
+        clasif: row.clasificacion || row.clasif || '', puntaje: parseFloat(row.puntaje) || 0, nivel: row.nivel || '',
+        scores: { mercado: parseFloat(row.mercado)||0, oferta: parseFloat(row.oferta)||0, rentabilizacion: parseFloat(row.rentabilizacion)||0, comercializacion: parseFloat(row.comercializacion)||0, madurez: parseFloat(row.madurez)||0 },
+        info: { nombre1: row.nombre||'', apellido1: row.apellido1||'', doc: ced, correo: row.correo||'', telefono: row.telefono||'', tiene_rut: row.rut||'', meses_reg: parseInt(row.meses_cc)||0, municipio: row.municipio||'', sector: row.sector||'', sexo: row.sexo||'', edu: row.edu||'', nacimiento: row.nacimiento||'', motivo: row.motivo||'', relacion: row.relacion||'', tiene_marca: row.tiene_marca||'' },
+        R: { ventas: parseFloat(row.ingresos_mes)||0, costos: parseFloat(row.costos_mes)||0, personal: parseInt(row.personal)||0 },
+        proyecto: row.proyecto || (cfg.proyecto || 'DME'), _fromSheets: true
       };
-      var ex = local.findIndex(function(x){ return String(x.doc) === ced; });
-      if (ex >= 0) {
-        if (new Date(d.fecha) > new Date(local[ex].fecha||0)) { local[ex] = Object.assign({},local[ex],d); act++; }
-      } else { local.push(d); nv++; }
+      var ex = local.findIndex(function(x) { return String(x.doc) === String(ced); });
+      if (ex < 0) { nv.push(d); } else { if (new Date(d.fecha) >= new Date(local[ex].fecha||0)) { local[ex] = Object.assign({}, local[ex], d); act.push(d); } }
     });
-    localStorage.setItem('dme_diagnosticos_v1', JSON.stringify(local));
+    var updated = [...local]; nv.forEach(function(r) { updated.push(r); });
+    localStorage.setItem(DB_KEY, JSON.stringify(updated));
+    if (loadingEl) { loadingEl.style.cssText = 'display:block;background:#d4edda;color:#155724;border:1px solid #c3e6cb;border-radius:6px;padding:10px;margin-top:8px'; loadingEl.innerHTML = '✅ Importación completada: ' + nv.length + ' nuevos, ' + act.length + ' actualizados. Total: ' + updated.length + ' registros.'; }
     if (typeof actualizarTodo === 'function') actualizarTodo();
-    sd.style.cssText = 'display:block;background:#d4edda;color:#155724;border:1px solid #c3e6cb;border-radius:8px;padding:10px 16px;margin-top:10px;';
-    sd.innerHTML = '✅ Importación: ' + nv + ' nuevos, ' + act + ' actualizados. Total: ' + local.length + ' registros.';
   } catch(err) {
-    sd.style.cssText = 'display:block;background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;border-radius:8px;padding:10px 16px;margin-top:10px;';
-    sd.innerHTML = 'Error al importar: ' + err.message + '. Verifica el Apps Script (v2 con doGet).';
+    if (loadingEl) { loadingEl.style.cssText = 'display:block;background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;border-radius:6px;padding:10px;margin-top:8px'; loadingEl.innerHTML = '❌ Error al importar: ' + err.message + '. Verifica el Apps Script v2 con doGet.'; }
   }
 }
 
