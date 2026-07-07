@@ -717,7 +717,7 @@ async function sincronizarTodo() {
       else fail++;
     } catch(e) { fail++; }
   }
-  dbSave(db);
+  localStorage.setItem(DB_KEY, JSON.stringify(db));
   showSyncStatus(
     (fail===0 ? '✅' : '⚠') + ' Sincronización completada: ' + ok + ' enviados' + (skip>0?' · '+skip+' ya sincronizados (omitidos)':'') + (fail>0?' · '+fail+' fallidos':''),
     fail===0 ? 'success' : 'warn'
