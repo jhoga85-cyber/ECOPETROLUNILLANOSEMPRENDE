@@ -171,7 +171,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
       <table class="tbl">
         <thead><tr>
           <th>Beneficiario</th><th>Cédula</th><th>Municipio</th><th>Negocio / Sector</th>
-          <th>Clasificación</th><th>Modo</th><th>Puntaje</th><th>Nivel</th><th>Fecha</th>
+          <th>Clasificación</th><th>Modo</th><th>Puntaje</th><th>Nivel</th><th>Fecha</th><th>Acciones</th>
         </tr></thead>
         <tbody id="tbl-diags"></tbody>
       </table>
@@ -543,6 +543,7 @@ function renderDiags() {
       + '<td style="font-weight:700;color:' + col + ';font-family:monospace">' + (r.puntaje||'—') + '%</td>'
       + '<td>' + (r.nivel||'—') + '</td>'
       + '<td style="font-size:11px;color:var(--sub)">' + fecha + '</td>'
+      + '<td><a href="index.html?ver=' + r.id + '" target="_blank" style="color:var(--navy);font-weight:700;text-decoration:none;white-space:nowrap">👁 Ver/Descargar</a></td>'
       + '</tr>';
   }).join('');
 }
@@ -602,7 +603,7 @@ function doPost(e) {
     sheet.appendRow(['Fecha','Cédula','Nombre','Negocio','Municipio','Sector',
       'Clasificación','Modo','Puntaje','Nivel','Ingresos_Mes','Costos_Mes','Personal',
       'Mercado','Oferta','Rentabilización','Comercialización','Madurez',
-      'Correo','Teléfono','RUT','Meses_CC','Proyecto']);
+      'Correo','Teléfono','RUT','Meses_CC','Sexo','Fecha_Nacimiento','Nivel_Educativo','Relacion_Negocio','Motivo','Proyecto']);
   }
   
   var data = JSON.parse(e.postData.contents);
@@ -617,6 +618,7 @@ function doPost(e) {
     SC.mercado || 0, SC.oferta || 0, SC.rentabilizacion || 0,
     SC.comercializacion || 0, SC.madurez || 0,
     I.correo || '', I.telefono || '', I.tiene_rut || '', I.meses_reg || 0,
+    I.sexo || '', I.nacimiento || '', I.edu || '', I.relacion || '', I.motivo || '',
     data.proyecto || 'DME'
   ]);
   
@@ -626,10 +628,37 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  return ContentService.createTextOutput(
-    JSON.stringify({status:'ok', msg:'DME receptor activo'})
-  ).setMimeType(ContentService.MimeType.JSON);
-}`;
+  var action = (e && e.parameter && e.parameter.action) || '';
+    if (action === 'importar') {
+        var ss = SpreadsheetApp.getActiveSpreadsheet();
+            var sheet = ss.getSheetByName(SHEET_NAME);
+                if (!sheet || sheet.getLastRow() < 2) {
+                      return ContentService.createTextOutput(
+                              JSON.stringify({status:'ok', registros:[]})
+                                    ).setMimeType(ContentService.MimeType.JSON);
+                                        }
+                                            var values = sheet.getDataRange().getValues();
+                                                var registros = [];
+                                                    for (var i = 1; i < values.length; i++) {
+                                                          var row = values[i];
+                                                                registros.push({
+                                                                        fecha: row[0], cedula: String(row[1]||''), nombre: row[2], negocio: row[3],
+                                                                                municipio: row[4], sector: row[5], clasificacion: row[6], modo: row[7],
+                                                                                        puntaje: row[8], nivel: row[9], ingresos_mes: row[10], costos_mes: row[11],
+                                                                                                personal: row[12], mercado: row[13], oferta: row[14], rentabilizacion: row[15],
+                                                                                                        comercializacion: row[16], madurez: row[17], correo: row[18], telefono: row[19],
+                                                                                                                rut: row[20], meses_cc: row[21], sexo: row[22], nacimiento: row[23],
+                                                                                                                        edu: row[24], relacion: row[25], motivo: row[26], proyecto: row[27]
+                                                                                                                              });
+                                                                                                                                  }
+                                                                                                                                      return ContentService.createTextOutput(
+                                                                                                                                            JSON.stringify({status:'ok', registros: registros})
+                                                                                                                                                ).setMimeType(ContentService.MimeType.JSON);
+                                                                                                                                                  }
+                                                                                                                                                    return ContentService.createTextOutput(
+                                                                                                                                                        JSON.stringify({status:'ok', msg:'DME receptor activo'})
+                                                                                                                                                          ).setMimeType(ContentService.MimeType.JSON);
+                                                                                                                                                          };
 
 function initNube() {
   var code = document.getElementById('apps-script-code');
@@ -667,10 +696,11 @@ async function sincronizarTodo() {
   if (!db.length) { toast('No hay diagnósticos para sincronizar.', 'error'); return; }
 
   showSyncStatus('⏳ Sincronizando ' + db.length + ' diagnósticos...', 'info');
-  var ok = 0, fail = 0;
+  var ok = 0, fail = 0, skip = 0;
 
   for (var i=0; i<db.length; i++) {
     var r = db[i];
+    if (r._synced) { skip++; continue; }
     try {
       var payload = {
         doc:r.doc, negocio:r.negocio, municipio:r.municipio, sector:r.sector,
@@ -683,12 +713,13 @@ async function sincronizarTodo() {
         body: JSON.stringify(payload),
         headers:{'Content-Type':'text/plain'}
       });
-      if (res.ok) ok++;
+      if (res.ok) { ok++; r._synced = true; }
       else fail++;
     } catch(e) { fail++; }
   }
+  dbSave(db);
   showSyncStatus(
-    (fail===0 ? '✅' : '⚠') + ' Sincronización completada: ' + ok + ' enviados correctamente' + (fail>0?' · '+fail+' fallaron':''),
+    (fail===0 ? '✅' : '⚠') + ' Sincronización completada: ' + ok + ' enviados' + (skip>0?' · '+skip+' ya sincronizados (omitidos)':'') + (fail>0?' · '+fail+' fallidos':''),
     fail===0 ? 'success' : 'warn'
   );
 }
