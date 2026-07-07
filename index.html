@@ -1083,7 +1083,7 @@ function save3() {
     };
     ST.R.ventas   = gvMoney('f-ventas');
     ST.R.costos   = gvMoney('f-costos');
-    ST.R.personal = gv('f-personal');
+    ST.R.personal = Math.max(0, Math.min(500, parseInt(gv('f-personal'))||0));
     ST.R.aportes  = getR('aportes');
   }
 }
@@ -1404,13 +1404,14 @@ function selMat(dot) {
 // ═══════════════════════════════════════════════
 // RESULTS
 // ═══════════════════════════════════════════════
-function showResults(){
+function showResults(fromSaved){
   gid('steps').style.display='none';
   document.querySelector('.prog').style.display='none';
 
-  var scores = calcScores();
-  var ovr    = getOverall(scores);
-  var lvl    = getLvl(ovr);
+var useStored = fromSaved && window._DIME;
+      var scores = useStored ? window._DIME.scores : calcScores();
+      var ovr    = useStored ? window._DIME.ovr    : getOverall(scores);
+      var lvl    = useStored ? window._DIME.lvl    : getLvl(ovr);
   var I=ST.info, R=ST.R, ING=ST.ing;
   var clasif = clasificar(I, R);
 
@@ -2318,7 +2319,7 @@ function cargarDiagnostico(idx) {
   // Go directly to results
   document.getElementById('steps').style.display = 'none';
   document.querySelector('.prog').style.display   = 'none';
-  showResults();
+  showResults(true);
   showToast('✓ Diagnóstico de ' + r.negocio + ' cargado');
 }
 
@@ -2329,6 +2330,16 @@ function eliminarDiagnostico(idx) {
   dbSave(db);
   abrirHistorial(); // refresh
 }
+  function abrirDesdeDashboard() {
+      var params = new URLSearchParams(window.location.search);
+      var verId = params.get('ver');
+      if (!verId) return;
+      var db = dbLoad();
+      var idx = db.findIndex(function(r){ return String(r.id) === String(verId); });
+      if (idx < 0) { return; }
+      cargarDiagnostico(idx);
+  }
+  abrirDesdeDashboard();
 
 </script>
 
