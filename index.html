@@ -695,6 +695,7 @@ function step1() {
     + navBtns(true)
     + '</div>';
   appnd(html);
+  if (ST._bloqueoIngreso) bloquearCamposIngreso(['f-razon','f-nombre1','f-apellido1','f-municipio','f-sector','f-correo','f-telefono','f-rut','f-meses','tiene_marca']);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -720,6 +721,7 @@ function step2() {
     + navBtns(true)
     + '</div>';
   appnd(html);
+  if (ST._bloqueoIngreso) bloquearCamposIngreso(['f-relacion','f-sexo','f-edu','f-nacimiento','motivo']);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1188,36 +1190,52 @@ function buscarIngresoXCedula(doc) {
   // Only in seguimiento/salida mode
   if (MODO === 'ingreso' || !doc || doc.length < 5) return;
   var hint = gid('cedula-hint');
-  
+
   // Search localStorage for a saved ingreso diagnostic with this doc
   try {
     var db = JSON.parse(localStorage.getItem('dme_diagnosticos_v1') || '[]');
     var found = db.find(function(r) { return r.doc === doc && r.modo === 'ingreso'; });
     if (found) {
-      // Pre-fill ingreso values
+      // Pre-fill ingreso values (baseline for comparativo)
       ST.ing = {
-        ventas:     parseFloat((found.R || {}).ventas)    || 0,
-        costos:     parseFloat((found.R || {}).costos)    || 0,
-        personal:   parseInt((found.R || {}).personal)    || 0,
-        emp_formal: 0,
-        puntaje:    found.puntaje || 0,
-        nivel:      found.nivel   || ''
+        ventas:   parseFloat((found.R || {}).ventas)   || 0,
+        costos:   parseFloat((found.R || {}).costos)   || 0,
+        personal: parseInt((found.R || {}).personal)   || 0,
+        puntaje:  found.puntaje || 0,
+        nivel:    found.nivel   || ''
       };
-      // Pre-fill info
-      if (!ST.info.razon && found.info) {
-        ST.info.razon    = found.info.razon    || ST.info.razon;
-        ST.info.sector   = found.info.sector   || ST.info.sector;
-        ST.info.municipio= found.info.municipio|| ST.info.municipio;
-      }
+      // Pre-fill ALL identification/characterization data as read-only baseline
+      var fi = found.info || {};
+      ST.info.razon       = fi.razon       || ST.info.razon;
+      ST.info.nombre1     = fi.nombre1     || ST.info.nombre1;
+      ST.info.apellido1   = fi.apellido1   || ST.info.apellido1;
+      ST.info.sector      = fi.sector      || ST.info.sector;
+      ST.info.municipio   = fi.municipio   || ST.info.municipio;
+      ST.info.correo      = fi.correo      || ST.info.correo;
+      ST.info.telefono    = fi.telefono    || ST.info.telefono;
+      ST.info.tiene_rut   = fi.tiene_rut   || ST.info.tiene_rut;
+      ST.info.meses_reg   = fi.meses_reg   || ST.info.meses_reg;
+      ST.info.tiene_marca = fi.tiene_marca || ST.info.tiene_marca;
+      ST.info.relacion    = fi.relacion    || ST.info.relacion;
+      ST.info.sexo        = fi.sexo        || ST.info.sexo;
+      ST.info.edu         = fi.edu         || ST.info.edu;
+      ST.info.nacimiento  = fi.nacimiento  || ST.info.nacimiento;
+      ST.info.motivo      = fi.motivo      || ST.info.motivo;
+      ST._bloqueoIngreso = true;
+
       if (hint) {
         hint.innerHTML = '<span style="color:var(--green);font-weight:600">✅ Diagnóstico de ingreso encontrado: <strong>'
-          + (found.negocio || found.info && found.info.razon || 'negocio')
+          + (found.negocio || (found.info && found.info.razon) || 'negocio')
           + '</strong> — Ingresos: $' + Math.round(ST.ing.ventas).toLocaleString('es-CO')
           + '/mes · Costos: $' + Math.round(ST.ing.costos).toLocaleString('es-CO')
           + '/mes · Personal: ' + ST.ing.personal + ' persona(s)'
           + ' · Puntaje: ' + ST.ing.puntaje + '%</span>';
       }
+
+      // Reflect the pre-loaded data visually in the currently rendered fields and lock them
+      aplicarPrecargaVisual();
     } else {
+      ST._bloqueoIngreso = false;
       if (hint && doc.length >= 5) {
         hint.innerHTML = '<span style="color:var(--amber)">⚠ No se encontró diagnóstico de ingreso para esta cédula en este dispositivo. Podrás ingresar los valores manualmente.</span>';
       }
@@ -1225,6 +1243,51 @@ function buscarIngresoXCedula(doc) {
   } catch(e) {
     // localStorage not available
   }
+}
+
+// Reflects the auto-loaded ingreso baseline into the currently visible step1 fields
+// and marks them read-only.
+function aplicarPrecargaVisual() {
+  var map = {
+    'f-razon': ST.info.razon, 'f-nombre1': ST.info.nombre1, 'f-apellido1': ST.info.apellido1,
+    'f-municipio': ST.info.municipio, 'f-sector': ST.info.sector,
+    'f-correo': ST.info.correo, 'f-telefono': ST.info.telefono,
+    'f-rut': ST.info.tiene_rut, 'f-meses': ST.info.meses_reg
+  };
+  Object.keys(map).forEach(function(id){
+    var el = gid(id);
+    if (el && map[id] !== undefined && map[id] !== '') el.value = map[id];
+  });
+  bloquearCamposIngreso(['f-razon','f-nombre1','f-apellido1','f-municipio','f-sector','f-correo','f-telefono','f-rut','f-meses','tiene_marca']);
+}
+
+// Disables the given field ids (native inputs/selects) or custom radio/check groups,
+// and shows a note explaining the data came from the ingreso diagnostic.
+function bloquearCamposIngreso(ids) {
+  ids.forEach(function(id) {
+    var el = gid(id);
+    if (el && (el.tagName === 'INPUT' || el.tagName === 'SELECT')) {
+      el.disabled = true;
+      el.style.background = '#f0f0f0';
+      el.style.cursor = 'not-allowed';
+    } else {
+      var grp = document.querySelector('[data-radio="' + id + '"]') || document.querySelector('[data-check="' + id + '"]');
+      if (grp) { grp.style.pointerEvents = 'none'; grp.style.opacity = '0.65'; }
+    }
+  });
+  var cont = document.querySelector('.step.active');
+  if (cont && !cont.querySelector('.aviso-bloqueo')) {
+    var aviso = document.createElement('div');
+    aviso.className = 'aviso-bloqueo';
+    aviso.style.cssText = 'background:#EAF3FF;border:1px solid #B6D4FE;border-radius:8px;padding:10px 14px;margin:0 0 14px;font-size:13px;color:#1B3A6B;';
+    aviso.innerHTML = '🔒 Estos datos se cargaron automáticamente desde el diagnóstico de <strong>ingreso</strong> registrado para esta cédula. <a href="#" onclick="desbloquearCamposIngreso(); return false;" style="color:var(--navy);font-weight:700;">Editar manualmente</a>';
+    cont.insertBefore(aviso, cont.firstChild);
+  }
+}
+
+function desbloquearCamposIngreso() {
+  ST._bloqueoIngreso = false;
+  renderStep(ST.step);
 }
 
 function goNext() {
