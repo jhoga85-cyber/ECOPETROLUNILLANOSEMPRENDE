@@ -108,9 +108,16 @@ table.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
   <div class="tab" onclick="showTab('tab-socio')">👥 Caracterización sociodemográfica</div>
   <div class="tab" onclick="showTab('tab-empresarial')">🏢 Perfil empresarial</div>
   <div class="tab" onclick="showTab('tab-diagnosticos')">📋 Diagnósticos</div>
+  <div class="tab" onclick="showTab('tab-comparativo')">🔄 Comparativo</div>
   <div class="tab" onclick="showTab('tab-nube')">☁ Nube / Google Sheets</div>
 </div>
 
+<div class="filter-bar" style="padding:10px 20px; background:#f8f9fa; border-bottom:1px solid #e0e0e0; display:flex; align-items:center; gap:10px;">
+  <label for="filtro-municipio" style="font-weight:600;">📍 Filtrar por municipio:</label>
+  <select id="filtro-municipio" onchange="cambiarFiltroMunicipio(this.value)">
+    <option value="">Todos los municipios</option>
+  </select>
+</div>
 <div class="main">
 <div id="tab-resumen" class="panel active">
   <div class="stats" id="stats-resumen"></div>
@@ -180,6 +187,17 @@ table.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
       <div class="ico">📋</div>
       <p>No hay diagnósticos guardados.<br>Completa un diagnóstico y usa el botón <strong>💾 Guardar</strong>.</p>
     </div>
+  </div>
+</div>
+
+<div id="tab-comparativo" class="panel">
+  <div class="card">
+    <div class="card-title">📈 Indicadores de impacto (Ingreso → Seguimiento/Salida)</div>
+    <div class="stats" id="stats-comparativo"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🔄 Comparativo por beneficiario</div>
+    <div id="tabla-comparativo"></div>
   </div>
 </div>
 
@@ -257,6 +275,39 @@ function dbPersonas() {
     }
   });
   return Object.values ? Object.values(byDoc) : Object.keys(byDoc).map(function(k){ return byDoc[k]; });
+}
+
+// ═══ FILTRO GLOBAL DE MUNICIPIO ═══
+var FILTRO_MUNICIPIO = localStorage.getItem('filtro_municipio') || '';
+
+function dbLoadView() {
+  var db = dbLoad();
+  if (!FILTRO_MUNICIPIO) return db;
+  return db.filter(function(r){ return (r.municipio||'') === FILTRO_MUNICIPIO; });
+}
+
+function dbPersonasView() {
+  var db = dbPersonas();
+  if (!FILTRO_MUNICIPIO) return db;
+  return db.filter(function(r){ return (r.municipio||'') === FILTRO_MUNICIPIO; });
+}
+
+function poblarFiltroMunicipio() {
+  var sel = document.getElementById('filtro-municipio');
+  if (!sel) return;
+  var db = dbLoad();
+  var set = {};
+  db.forEach(function(r){ if (r.municipio) set[r.municipio] = true; });
+  var municipios = Object.keys(set).sort();
+  var actual = FILTRO_MUNICIPIO;
+  sel.innerHTML = '<option value="">Todos los municipios</option>' +
+    municipios.map(function(m){ return '<option value="'+m+'"'+(m===actual?' selected':'')+'>'+m+'</option>'; }).join('');
+}
+
+function cambiarFiltroMunicipio(val) {
+  FILTRO_MUNICIPIO = val || '';
+  localStorage.setItem('filtro_municipio', FILTRO_MUNICIPIO);
+  actualizarTodo();
 }
 
 function cfgLoad() {
@@ -343,8 +394,8 @@ function rangoEdad(age) {
 // TAB 1: RESUMEN GENERAL
 // ═══════════════════════════════════════════════
 function renderResumen() {
-  var db       = dbLoad();
-  var personas = dbPersonas(); // unique beneficiaries by cedula
+  var db       = dbLoadView();
+  var personas = dbPersonasView(); // unique beneficiaries by cedula
   if (!db.length) {
     document.getElementById('stats-resumen').innerHTML = '<div class="empty"><div class="ico">📊</div><p>No hay diagnósticos guardados aún.</p></div>';
     return;
@@ -404,7 +455,7 @@ function chartCard(title, innerId) {
 // TAB 2: CARACTERIZACIÓN SOCIODEMOGRÁFICA
 // ═══════════════════════════════════════════════
 function renderSocio() {
-  var db = dbPersonas(); // unique beneficiaries
+  var db = dbPersonasView(); // unique beneficiaries
   if (!db.length) return;
 
   // Sex
@@ -452,8 +503,8 @@ function renderSocio() {
 // TAB 3: PERFIL EMPRESARIAL
 // ═══════════════════════════════════════════════
 function renderEmpresarial() {
-  var db = dbLoad(); // all records for diagnostic history
-  var personas = dbPersonas(); // unique people
+  var db = dbLoadView(); // all records for diagnostic history
+  var personas = dbPersonasView(); // unique people
   if (!db.length) return;
 
   var ingreso = db.filter(function(r){ return r.modo==='ingreso' && r.puntaje>0; });
@@ -506,7 +557,7 @@ function renderEmpresarial() {
 // TAB 4: TABLA DE DIAGNÓSTICOS
 // ═══════════════════════════════════════════════
 function renderDiags() {
-  var db = dbLoad();
+  var db = dbLoadView();
   var q  = (document.getElementById('search-diag').value||'').toLowerCase();
   var fm = document.getElementById('filter-modo').value;
   var fc = document.getElementById('filter-clasif').value;
@@ -546,6 +597,117 @@ function renderDiags() {
       + '<td><a href="index.html?ver=' + r.id + '" target="_blank" style="color:var(--navy);font-weight:700;text-decoration:none;white-space:nowrap">👁 Ver/Descargar</a></td>'
       + '</tr>';
   }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPARATIVO: INGRESO vs SEGUIMIENTO/SALIDA
+// ═══════════════════════════════════════════════════════════
+function renderComparativo() {
+  var db = dbLoadView();
+  var statsEl = document.getElementById('stats-comparativo');
+  var tablaEl = document.getElementById('tabla-comparativo');
+  if (!statsEl || !tablaEl) return;
+  if (!db.length) {
+    statsEl.innerHTML = '';
+    tablaEl.innerHTML = '<div class="empty"><div class="ico">🔄</div><p>No hay diagnósticos guardados.</p></div>';
+    return;
+  }
+
+  var byDoc = {};
+  db.forEach(function(r){
+    var doc = r.doc || ('__sin_doc__'+r.id);
+    if (!byDoc[doc]) byDoc[doc] = [];
+    byDoc[doc].push(r);
+  });
+
+  var comparables = [];
+  Object.keys(byDoc).forEach(function(doc){
+    var recs = byDoc[doc];
+    var ingreso = recs.filter(function(r){ return r.modo === 'ingreso'; })[0];
+    var otros = recs.filter(function(r){ return r.modo !== 'ingreso'; })
+      .sort(function(a,b){ return new Date(b.fecha||0) - new Date(a.fecha||0); });
+    if (ingreso && otros.length) comparables.push({ doc: doc, ingreso: ingreso, actual: otros[0] });
+  });
+
+  if (!comparables.length) {
+    statsEl.innerHTML = '';
+    tablaEl.innerHTML = '<div class="empty"><div class="ico">🔄</div><p>Aún no hay beneficiarios con diagnóstico de seguimiento o salida para comparar con su ingreso.</p></div>';
+    return;
+  }
+
+  function fmtPct(v){ return (v>=0?'+':'') + v.toFixed(1) + '%'; }
+  function fmtMoney(v){ return '$' + Math.round(v||0).toLocaleString('es-CO'); }
+  function estado(delta){
+    if (delta > 0) return '<span class="badge b-mip">✅ Mejoró</span>';
+    if (delta < 0) return '<span class="badge b-emp">❌ Retrocedió</span>';
+    return '<span class="badge">⚠ Se mantuvo</span>';
+  }
+
+  var sumDeltaPuntaje=0, sumDeltaVentas=0, sumDeltaCostos=0, sumDeltaPersonal=0;
+  var nMejoraron=0, nCambioNivel=0;
+  comparables.forEach(function(c){
+    var dp = (c.actual.puntaje||0) - (c.ingreso.puntaje||0);
+    sumDeltaPuntaje += dp;
+    if (dp>0) nMejoraron++;
+    if (c.ingreso.nivel && c.actual.nivel && c.ingreso.nivel !== c.actual.nivel) nCambioNivel++;
+    var vi=(c.ingreso.R&&c.ingreso.R.ventas)||0, va=(c.actual.R&&c.actual.R.ventas)||0;
+    sumDeltaVentas += (va-vi);
+    var ci=(c.ingreso.R&&c.ingreso.R.costos)||0, ca=(c.actual.R&&c.actual.R.costos)||0;
+    sumDeltaCostos += (ca-ci);
+    var pi=(c.ingreso.R&&c.ingreso.R.personal)||0, pa=(c.actual.R&&c.actual.R.personal)||0;
+    sumDeltaPersonal += (pa-pi);
+  });
+  var n = comparables.length;
+  var avgDeltaPuntaje = sumDeltaPuntaje/n;
+  var avgDeltaVentas = sumDeltaVentas/n;
+  var avgDeltaCostos = sumDeltaCostos/n;
+  var avgDeltaPersonal = sumDeltaPersonal/n;
+  var pctMejoraron = (nMejoraron/n*100);
+  var pctCambioNivel = (nCambioNivel/n*100);
+
+  statsEl.innerHTML =
+    stat('Beneficiarios comparables', n, 'con ingreso + seguimiento/salida')
+    + stat('Mejoraron su puntaje', fmtPct(pctMejoraron), 'sobre el total comparable')
+    + stat('Variación prom. de puntaje', (avgDeltaPuntaje>=0?'+':'')+avgDeltaPuntaje.toFixed(1), 'puntos, ingreso → actual')
+    + stat('Cambiaron de nivel', fmtPct(pctCambioNivel), 'de madurez')
+    + stat('Variación prom. ingresos', fmtMoney(avgDeltaVentas), 'mensual COP')
+    + stat('Variación prom. costos', fmtMoney(avgDeltaCostos), 'mensual COP')
+    + stat('Variación prom. personal', (avgDeltaPersonal>=0?'+':'')+avgDeltaPersonal.toFixed(1), 'personas empleadas');
+
+  var dims = [
+    ['mercado','Mercado'],['oferta','Oferta'],['rentabilizacion','Rentabilización'],
+    ['comercializacion','Comercialización'],['madurez','Madurez']
+  ];
+
+  var rows = comparables.map(function(c){
+    var ing=c.ingreso, act=c.actual;
+    var dp = (act.puntaje||0)-(ing.puntaje||0);
+    var nombre = (ing.info && ing.info.nombre1) ? (ing.info.nombre1 + ' ' + (ing.info.apellido1||'')) : '';
+    var dimsHtml = dims.map(function(d){
+      var vi=(ing.scores&&ing.scores[d[0]])||0, va=(act.scores&&act.scores[d[0]])||0;
+      var dd = va-vi;
+      var color = dd>0?'#1a7f37':(dd<0?'#c0392b':'#8a6d00');
+      return '<td>'+vi.toFixed(0)+' → '+va.toFixed(0)+' <small style="color:'+color+'">('+(dd>=0?'+':'')+dd.toFixed(0)+')</small></td>';
+    }).join('');
+    return '<tr>'
+      + '<td><strong>'+(ing.negocio||'—')+'</strong><br><span style="font-size:11px;color:var(--sub)">'+(nombre||'')+'</span></td>'
+      + '<td style="font-family:monospace;font-size:12px">'+(ing.doc||c.doc)+'</td>'
+      + '<td>'+(ing.municipio||'—')+'</td>'
+      + '<td>'+(ing.nivel||'—')+' → '+(act.nivel||'—')+'</td>'
+      + '<td>'+(ing.puntaje||0).toFixed(0)+' → '+(act.puntaje||0).toFixed(0)+' <small>('+(dp>=0?'+':'')+dp.toFixed(0)+')</small></td>'
+      + dimsHtml
+      + '<td>'+act.modo+'</td>'
+      + '<td>'+estado(dp)+'</td>'
+    + '</tr>';
+  }).join('');
+
+  tablaEl.innerHTML =
+    '<div class="tbl-wrap"><table class="tbl">'
+    + '<thead><tr>'
+      + '<th>Emprendimiento</th><th>Cédula</th><th>Municipio</th><th>Nivel (ingreso → actual)</th><th>Puntaje (ingreso → actual)</th>'
+      + dims.map(function(d){ return '<th>'+d[1]+'</th>'; }).join('')
+      + '<th>Último modo</th><th>Estado</th>'
+    + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
 }
 
 // ═══════════════════════════════════════════════
@@ -738,10 +900,12 @@ function showSyncStatus(msg, type) {
 // INIT
 // ═══════════════════════════════════════════════
 function actualizarTodo() {
+  poblarFiltroMunicipio();
   renderResumen();
   renderSocio();
   renderEmpresarial();
   renderDiags();
+  renderComparativo();
   toast('✓ Datos actualizados');
 }
 
@@ -784,7 +948,7 @@ async function importarDesdeSheets() {
         R: { ventas: parseFloat(row.ingresos_mes)||0, costos: parseFloat(row.costos_mes)||0, personal: parseInt(row.personal)||0 },
         proyecto: row.proyecto || (cfg.proyecto || 'DME'), _fromSheets: true
       };
-      var ex = local.findIndex(function(x) { return String(x.doc) === String(ced); });
+      var ex = local.findIndex(function(x) { return String(x.doc) === String(ced) && String(x.modo||'ingreso') === String(d.modo||'ingreso'); });
       if (ex < 0) { nv.push(d); } else { if (new Date(d.fecha) >= new Date(local[ex].fecha||0)) { local[ex] = Object.assign({}, local[ex], d); act.push(d); } }
     });
     var updated = [...local]; nv.forEach(function(r) { updated.push(r); });
@@ -796,10 +960,12 @@ async function importarDesdeSheets() {
   }
 }
 
+poblarFiltroMunicipio();
 renderResumen();
 renderSocio();
 renderEmpresarial();
 renderDiags();
+renderComparativo();
 initNube();
 </script>
 </body>
