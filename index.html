@@ -2269,7 +2269,7 @@ function dbSave(arr) {
   catch(e) { return false; }
 }
 
-function guardarDiagnostico() {
+function formatMoneyInput(el) {  var digits = (el.value || '').replace(/\D/g, '');  if (!digits) { el.value = ''; return; }  el.value = new Intl.NumberFormat('es-CO').format(parseInt(digits, 10));}var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsm2aVGdZAA4HQdkK-TtIjlVPUVzCKMGzhdkkPmgqtlq8THn6yPkp3erRkNaGX-E0F/exec';function enviarASheets(record) {  fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(record) })    .then(function(r){ return r.json(); })    .then(function(res){      if (res && res.status === 'ok') showToast('\u2713 Sincronizado con Google Sheets');      else showToast('Guardado local. Google Sheets respondio con error.', 'error');    })    .catch(function(err){      showToast('Guardado local. No se pudo conectar con Google Sheets.', 'error');    });}function guardarDiagnostico() {
   var D = window._DIME;
   if (!D) { showToast('Primero completa el diagnóstico.', 'error'); return; }
   var db = dbLoad();
@@ -2294,7 +2294,7 @@ function guardarDiagnostico() {
   var idx = db.findIndex(function(r){ return r.doc===record.doc && r.modo===record.modo; });
   if (idx >= 0) db[idx] = record;
   else db.unshift(record);
-  if (dbSave(db)) showToast('✓ Diagnóstico guardado correctamente');
+  if (dbSave(db)) { showToast('✓ Diagnóstico guardado correctamente'); enviarASheets(record); }
   else showToast('Error al guardar. Espacio de almacenamiento lleno.', 'error');
 }
 
