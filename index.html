@@ -315,7 +315,7 @@ body{font-family:'Sora',sans-serif;background:var(--light);color:var(--text);min
 var MUNICIPIOS = ["Villavicencio","Acacias","Guamal","Castilla La Nueva","Cubarral","Puerto Gaitan","Otro municipio del Meta"];
 var SECTORES   = ["Manufacturero / Agroindustrial","Servicios","Comercio","Agropecuario","Tecnología","Turismo y cultura","Construccion","Otro"];
 var MOTIVOS    = ["No tenia otra alternativa de ingresos","Identifico una oportunidad de negocio en el mercado","Por tradicion familiar o lo heredó","Para complementar o mejorar el ingreso familiar","Para ejercer su oficio, carrera o profesion","No tenia la experiencia o escolaridad para un empleo","Para contar con mas tiempo para actividades de cuidado","Otro"];
-var GRUPOS_POB = ["Indígena","Afrodescendiente, Negro, Raizal o Palenquero","Gitano o Rrom","Jefe/a de hogar","Migrante","Campesino/a","Persona con discapacidad","LGBTI","Victima del conflicto armado","Persona en proceso de reincorporacion","Ninguno"];
+var GRUPOS_POB = ["Indígena","Afrodescendiente, Negro, Raizal o Palenquero","Gitano o Rrom","Mujer cabeza de familia","Víctima del conflicto armado","Persona con discapacidad","LGBTI","Persona migrante","Persona en proceso de reincorporación","Otro","Ninguno"];
 var NIVEL_EDU  = ["Primaria","Bachillerato","Técnico Laboral","Técnico Profesional","Tecnólogo","Universitario","Posgrado","Ninguno"];
 var VISION_NEG = ["El negocio esta en exploracion y busca desarrollar la idea con pocos recursos","El negocio busca mantenerse en funcionamiento con equipo reducido","El negocio espera crecer mejorando su operacion actual","El negocio planea crecer diversificando su oferta o buscando nuevos mercados","El negocio se proyecta como estable y consolidado con estructura solida","El negocio enfrenta dificultades y podria cerrar por falta de recursos"];
 var PLAN_CREC  = ["No hay ideas sobre el futuro. Solo se trabaja para cubrir los gastos del dia a dia","Se tienen ideas de como crecer, pero NO hay plan escrito ni presupuesto","Se tienen metas de ventas y un plan de trabajo para los próximos 12 meses","Se cuenta con un plan de crecimiento a 2 o 3 años con recursos asignados","Se tiene un plan estratégico a más de 3 años con indicadores y estructura autónoma"];
@@ -716,7 +716,7 @@ function step2() {
     + field('Fecha de nacimiento', 'f-nacimiento', 'date', '', I.nacimiento, false)
     + '</div>'
     + '<div class="field"><label>Principal motivo para iniciar este negocio<span class="req">*</span></label>'
-    + radioGrp('motivo', MOTIVOS, I.motivo)
+    + radioGrp('motivo', MOTIVOS, I.motivo) + '</div>' + '<div class="field"><label>Grupos poblacionales (marca los que apliquen)</label>' + checkGrp('gruposPob', GRUPOS_POB, I.gruposPob)
     + '</div>'
     + navBtns(true)
     + '</div>';
@@ -1063,7 +1063,7 @@ function save1() {
 function save2() {
   Object.assign(ST.info, {
     relacion:gv('f-relacion'), sexo:gv('f-sexo'), edu:gv('f-edu'),
-    nacimiento:gv('f-nacimiento'), motivo:getR('motivo')
+    nacimiento:gv('f-nacimiento'), motivo:getR('motivo'), gruposPob:getC('gruposPob')
   });
 }
 function save3() {
