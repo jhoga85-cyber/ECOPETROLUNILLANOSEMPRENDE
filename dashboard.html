@@ -471,7 +471,7 @@ function renderSocio() {
     var m = (r.info||{}).motivo || 'Sin dato';
     return m.length > 40 ? m.slice(0,40)+'...' : m;
   });
-  var gpobData = {};  db.forEach(function(r){    var g = (r.info||{}).gruposPob;    if (!g) return;    var arr = Array.isArray(g) ? g : String(g).split(';').map(function(x){ return x.trim(); }).filter(Boolean);    arr.forEach(function(v){ if (v && v !== 'Ninguno') { gpobData[v] = (gpobData[v]||0) + 1; } });  });  // Municipio
+  var gpobCounts = {};  db.forEach(function(r){    var g = (r.info||{}).gruposPob;    if (!g) return;    var arr = Array.isArray(g) ? g : String(g).split(';').map(function(x){ return x.trim(); }).filter(Boolean);    arr.forEach(function(v){ if (v && v !== 'Ninguno') { gpobCounts[v] = (gpobCounts[v]||0) + 1; } });  });  var gpobData = Object.keys(gpobCounts).sort(function(a,b){ return gpobCounts[b]-gpobCounts[a]; }).map(function(k){ return {k:k, v:gpobCounts[k]}; }); // Municipio
   var munData = countBy(db, function(r){ return r.municipio||'Sin dato'; });
 
   // Stats row
