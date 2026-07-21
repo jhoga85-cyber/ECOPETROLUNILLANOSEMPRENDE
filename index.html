@@ -530,8 +530,8 @@ function selR(item) {
   item.querySelector('.opt-dot').classList.add('filled');
 }
 
-function togC(item) {
-  item.classList.toggle('sel');
+function onCheckToggle(item){ var grp = item.closest('[data-check]'); if(!grp || grp.getAttribute('data-check')!=='gruposPob') return; var otro = document.getElementById('otroPobWrap'); if(!otro) return; var isOtro = Array.from(grp.querySelectorAll('.opt-item.sel')).some(function(x){ return x.getAttribute('data-val')==='Otro'; }); otro.style.display = isOtro ? 'block' : 'none'; } function togC(item) {
+  item.classList.toggle('sel'); onCheckToggle(item);
   var cc = item.querySelector('.opt-check');
   if (item.classList.contains('sel')) {
     cc.classList.add('filled');
@@ -716,7 +716,7 @@ function step2() {
     + field('Fecha de nacimiento', 'f-nacimiento', 'date', '', I.nacimiento, false)
     + '</div>'
     + '<div class="field"><label>Principal motivo para iniciar este negocio<span class="req">*</span></label>'
-    + radioGrp('motivo', MOTIVOS, I.motivo) + '</div>' + '<div class="field"><label>Grupos poblacionales (marca los que apliquen)</label>' + checkGrp('gruposPob', GRUPOS_POB, I.gruposPob)
+    + radioGrp('motivo', MOTIVOS, I.motivo) + '</div>' + '<div class="field"><label>Grupos poblacionales (marca los que apliquen)</label>' + checkGrp('gruposPob', GRUPOS_POB, I.gruposPob) + '</div>' + '<div class="field" id="otroPobWrap" style="display:' + ((I.gruposPob||[]).indexOf('Otro')>=0?'block':'none') + '"><label>Especifique otro grupo poblacional</label><input type="text" id="f-otroPob" value="' + esc(I.gruposPobOtro||'') + '" placeholder="Escriba aqui">'
     + '</div>'
     + navBtns(true)
     + '</div>';
@@ -1063,7 +1063,7 @@ function save1() {
 function save2() {
   Object.assign(ST.info, {
     relacion:gv('f-relacion'), sexo:gv('f-sexo'), edu:gv('f-edu'),
-    nacimiento:gv('f-nacimiento'), motivo:getR('motivo'), gruposPob:getC('gruposPob')
+    nacimiento:gv('f-nacimiento'), motivo:getR('motivo'), gruposPob:getC('gruposPob'), gruposPobOtro:gv('f-otroPob')
   });
 }
 function save3() {
