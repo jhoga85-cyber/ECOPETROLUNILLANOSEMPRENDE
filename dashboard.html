@@ -765,7 +765,7 @@ function doPost(e) {
     sheet.appendRow(['Fecha','Cédula','Nombre','Negocio','Municipio','Sector',
       'Clasificación','Modo','Puntaje','Nivel','Ingresos_Mes','Costos_Mes','Personal',
       'Mercado','Oferta','Rentabilización','Comercialización','Madurez',
-      'Correo','Teléfono','RUT','Meses_CC','Sexo','Fecha_Nacimiento','Nivel_Educativo','Relacion_Negocio','Motivo','Proyecto','Grupos_Poblacionales']);
+      'Correo','Teléfono','RUT','Meses_CC','Sexo','Fecha_Nacimiento','Nivel_Educativo','Relacion_Negocio','Motivo','Proyecto','Grupos_Poblacionales','Grupos_Poblacionales_Otro']);
   }
   
   var data = JSON.parse(e.postData.contents);
@@ -781,7 +781,7 @@ function doPost(e) {
     SC.comercializacion || 0, SC.madurez || 0,
     I.correo || '', I.telefono || '', I.tiene_rut || '', I.meses_reg || 0,
     I.sexo || '', I.nacimiento || '', I.edu || '', I.relacion || '', I.motivo || '',
-    data.proyecto || 'DME', (I.gruposPob || []).join('; ')
+    data.proyecto || 'DME', (I.gruposPob || []).join('; '), I.gruposPobOtro || ''
   ]);
   
   return ContentService.createTextOutput(
@@ -810,7 +810,7 @@ function doGet(e) {
                                                                                                 personal: row[12], mercado: row[13], oferta: row[14], rentabilizacion: row[15],
                                                                                                         comercializacion: row[16], madurez: row[17], correo: row[18], telefono: row[19],
                                                                                                                 rut: row[20], meses_cc: row[21], sexo: row[22], nacimiento: row[23],
-                                                                                                                        edu: row[24], relacion: row[25], motivo: row[26], proyecto: row[27], gruposPob: row[28]
+                                                                                                                        edu: row[24], relacion: row[25], motivo: row[26], proyecto: row[27], gruposPob: row[28], gruposPobOtro: row[29]
                                                                                                                               });
                                                                                                                                   }
                                                                                                                                       return ContentService.createTextOutput(
@@ -944,7 +944,7 @@ async function importarDesdeSheets() {
         sector: row.sector || '', municipio: row.municipio || '',
         clasif: row.clasificacion || row.clasif || '', puntaje: parseFloat(row.puntaje) || 0, nivel: row.nivel || '',
         scores: { mercado: parseFloat(row.mercado)||0, oferta: parseFloat(row.oferta)||0, rentabilizacion: parseFloat(row.rentabilizacion)||0, comercializacion: parseFloat(row.comercializacion)||0, madurez: parseFloat(row.madurez)||0 },
-        info: { nombre1: row.nombre||'', apellido1: row.apellido1||'', doc: ced, correo: row.correo||'', telefono: row.telefono||'', tiene_rut: row.rut||'', meses_reg: parseInt(row.meses_cc)||0, municipio: row.municipio||'', sector: row.sector||'', sexo: row.sexo||'', edu: row.edu||'', nacimiento: row.nacimiento||'', motivo: row.motivo||'', relacion: row.relacion||'', tiene_marca: row.tiene_marca||'', gruposPob: row.gruposPob||'' },
+        info: { nombre1: row.nombre||'', apellido1: row.apellido1||'', doc: ced, correo: row.correo||'', telefono: row.telefono||'', tiene_rut: row.rut||'', meses_reg: parseInt(row.meses_cc)||0, municipio: row.municipio||'', sector: row.sector||'', sexo: row.sexo||'', edu: row.edu||'', nacimiento: row.nacimiento||'', motivo: row.motivo||'', relacion: row.relacion||'', tiene_marca: row.tiene_marca||'', gruposPob: row.gruposPob||'', gruposPobOtro: row.gruposPobOtro||'' },
         R: { ventas: parseFloat(row.ingresos_mes)||0, costos: parseFloat(row.costos_mes)||0, personal: parseInt(row.personal)||0 },
         proyecto: row.proyecto || (cfg.proyecto || 'DME'), _fromSheets: true
       };
